@@ -8,10 +8,11 @@ const opts = {
     theme: {
         themes: {
           light: {
-            primary: "#333",
-            // secondary: '#c7a92e',
-            secondary: '#C6A92D',
-            textcolor: '#5a5b5c',
+            // linear-gradient(to top, #e85224, #fabe22)
+            primary: "#233464",
+            orange: '#fabe22',
+            textcolor: '#233464',
+            lightOrange: 'e85224'
             // black: '#333',
             // Vuetify Action Colors
             // secondary: '#f5f5f5',

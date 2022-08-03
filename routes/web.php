@@ -22,9 +22,18 @@ use App\Http\Controllers\DashboardController;
 Route::get('/auth_user', [UserController::class, 'getAuthenticatedUser'])->name('get.auth.user');
 Auth::routes([
     'register' => false, // Registration Routes...
-    //'reset' => false, // Password Reset Routes...
+    'reset' => false, // Password Reset Routes...
     'verify' => false, // Email Verification Routes...
+    'login' => false, // Login Routes...
 ]);
+
+/**
+ * Login with Sanctum route
+ */
+Route::get('/login', function (){
+    return view('login');
+})->name('sanctum.login');
+
 Route::get('/', [DashboardController::class, 'home'])->name('home');
 Route::get('/home', [DashboardController::class, 'home'])->name('home');
 Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], function(){
