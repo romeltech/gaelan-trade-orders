@@ -25,6 +25,7 @@
       >
       </v-text-field>
       <v-btn
+        :loading="loadingLogin"
         width="100%"
         height="55"
         large
@@ -49,8 +50,8 @@ import gagUserClient from "../../services/gagUserClient";
 export default {
   data() {
     return {
+      loadingLogin: false,
       hasError: false,
-      isLoading: true,
       loginValid: true,
       loginEmail: "",
       loginEmailrules: [
@@ -68,22 +69,18 @@ export default {
       message: "",
     };
   },
-  watch: {
-    isLoading: function (newVal, oldVal) {
-      this.isLoading = newVal;
-    },
-  },
   methods: {
     submitLogin() {
+      this.loadingLogin = true;
       let data = {
         username: this.loginEmail,
         password: this.loginPassword,
       };
-      console.log("data", data);
       gagUserClient.get("/sanctum/csrf-cookie").then((res) => {
-        console.log("res", res);
         gagUserClient.post("api/sanctumlogin", data).then((response) => {
-          console.log("gagUserClient", response);
+          this.loadingLogin = false;
+          console.log("res", response.data);
+          localStorage.setItem("gag_en", response.data.token.toString());
         });
       });
     },

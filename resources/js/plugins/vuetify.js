@@ -10,9 +10,10 @@ const opts = {
           light: {
             // linear-gradient(to top, #e85224, #fabe22)
             primary: "#233464",
-            orange: '#fabe22',
+            secondary: '#e65225',
+            orange: '#e85224',
+            lightOrange: '#fabe22',
             textcolor: '#233464',
-            lightOrange: 'e85224'
             // black: '#333',
             // Vuetify Action Colors
             // secondary: '#f5f5f5',

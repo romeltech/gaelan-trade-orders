@@ -7,7 +7,7 @@
       app
       width="250px"
       :src="`${$baseUrl + '/images/gag-2.png'}`"
-      color="#000"
+      color="primary"
       dark
     >
       <div width="100%" class="text-center pa-3">
@@ -25,7 +25,7 @@
         >
       </div>
       <v-divider></v-divider>
-      <v-list dense rounded>
+      <v-list dense nav>
         <!-- Navigation Items -->
         <!-- Common Nav -->
         <nav-item
@@ -87,7 +87,9 @@
                 {{ printInitials(auth_user.profile.full_name) }}
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title>{{ auth_user.profile.full_name }}</v-list-item-title>
+                <v-list-item-title>{{
+                  auth_user.profile.full_name
+                }}</v-list-item-title>
                 <v-list-item-subtitle>{{
                   auth_user.email
                 }}</v-list-item-subtitle>
@@ -130,27 +132,32 @@ export default {
       ],
       adminNav: [
         {
-          title: "Users",
-          icon: "mdi-account-group-outline",
-          location: "/d/users",
+          title: "Reports",
+          icon: "mdi-chart-areaspline",
+          location: "/d/reports",
         },
-        // {
-        //   title: "Settings",
-        //   icon: "mdi-cog-outline",
-        //   location: "/d/settings",
-        //   subs: [
-        //     {
-        //       title: "Companies",
-        //       icon: "mdi-store-outline",
-        //       location: "/d/companies",
-        //     },
-        //     {
-        //       title: "Departments",
-        //       icon: "mdi-account-supervisor-circle-outline",
-        //       location: "/d/departments",
-        //     },
-        //   ],
-        // },
+        {
+          title: "Settings",
+          icon: "mdi-cog-outline",
+          location: "/d/settings",
+          subs: [
+            {
+              title: "Items",
+              icon: "mdi-archive",
+              location: "/d/items",
+            },
+            {
+              title: "Pharmacies",
+              icon: "mdi-store",
+              location: "/d/pharmacies",
+            },
+            {
+              title: "Users",
+              icon: "mdi-account-group",
+              location: "/d/users",
+            },
+          ],
+        },
       ],
     };
   },

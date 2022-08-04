@@ -18,8 +18,13 @@
           <v-list-item-action class="mr-3">
             <v-icon small color="white">{{ sub.icon }}</v-icon>
           </v-list-item-action>
-          <v-list-item-content class="white--text">
-            <v-list-item-title v-text="sub.title"> </v-list-item-title>
+          <v-list-item-content>
+            <v-list-item-title
+              class="white--text"
+              style="z-index: 1"
+              v-text="sub.title"
+            >
+            </v-list-item-title>
           </v-list-item-content>
           <!-- Notification Info here -->
         </v-list-item>

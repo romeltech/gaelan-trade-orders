@@ -3706,6 +3706,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -3728,27 +3730,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       // },
       ],
       adminNav: [{
-        title: "Users",
-        icon: "mdi-account-group-outline",
-        location: "/d/users"
-      } // {
-      //   title: "Settings",
-      //   icon: "mdi-cog-outline",
-      //   location: "/d/settings",
-      //   subs: [
-      //     {
-      //       title: "Companies",
-      //       icon: "mdi-store-outline",
-      //       location: "/d/companies",
-      //     },
-      //     {
-      //       title: "Departments",
-      //       icon: "mdi-account-supervisor-circle-outline",
-      //       location: "/d/departments",
-      //     },
-      //   ],
-      // },
-      ]
+        title: "Reports",
+        icon: "mdi-chart-areaspline",
+        location: "/d/reports"
+      }, {
+        title: "Settings",
+        icon: "mdi-cog-outline",
+        location: "/d/settings",
+        subs: [{
+          title: "Items",
+          icon: "mdi-archive",
+          location: "/d/items"
+        }, {
+          title: "Pharmacies",
+          icon: "mdi-store",
+          location: "/d/pharmacies"
+        }, {
+          title: "Users",
+          icon: "mdi-account-group",
+          location: "/d/users"
+        }]
+      }]
     };
   },
   computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_8__.mapState)(_stores_authUser__WEBPACK_IMPORTED_MODULE_6__.useAuthUserStore, ["auth_user"])),
@@ -3773,6 +3775,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3840,7 +3847,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _services_gagUserClient__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../services/gagUserClient */ "./resources/js/services/gagUserClient.js");
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _services_gagUserClient__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/gagUserClient */ "./resources/js/services/gagUserClient.js");
+
+
+//
 //
 //
 //
@@ -3891,8 +3905,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      loadingLogin: false,
       hasError: false,
-      isLoading: true,
       loginValid: true,
       loginEmail: "",
       loginEmailrules: [function (value) {
@@ -3908,22 +3922,20 @@ __webpack_require__.r(__webpack_exports__);
       message: ""
     };
   },
-  watch: {
-    isLoading: function isLoading(newVal, oldVal) {
-      this.isLoading = newVal;
-    }
-  },
   methods: {
     submitLogin: function submitLogin() {
+      var _this = this;
+
+      this.loadingLogin = true;
       var data = {
         username: this.loginEmail,
         password: this.loginPassword
       };
-      console.log("data", data);
-      _services_gagUserClient__WEBPACK_IMPORTED_MODULE_0__["default"].get("/sanctum/csrf-cookie").then(function (res) {
-        console.log("res", res);
-        _services_gagUserClient__WEBPACK_IMPORTED_MODULE_0__["default"].post("api/sanctumlogin", data).then(function (response) {
-          console.log("gagUserClient", response);
+      _services_gagUserClient__WEBPACK_IMPORTED_MODULE_2__["default"].get("/sanctum/csrf-cookie").then(function (res) {
+        _services_gagUserClient__WEBPACK_IMPORTED_MODULE_2__["default"].post("api/sanctumlogin", data).then(function (response) {
+          _this.loadingLogin = false;
+          console.log("res", response.data);
+          localStorage.setItem("gag_en", response.data.token.toString());
         });
       });
     }
@@ -4255,9 +4267,10 @@ var opts = {
       light: {
         // linear-gradient(to top, #e85224, #fabe22)
         primary: "#233464",
-        orange: '#fabe22',
-        textcolor: '#233464',
-        lightOrange: 'e85224' // black: '#333',
+        secondary: '#e65225',
+        orange: '#e85224',
+        lightOrange: '#fabe22',
+        textcolor: '#233464' // black: '#333',
         // Vuetify Action Colors
         // secondary: '#f5f5f5',
         // accent: '#82B1FF',
@@ -8322,6 +8335,44 @@ var exec = __webpack_require__(/*! ../internals/regexp-exec */ "./node_modules/c
 $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
   exec: exec
 });
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/es.regexp.to-string.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/core-js/modules/es.regexp.to-string.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var PROPER_FUNCTION_NAME = __webpack_require__(/*! ../internals/function-name */ "./node_modules/core-js/internals/function-name.js").PROPER;
+var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
+var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
+var $toString = __webpack_require__(/*! ../internals/to-string */ "./node_modules/core-js/internals/to-string.js");
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
+var flags = __webpack_require__(/*! ../internals/regexp-flags */ "./node_modules/core-js/internals/regexp-flags.js");
+
+var TO_STRING = 'toString';
+var RegExpPrototype = RegExp.prototype;
+var nativeToString = RegExpPrototype[TO_STRING];
+
+var NOT_GENERIC = fails(function () { return nativeToString.call({ source: 'a', flags: 'b' }) != '/a/b'; });
+// FF44- RegExp#toString has a wrong name
+var INCORRECT_NAME = PROPER_FUNCTION_NAME && nativeToString.name != TO_STRING;
+
+// `RegExp.prototype.toString` method
+// https://tc39.es/ecma262/#sec-regexp.prototype.tostring
+if (NOT_GENERIC || INCORRECT_NAME) {
+  redefine(RegExp.prototype, TO_STRING, function toString() {
+    var R = anObject(this);
+    var p = $toString(R.source);
+    var rf = R.flags;
+    var f = $toString(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype) ? flags.call(R) : rf);
+    return '/' + p + '/' + f;
+  }, { unsafe: true });
+}
 
 
 /***/ }),
@@ -17020,7 +17071,7 @@ var render = function() {
                       _c(
                         "v-btn",
                         {
-                          staticClass: "secondary mb-5",
+                          staticClass: "primary mb-5",
                           attrs: { to: "user/new" }
                         },
                         [_vm._v("New User")]
@@ -17508,7 +17559,7 @@ var render = function() {
             app: "",
             width: "250px",
             src: "" + (_vm.$baseUrl + "/images/gag-2.png"),
-            color: "#000",
+            color: "primary",
             dark: ""
           },
           model: {
@@ -17558,7 +17609,7 @@ var render = function() {
           _vm._v(" "),
           _c(
             "v-list",
-            { attrs: { dense: "", rounded: "" } },
+            { attrs: { dense: "", nav: "" } },
             [
               _vm._l(_vm.commonNav, function(item) {
                 return _c("nav-item", { key: item.title, attrs: { nav: item } })
@@ -17845,9 +17896,10 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "v-list-item-content",
-                          { staticClass: "white--text" },
                           [
                             _c("v-list-item-title", {
+                              staticClass: "white--text",
+                              staticStyle: { "z-index": "1" },
                               domProps: { textContent: _vm._s(sub.title) }
                             })
                           ],
@@ -17969,6 +18021,7 @@ var render = function() {
                 "mb-3 " +
                 (_vm.loginValid == true ? "primary" : "grey lighten-2"),
               attrs: {
+                loading: _vm.loadingLogin,
                 width: "100%",
                 height: "55",
                 large: "",
