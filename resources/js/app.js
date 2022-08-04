@@ -28,6 +28,12 @@ const router = new VueRouter({
     mode: "history"
 });
 
+/**
+ * PapaParse
+ */
+import VuePapaParse from "vue-papa-parse";
+Vue.use(VuePapaParse);
+
 const helpers_plugin = {
     install(Vue, options) {
         // Date format
@@ -96,6 +102,10 @@ Vue.component(
     "confirmation-dialog",
     require("./components/common/ConfirmationDialog.vue").default
 );
+Vue.component(
+    "page-title",
+    require("./components/common/PageTitle.vue").default
+);
 
 /**
  * Public Components
@@ -104,7 +114,6 @@ Vue.component(
     "login-form",
     require("./components/public/LoginForm.vue").default
 );
-
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

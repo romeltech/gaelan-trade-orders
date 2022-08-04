@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -61,4 +62,13 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
      * Profiles
      */
     Route::post('/profile/save', [ProfileController::class, 'saveProfile'])->name('user.profile');
+
+    /**
+     * Items
+     */
+    Route::post('/item/save', [ItemController::class, 'saveItem'])->name('item.save');
+    Route::get('/items/get/all', [ItemController::class, 'getPaginatedItems'])->name('item.get.paginated');
+    Route::get('/items/page/{page}', [DashboardController::class, 'dashboard'])->name('item.paginated');
+    Route::get('/items/import', [DashboardController::class, 'dashboard'])->name('item.import');
+    Route::post('/import/items', [ItemController::class, 'importItems'])->name('item.save.import');
 });

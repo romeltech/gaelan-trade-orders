@@ -14,7 +14,7 @@
         </v-list-item-content>
       </template>
       <div v-for="sub in item.subs" :key="sub.title">
-        <v-list-item :to="sub.location" class="pl-10" active-class="secondary">
+        <v-list-item :to="sub.location" class="pl-10" active-class="orange-gradient-bg">
           <v-list-item-action class="mr-3">
             <v-icon small color="white">{{ sub.icon }}</v-icon>
           </v-list-item-action>
@@ -26,11 +26,10 @@
             >
             </v-list-item-title>
           </v-list-item-content>
-          <!-- Notification Info here -->
         </v-list-item>
       </div>
     </v-list-group>
-    <v-list-item v-else link :to="item.location" active-class="secondary">
+    <v-list-item v-else link :to="item.location" active-class="orange-gradient-bg">
       <v-list-item-action>
         <v-icon>{{ item.icon }}</v-icon>
       </v-list-item-action>

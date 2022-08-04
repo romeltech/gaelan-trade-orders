@@ -14,3 +14,12 @@
         left: 0;
     }
 }
+
+.orange-gradient-bg {
+    background: linear-gradient(
+        45deg,
+        rgb(235, 99, 36) 0%,
+        rgb(243, 146, 35) 50%,
+        rgb(235, 99, 36) 100%
+    ) !important;
+}
