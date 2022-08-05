@@ -2430,49 +2430,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -2492,19 +2449,40 @@ __webpack_require__.r(__webpack_exports__);
       alertStatus: false,
       alertMessage: "",
       alertType: "info",
-      existedSuppliersArray: []
+      countdown: 0
     };
+  },
+  watch: {
+    countdown: {
+      handler: function handler(value) {
+        var _this = this;
+
+        if (value) {
+          setTimeout(function () {
+            _this.countdown--;
+
+            if (_this.countdown == 0) {
+              _this.goToRoute("Items");
+            }
+          }, 1000);
+        }
+      }
+    }
   },
   methods: {
     importResponse: function importResponse(res) {
-      console.log(res); //   this.alertStatus = true;
-      //   this.alertMessage = res.alertData.message;
-      //   this.alertType = res.alertData.type;
-      //   this.existedSuppliersArray = res.existed_data ? res.existed_data : [];
+      console.log("res", res);
+      this.alertStatus = true;
+      this.alertMessage = res.alertData.message;
+      this.alertType = res.alertData.type;
+      this.redirectCounter(5);
     },
-    goToRoute: function goToRoute() {
+    redirectCounter: function redirectCounter(s) {
+      this.countdown = s;
+    },
+    goToRoute: function goToRoute(route) {
       this.$router.push({
-        name: "Supplers"
+        name: route
       });
     }
   }
@@ -4457,6 +4435,8 @@ __webpack_require__.r(__webpack_exports__);
       }; // Send Data
 
       axios.post(this.route, data).then(function (response) {
+        _this.loading = false;
+        _this.importDialog = false;
         var data = {
           alertData: {
             type: "success",
@@ -4466,9 +4446,6 @@ __webpack_require__.r(__webpack_exports__);
         };
 
         _this.$emit("responded", data);
-
-        _this.loading = false;
-        _this.importDialog = false;
       }).catch(function (error) {
         _this.loading = false;
         _this.importDialog = false;
@@ -4489,7 +4466,7 @@ __webpack_require__.r(__webpack_exports__);
           var _data2 = {
             alertData: {
               type: "error",
-              message: "Import Error 500. Please double check your CSV file for valid values"
+              message: "Import Error 500"
             },
             existed_data: error.response.data.existed_data
           };
@@ -17255,75 +17232,34 @@ var render = function() {
                     _c("div", [
                       _vm._v(
                         "\n            " +
-                          _vm._s(_vm.alertMessage) +
+                          _vm._s(_vm.alertMessage + ".") +
+                          "\n            " +
+                          _vm._s("Redirecting to ") +
                           "\n            "
                       ),
                       _vm.alertType == "success"
                         ? _c(
                             "a",
                             {
-                              staticClass: "ml-1 success--text",
+                              staticClass: "success--text",
                               attrs: { href: "#" },
-                              on: { click: _vm.goToRoute }
+                              on: {
+                                click: function() {
+                                  return _vm.goToRoute("Items")
+                                }
+                              }
                             },
-                            [_vm._v("Suppliers")]
+                            [_vm._v("Items")]
                           )
-                        : _vm._e()
+                        : _vm._e(),
+                      _vm._v(
+                        "\n            " +
+                          _vm._s(" in... " + _vm.countdown) +
+                          "\n          "
+                      )
                     ])
                   ]
-                ),
-                _vm._v(" "),
-                _vm.existedSuppliersArray.length > 0
-                  ? _c(
-                      "v-card",
-                      { staticClass: "pb-3" },
-                      [
-                        _c("v-card-title", { staticClass: "overline" }, [
-                          _vm._v("Existed Supplier(s)")
-                        ]),
-                        _vm._v(" "),
-                        _c("v-simple-table", {
-                          attrs: { dense: "" },
-                          scopedSlots: _vm._u(
-                            [
-                              {
-                                key: "default",
-                                fn: function() {
-                                  return [
-                                    _c("thead", [
-                                      _c("tr", [
-                                        _c("th", { staticClass: "text-left" }, [
-                                          _vm._v("Suppler")
-                                        ])
-                                      ])
-                                    ]),
-                                    _vm._v(" "),
-                                    _c(
-                                      "tbody",
-                                      _vm._l(
-                                        _vm.existedSuppliersArray,
-                                        function(item, index) {
-                                          return _c("tr", { key: index }, [
-                                            _c("td", [_vm._v(_vm._s(item))])
-                                          ])
-                                        }
-                                      ),
-                                      0
-                                    )
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ],
-                            null,
-                            false,
-                            689436114
-                          )
-                        })
-                      ],
-                      1
-                    )
-                  : _vm._e()
+                )
               ],
               1
             )

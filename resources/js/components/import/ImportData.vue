@@ -67,6 +67,8 @@ export default {
       axios
         .post(this.route, data)
         .then((response) => {
+          this.loading = false;
+          this.importDialog = false;
           let data = {
             alertData: {
               type: "success",
@@ -75,8 +77,6 @@ export default {
             existed_data: response.data.existed_data,
           };
           this.$emit("responded", data);
-          this.loading = false;
-          this.importDialog = false;
         })
         .catch((error) => {
           this.loading = false;
@@ -96,7 +96,7 @@ export default {
               alertData: {
                 type: "error",
                 message:
-                  "Import Error 500. Please double check your CSV file for valid values",
+                  "Import Error 500",
               },
               existed_data: error.response.data.existed_data,
             };
@@ -104,7 +104,6 @@ export default {
           }
         });
     },
-
     importCSV() {
       this.loading = true;
       let ext = document
@@ -120,7 +119,7 @@ export default {
       this.$papa.parse(document.getElementById("inputFile").files[0], {
         header: true,
         transformHeader: function (text) {
-          return text.replace(/\s+/g,"_").toLowerCase().trim();
+          return text.replace(/\s+/g, "_").toLowerCase().trim();
         },
         complete: this.parseComplete,
       });

@@ -38,35 +38,22 @@ class ItemController extends Controller
 
         DB::beginTransaction();
         try {
-            foreach (array_chunk($itemsToImport, 500) as $itemsToImport_chunked)
-            {
-
+            foreach (array_chunk($itemsToImport, 1000) as $itemsToImport_chunked){
                 $itemArr = array();
                 foreach ($itemsToImport_chunked as $item) {
                     array_push($itemArr, array(
-                        'name' => $item->item_name,
+                        'name' => $item->name,
                         'sku' => $item->sku,
                         'price' => $item->price
                         )
                     );
-                    // Item::updateOrCreate(
-                    //     [
-                    //         'sku' => $item->sku,
-                    //     ],
-                    //     [
-                    //         'name' => $item->item_name,
-                    //         'sku' => $item->sku,
-                    //         'price' => $item->price
-                    //     ]
-                    // );
-
                 }
-                dd($itemArr);
-                Item::upsert(
+                $import = Item::upsert(
                     $itemArr,
                     ['sku'],
                     ['name', 'price']
                 );
+                $msg = $import ? "Import success" : "Import failed";
                 // Log::create([
                 //     'user_id' => 0,
                 //     'log_type' => 'run-cron',
@@ -75,8 +62,9 @@ class ItemController extends Controller
             }
             DB::commit();
         } catch (Exception $e) {
-            dd('rollback');
             DB::rollback();
+            $statusCode = 500;
+            $msg = "Import failed";
         }
 
         return response()->json([

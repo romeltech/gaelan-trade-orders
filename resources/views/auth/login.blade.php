@@ -2,12 +2,15 @@
 
 @section('content')
     <div id="g-login" class="container-fluid py-16 d-flex flex-column align-center gag-container-bg">
-        <div class="col-12 col-md-4">
+        <div class="col-xs-12 col-sm-8 col-md-4" style="z-index: 2">
+            <div style="max-width: 250px; margin: 0 auto 30px">
+                <img style="width: 100%; height: auto" src="/images/logo-light.png" alt="Gaelan Medical">
+            </div>
             <v-card id="loginform" class="px-5">
                 <v-card-title class="px-5 pt-8 pb-0">Login</v-card-title>
                 <v-card-text class="py-5">
-                    <v-form autocomplete="off" method="POST" action="{{ route('login') }}" ref="form" v-model="loginValid"
-                        lazy-validation>
+                    <v-form autocomplete="off" method="POST" action="{{ route('login') }}" ref="form"
+                        v-model="loginValid" lazy-validation>
                         @csrf
                         <v-text-field outlined required autocomplete="off" id="username" type="username" name="username"
                             label="{{ __('Username') }}" v-model="loginEmail" :rules="loginEmailrules" autofocus

@@ -34,62 +34,19 @@
             :type="alertType"
           >
             <div>
-              {{ alertMessage }}
+              {{ alertMessage + "." }}
+              {{ "Redirecting to " }}
               <a
                 v-if="alertType == 'success'"
                 href="#"
-                class="ml-1 success--text"
-                @click="goToRoute"
-                >Suppliers</a
+                class="success--text"
+                @click="() => goToRoute('Items')"
+                >Items</a
               >
+              {{ " in... " + countdown }}
             </div>
           </v-alert>
-
-          <v-card v-if="existedSuppliersArray.length > 0" class="pb-3">
-            <v-card-title class="overline">Existed Supplier(s)</v-card-title>
-            <v-simple-table dense>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left">Suppler</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(item, index) in existedSuppliersArray"
-                    :key="index"
-                  >
-                    <td>{{ item }}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-card>
         </div>
-        <!-- <div class="col-12 col-md-5">
-          <v-card :loading="loadingCompanies">
-            <v-card-title>Company Codes</v-card-title>
-            <v-divider></v-divider>
-            <v-data-table
-              dense
-              :headers="headers"
-              :items="companies"
-              item-key="name"
-              class="elevation-0"
-              :search="search"
-              :items-per-page="5"
-            >
-              <template v-slot:top>
-                <v-text-field
-                  dense
-                  v-model="search"
-                  label="Search Company"
-                  class="mx-4 pt-5"
-                ></v-text-field>
-              </template>
-            </v-data-table>
-          </v-card>
-        </div> -->
       </v-row>
     </v-container>
   </div>
@@ -117,19 +74,37 @@ export default {
       alertStatus: false,
       alertMessage: "",
       alertType: "info",
-      existedSuppliersArray: [],
+
+      countdown: 0,
     };
+  },
+  watch: {
+    countdown: {
+      handler(value) {
+        if (value) {
+          setTimeout(() => {
+            this.countdown--;
+            if (this.countdown == 0) {
+              this.goToRoute("Items");
+            }
+          }, 1000);
+        }
+      },
+    },
   },
   methods: {
     importResponse(res) {
-      console.log(res);
-      //   this.alertStatus = true;
-      //   this.alertMessage = res.alertData.message;
-      //   this.alertType = res.alertData.type;
-      //   this.existedSuppliersArray = res.existed_data ? res.existed_data : [];
+      console.log("res", res);
+      this.alertStatus = true;
+      this.alertMessage = res.alertData.message;
+      this.alertType = res.alertData.type;
+      this.redirectCounter(5);
     },
-    goToRoute() {
-      this.$router.push({ name: "Supplers" });
+    redirectCounter(s) {
+      this.countdown = s;
+    },
+    goToRoute(route) {
+      this.$router.push({ name: route });
     },
   },
 };
