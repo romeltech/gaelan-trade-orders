@@ -10,6 +10,8 @@ import ImportItem from "../components/admin/items/ImportItem";
 
 import Locations from "../components/admin/locations/Locations";
 import ImportLocation from "../components/admin/locations/ImportLocation";
+
+import OrderForm from "../components/staff/orders/OrderForm";
 export const routes = [
     /**
      * Admin Pages
@@ -86,5 +88,14 @@ export const routes = [
         path: "/d/locations/page/:page",
         component: Locations,
         name: "PaginatedLocations"
-    }
+    },
+
+    /**
+     * Locations
+     */
+    {
+        path: "/staff/order-form",
+        component: OrderForm,
+        name: "OrderForm"
+    },
 ];

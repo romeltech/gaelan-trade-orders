@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
+    public function getAllLocations()
+    {
+        $locations = Location::all();
+        return response()->json([
+            'locations' => $locations
+        ], 200);
+    }
+
     public function getPaginatedLocations()
     {
         $locations = Location::paginate(10);

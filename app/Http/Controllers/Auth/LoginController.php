@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -55,9 +54,16 @@ class LoginController extends Controller
 
         $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         // if(auth()->attempt(array($fieldType => $input['username'], 'password' => $input['password'])))
-        if(auth()->attempt( array( $fieldType => $input['username'], 'password' => $input['password'], 'role' => 'admin', 'status' => 'active')))
+        if(auth()->attempt( array( $fieldType => $input['username'], 'password' => $input['password'], 'status' => 'active')))
         {
-            return redirect('/d/users');
+            $role =  Auth::user()->role;
+            if($role == 'admin' || $role === 'super_admin'){
+                return redirect('d/orders');
+            }elseif($role == 'staff'){
+                return redirect('staff/request-form');
+            }else{
+                return redirect('home');
+            }
         }else{
             return redirect('login')
                 ->withErrors(['username_error' => 'Incorrect login credentials.' ]);

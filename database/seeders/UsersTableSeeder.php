@@ -17,27 +17,27 @@ class UsersTableSeeder extends Seeder
             'username'   => 'gaadmin',
             'email'      => 'admin@admin.com',
             'password'   => bcrypt('gag@112211'),
-            'account_phone'      => '05012345678',
+            'account_phone' => '05012345678',
             'status'     => 'active', // active, disabled, trashed
             'role'       => 'admin'
         ]);
         $user->save();
         $user = new \App\Models\User([
-            'username'   => 'editor',
-            'email'      => 'editor@admin.com',
+            'username'   => 'staff',
+            'email'      => 'staff@admin.com',
             'password'   => bcrypt('gag@112211'),
-            'account_phone'      => '05012345678',
-            'status'     => 'disabled', // active, disabled, trashed
-            'role'       => 'editor'
+            'account_phone' => '05012345678',
+            'status'     => 'active', // active, disabled, trashed
+            'role'       => 'staff'
         ]);
         $user->save();
         $user = new \App\Models\User([
-            'username'   => 'editor2',
-            'email'      => 'editor2@admin.com',
+            'username'   => 'staff2',
+            'email'      => 'staff2@admin.com',
             'password'   => bcrypt('gag@112211'),
-            'account_phone'      => '05012345678',
-            'status'     => 'trashed', // active, disabled, trashed
-            'role'       => 'editor'
+            'account_phone' => '05012345678',
+            'status'     => 'active', // active, disabled, trashed
+            'role'       => 'staff'
         ]);
         $user->save();
 

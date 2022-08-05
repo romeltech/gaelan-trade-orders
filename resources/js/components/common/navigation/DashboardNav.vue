@@ -18,7 +18,7 @@
           {{ printInitials(auth_user.profile.full_name) }}
         </v-avatar>
         <div class="text-h6 text-uppercase white--text">
-          {{ auth_user.full_name }}
+          {{ auth_user.profile.full_name }}
         </div>
         <small class="white--text text-capitalize"
           >{{ auth_user.role }} Account</small
@@ -28,15 +28,23 @@
       <v-list dense nav>
         <!-- Navigation Items -->
         <!-- Common Nav -->
-        <nav-item
+        <!-- <nav-item
           v-for="item in commonNav"
           :key="item.title"
           :nav="item"
-        ></nav-item>
+        ></nav-item> -->
         <!-- Admin -->
         <div v-if="auth_user.role == 'admin'">
           <nav-item
             v-for="item in adminNav"
+            :key="item.title"
+            :nav="item"
+          ></nav-item>
+        </div>
+        <!-- Staff -->
+        <div v-if="auth_user.role == 'staff'">
+          <nav-item
+            v-for="item in staffNav"
             :key="item.title"
             :nav="item"
           ></nav-item>
@@ -118,22 +126,34 @@ export default {
     return {
       drawer: true,
       menu: false,
-      commonNav: [
+      //   commonNav: [
+      //     {
+      //       title: "Dashboard",
+      //       icon: "mdi-home-outline",
+      //       location: "/d/dashboard",
+      //     },
+      //     // {
+      //     //   title: "Profile",
+      //     //   icon: "mdi-account",
+      //     //   location: "/d/profile",
+      //     // },
+      //   ],
+      staffNav: [
         {
-          title: "Dashboard",
-          icon: "mdi-home-outline",
-          location: "/d/dashboard",
+          title: "Order Form",
+          icon: "mdi-playlist-edit",
+          location: "/staff/order-form",
         },
-        // {
-        //   title: "Profile",
-        //   icon: "mdi-account",
-        //   location: "/d/profile",
-        // },
+        {
+          title: "Orders",
+          icon: "mdi-format-list-checkbox",
+          location: "/staff/orders",
+        },
       ],
       adminNav: [
         {
           title: "Orders",
-          icon: "mdi-chart-areaspline",
+          icon: "mdi-format-list-bulleted",
           location: "/d/orders",
         },
         {
@@ -163,7 +183,6 @@ export default {
   },
   computed: {
     ...mapState(useAuthUserStore, ["auth_user"]),
-    // ...mapState(useAuthUserStore, ["authUserObj"]),
   },
   methods: {
     logout: function (event) {

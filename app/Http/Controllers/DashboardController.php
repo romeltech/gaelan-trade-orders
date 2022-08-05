@@ -32,6 +32,8 @@ class DashboardController extends Controller
         $role = Auth::user()->role;
         if($role == 'admin' || $role == 'editor'){
             return redirect('d/users');
+        }else if($role == 'staff'){
+            return redirect('staff/request-form');
         }else{
             // other roles
         }

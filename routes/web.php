@@ -76,6 +76,8 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     /**
      * Locations
      */
+    Route::get('/locations/fetch/all', [LocationController::class, 'getAllLocations'])->name('location.get.all');
+
     Route::post('/location/save', [LocationController::class, 'saveLocation'])->name('location.save');
     Route::get('/locations/get/all', [LocationController::class, 'getPaginatedLocations'])->name('location.get.paginated');
     Route::get('/locations/page/{page}', [DashboardController::class, 'dashboard'])->name('location.paginated');
@@ -87,4 +89,25 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
      */
     Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
     Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
+});
+
+
+
+/**
+ * Staff Routes
+ */
+Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], function(){
+    /**
+     * vue-router pages
+     */
+    Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/{page}', [DashboardController::class, 'dashboard'])->name('page');
+    Route::get('/{page}/{action}', [DashboardController::class, 'dashboard'])->name('page.action');
+
+    /**
+     * Orders
+     */
+    Route::get('/order-form', [DashboardController::class, 'dashboard'])->name('order.form');
+    Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
+    // Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
 });
