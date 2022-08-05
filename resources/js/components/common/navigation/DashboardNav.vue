@@ -132,9 +132,9 @@ export default {
       ],
       adminNav: [
         {
-          title: "Reports",
+          title: "Orders",
           icon: "mdi-chart-areaspline",
-          location: "/d/reports",
+          location: "/d/orders",
         },
         {
           title: "Settings",
@@ -147,9 +147,9 @@ export default {
               location: "/d/items",
             },
             {
-              title: "Pharmacies",
+              title: "Locations",
               icon: "mdi-store",
-              location: "/d/pharmacies",
+              location: "/d/locations",
             },
             {
               title: "Users",

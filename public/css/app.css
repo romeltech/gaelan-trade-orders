@@ -28265,4 +28265,8 @@
   background: linear-gradient(45deg, #eb6324 0%, #f39223 50%, #eb6324 100%) !important;
 }
 
+body.dashboard .container {
+  max-width: 1366px;
+}
+
 

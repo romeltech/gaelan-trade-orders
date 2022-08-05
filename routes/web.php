@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\DashboardController;
 
 /*
@@ -71,4 +72,19 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     Route::get('/items/page/{page}', [DashboardController::class, 'dashboard'])->name('item.paginated');
     Route::get('/items/import', [DashboardController::class, 'dashboard'])->name('item.import');
     Route::post('/import/items', [ItemController::class, 'importItems'])->name('item.save.import');
+
+    /**
+     * Locations
+     */
+    Route::post('/location/save', [LocationController::class, 'saveLocation'])->name('location.save');
+    Route::get('/locations/get/all', [LocationController::class, 'getPaginatedLocations'])->name('location.get.paginated');
+    Route::get('/locations/page/{page}', [DashboardController::class, 'dashboard'])->name('location.paginated');
+    Route::get('/locations/import', [DashboardController::class, 'dashboard'])->name('location.import');
+    Route::post('/import/locations', [LocationController::class, 'importLocations'])->name('location.save.import');
+
+    /**
+     * Orders
+     */
+    Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
+    Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
 });

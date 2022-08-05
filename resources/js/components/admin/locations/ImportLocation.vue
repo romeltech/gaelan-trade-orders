@@ -1,23 +1,23 @@
 <template>
   <div>
-    <page-title :title="'Import Items'"></page-title>
+    <page-title :title="'Import Locations'"></page-title>
     <v-container class="py-8">
       <v-row>
         <div class="col-12">
           <v-card>
-            <v-card-title>Import Items</v-card-title>
+            <v-card-title>Import Locations</v-card-title>
             <v-divider></v-divider>
             <v-card-text class="pb-10">
               <div class="d-flex align-center">
                 <ImportData
-                  :route="'/d/import/items'"
+                  :route="'/d/import/locations'"
                   @responded="importResponse"
                 />
                 <v-btn
                   class="ml-2"
                   text
                   color="primary"
-                  :href="`${$baseUrl}/csv/import-item-template.csv`"
+                  :href="`${$baseUrl}/csv/import-location-template.csv`"
                   download
                   >Download CSV Template
                   <v-icon small class="ml-2">mdi-download</v-icon></v-btn
@@ -42,8 +42,8 @@
                 <a
                   href="#"
                   class="success--text"
-                  @click="() => goToRoute('Items')"
-                  >Items</a
+                  @click="() => goToRoute('Locations')"
+                  >Locations</a
                 >
                 {{ " in... " + countdown }}
               </span>
@@ -77,7 +77,7 @@ export default {
           setTimeout(() => {
             this.countdown--;
             if (this.countdown == 0) {
-              this.goToRoute("Items");
+              this.goToRoute("Locations");
             }
           }, 1000);
         }
