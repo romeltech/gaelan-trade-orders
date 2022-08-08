@@ -24,7 +24,7 @@ use App\Http\Controllers\DashboardController;
 Route::get('/auth_user', [UserController::class, 'getAuthenticatedUser'])->name('get.auth.user');
 Auth::routes([
     'register' => false, // Registration Routes...
-    'reset' => false, // Password Reset Routes...
+    // 'reset' => false, // Password Reset Routes...
     'verify' => false, // Email Verification Routes...
     // 'login' => false, // Login Routes...
 ]);
@@ -67,6 +67,8 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     /**
      * Items
      */
+    Route::get('/items/fetch/all', [ItemController::class, 'getAllItems'])->name('item.get.all');
+
     Route::post('/item/save', [ItemController::class, 'saveItem'])->name('item.save');
     Route::get('/items/get/all', [ItemController::class, 'getPaginatedItems'])->name('item.get.paginated');
     Route::get('/items/page/{page}', [DashboardController::class, 'dashboard'])->name('item.paginated');

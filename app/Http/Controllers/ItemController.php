@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
 {
+    public function getAllItems()
+    {
+        $items = Item::all();
+        return response()->json([
+            'items' => $items
+        ], 200);
+    }
+
     public function getPaginatedItems()
     {
         $items = Item::paginate(10);

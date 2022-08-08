@@ -5090,10 +5090,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var core_js_modules_es_object_get_own_property_descriptors_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.get-own-property-descriptors.js */ "./node_modules/core-js/modules/es.object.get-own-property-descriptors.js");
 /* harmony import */ var core_js_modules_es_object_get_own_property_descriptors_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_own_property_descriptors_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
 /* harmony import */ var _stores_locations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../stores/locations */ "./resources/js/stores/locations.js");
-/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
-/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _stores_items__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../stores/items */ "./resources/js/stores/items.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_8__);
 
 
 
@@ -5198,38 +5199,167 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
-    ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_7__.ValidationProvider,
-    ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_7__.ValidationObserver
+    ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_8__.ValidationProvider,
+    ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_8__.ValidationObserver
   },
   data: function data() {
     return {
+      itemList: [],
+      loadingItem: false,
       locationList: [],
       loadingLocation: false,
       loadingPage: false,
       loadingOrder: false,
-      orderObj: {}
+      orderObj: {},
+      orderDetails: [],
+      dialogOrder: false
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_8__.mapState)(_stores_locations__WEBPACK_IMPORTED_MODULE_6__.useLocationsStore, ["location_list"])), (0,pinia__WEBPACK_IMPORTED_MODULE_8__.mapStores)(_stores_locations__WEBPACK_IMPORTED_MODULE_6__.useLocationsStore)),
+  computed: _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_9__.mapState)(_stores_locations__WEBPACK_IMPORTED_MODULE_6__.useLocationsStore, ["location_list"])), (0,pinia__WEBPACK_IMPORTED_MODULE_9__.mapStores)(_stores_locations__WEBPACK_IMPORTED_MODULE_6__.useLocationsStore)), (0,pinia__WEBPACK_IMPORTED_MODULE_9__.mapState)(_stores_items__WEBPACK_IMPORTED_MODULE_7__.useItemsStore, ["item_list"])), (0,pinia__WEBPACK_IMPORTED_MODULE_9__.mapStores)(_stores_items__WEBPACK_IMPORTED_MODULE_7__.useItemsStore)),
   methods: {
+    setItems: function setItems() {
+      var _this = this;
+
+      this.loadingItem = true;
+
+      if (this.itemList.length == 0) {
+        this.itemsStore.fetchAllItems().then(function () {
+          _this.itemList = _this.item_list;
+          _this.loadingItem = false;
+          console.log("this.itemList", _this.itemList);
+        });
+      } else {
+        this.loadingItem = false;
+      }
+    },
+    addItem: function addItem() {
+      this.dialogOrder = true;
+    },
     submitOrder: function submitOrder() {
       console.log("submitOrder");
     },
     setLocations: function setLocations() {
-      var _this = this;
+      var _this2 = this;
 
       this.loadingLocation = true;
 
-      if (this.location_list.length == 0) {
+      if (this.locationList.length == 0) {
         this.locationsStore.fetchAllLocations().then(function () {
-          _this.locationList = _this.location_list;
-          _this.loadingLocation = false;
-          console.log("this.locationList", _this.locationList);
+          _this2.locationList = _this2.location_list;
+          _this2.loadingLocation = false;
+          console.log("this.locationList", _this2.locationList);
         });
       } else {
         this.loadingLocation = false;
@@ -5755,6 +5885,90 @@ var useAuthUserStore = (0,pinia__WEBPACK_IMPORTED_MODULE_4__.defineStore)({
   getters: {
     auth_user: function auth_user(state) {
       return state.authUserObj;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/stores/items.js":
+/*!**************************************!*\
+  !*** ./resources/js/stores/items.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "useItemsStore": () => (/* binding */ useItemsStore)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.keys.js */ "./node_modules/core-js/modules/es.object.keys.js");
+/* harmony import */ var core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.promise.js */ "./node_modules/core-js/modules/es.promise.js");
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+
+
+
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+/**
+ * Store for Items
+ */
+
+var useItemsStore = (0,pinia__WEBPACK_IMPORTED_MODULE_4__.defineStore)({
+  // id is required so that Pinia can connect the store to the devtools
+  id: "items",
+  state: function state() {
+    return {
+      itemList: []
+    };
+  },
+  actions: {
+    fetchAllItems: function fetchAllItems() {
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(Object.keys(_this.itemList).length > 0)) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt("return");
+
+              case 2:
+                _context.next = 4;
+                return axios.get("/d/items/fetch/all");
+
+              case 4:
+                response = _context.sent;
+                _this.itemList = response.data.items; // console.log("itemList", this.itemList);
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    }
+  },
+  getters: {
+    item_list: function item_list(state) {
+      return state.itemList;
     }
   }
 });
@@ -21763,7 +21977,7 @@ var render = function() {
             : _c("v-row", [
                 _c(
                   "div",
-                  { staticClass: "col-md-8 mx-auto" },
+                  { staticClass: "col-12" },
                   [
                     _c(
                       "v-card",
@@ -21774,202 +21988,229 @@ var render = function() {
                         }
                       },
                       [
-                        _c("v-card-title", [_c("h4", [_vm._v("Order Form")])]),
+                        _c("v-card-title", [
+                          _c("h4", { staticClass: "textcolor--text" }, [
+                            _vm._v("Order Form")
+                          ])
+                        ]),
                         _vm._v(" "),
                         _c(
                           "v-card-text",
                           { staticClass: "py-5" },
                           [
-                            _c("ValidationObserver", {
-                              ref: "order_form_observer",
+                            _c("v-autocomplete", {
+                              attrs: {
+                                items: _vm.locationList,
+                                label: "Location",
+                                "item-text": "name",
+                                "item-value": "id",
+                                outlined: "",
+                                loading: _vm.loadingLocation
+                              },
+                              on: {
+                                click: _vm.setLocations,
+                                blur: _vm.setLocations
+                              },
+                              model: {
+                                value: _vm.orderObj.location,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.orderObj, "location", $$v)
+                                },
+                                expression: "orderObj.location"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              { staticClass: "d-flex align-center mb-3" },
+                              [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "text-subtitle-1 textcolor--text"
+                                  },
+                                  [_vm._v("Order Details")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "primary mx-3",
+                                    on: { click: _vm.addItem }
+                                  },
+                                  [_vm._v("Add Item")]
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("v-simple-table", {
+                              staticClass: "elevation-1",
                               scopedSlots: _vm._u([
                                 {
                                   key: "default",
-                                  fn: function(ref) {
-                                    var valid = ref.valid
+                                  fn: function() {
                                     return [
-                                      _c(
-                                        "v-form",
-                                        { ref: "form" },
-                                        [
-                                          _c("ValidationProvider", {
-                                            attrs: {
-                                              rules: "",
-                                              name: "Location"
-                                            },
-                                            scopedSlots: _vm._u(
-                                              [
-                                                {
-                                                  key: "default",
-                                                  fn: function(ref) {
-                                                    var errors = ref.errors
-                                                    return [
-                                                      _c("v-autocomplete", {
-                                                        attrs: {
-                                                          items:
-                                                            _vm.locationList,
-                                                          label: "Location",
-                                                          "item-text": "name",
-                                                          "item-value": "id",
-                                                          outlined: "",
-                                                          "error-messages": errors,
-                                                          loading:
-                                                            _vm.loadingLocation
-                                                        },
-                                                        on: {
-                                                          click:
-                                                            _vm.setLocations,
-                                                          blur: _vm.setLocations
-                                                        },
-                                                        model: {
-                                                          value:
-                                                            _vm.orderObj
-                                                              .location,
-                                                          callback: function(
-                                                            $$v
-                                                          ) {
-                                                            _vm.$set(
-                                                              _vm.orderObj,
-                                                              "location",
-                                                              $$v
-                                                            )
-                                                          },
-                                                          expression:
-                                                            "orderObj.location"
-                                                        }
-                                                      })
-                                                    ]
-                                                  }
-                                                }
-                                              ],
-                                              null,
-                                              true
-                                            )
-                                          }),
-                                          _vm._v(" "),
-                                          _c("v-divider", {
-                                            staticClass: "py-3"
-                                          }),
-                                          _vm._v(" "),
-                                          _c("ValidationProvider", {
-                                            attrs: {
-                                              rules: "required",
-                                              name: "Non-FoC Quantity"
-                                            },
-                                            scopedSlots: _vm._u(
-                                              [
-                                                {
-                                                  key: "default",
-                                                  fn: function(ref) {
-                                                    var errors = ref.errors
-                                                    return [
-                                                      _c("v-text-field", {
-                                                        attrs: {
-                                                          type: "number",
-                                                          outlined: "",
-                                                          label:
-                                                            "Non-FoC Quantity*",
-                                                          "error-messages": errors,
-                                                          required: ""
-                                                        },
-                                                        model: {
-                                                          value:
-                                                            _vm.orderObj
-                                                              .non_foc_quantity,
-                                                          callback: function(
-                                                            $$v
-                                                          ) {
-                                                            _vm.$set(
-                                                              _vm.orderObj,
-                                                              "non_foc_quantity",
-                                                              $$v
-                                                            )
-                                                          },
-                                                          expression:
-                                                            "orderObj.non_foc_quantity"
-                                                        }
-                                                      })
-                                                    ]
-                                                  }
-                                                }
-                                              ],
-                                              null,
-                                              true
-                                            )
-                                          }),
-                                          _vm._v(" "),
-                                          _c("ValidationProvider", {
-                                            attrs: {
-                                              rules: "required",
-                                              name: "FoC Quantity"
-                                            },
-                                            scopedSlots: _vm._u(
-                                              [
-                                                {
-                                                  key: "default",
-                                                  fn: function(ref) {
-                                                    var errors = ref.errors
-                                                    return [
-                                                      _c("v-text-field", {
-                                                        attrs: {
-                                                          type: "number",
-                                                          outlined: "",
-                                                          label:
-                                                            "FoC Quantity*",
-                                                          "error-messages": errors,
-                                                          required: ""
-                                                        },
-                                                        model: {
-                                                          value:
-                                                            _vm.orderObj
-                                                              .foc_quantity,
-                                                          callback: function(
-                                                            $$v
-                                                          ) {
-                                                            _vm.$set(
-                                                              _vm.orderObj,
-                                                              "foc_quantity",
-                                                              $$v
-                                                            )
-                                                          },
-                                                          expression:
-                                                            "orderObj.foc_quantity"
-                                                        }
-                                                      })
-                                                    ]
-                                                  }
-                                                }
-                                              ],
-                                              null,
-                                              true
-                                            )
-                                          }),
+                                      _c("thead", [
+                                        _c("tr", [
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("No.")]
+                                          ),
                                           _vm._v(" "),
                                           _c(
-                                            "v-card-actions",
-                                            { staticClass: "px-0" },
-                                            [
-                                              _c(
-                                                "v-btn",
-                                                {
-                                                  staticClass: "primary px-5",
-                                                  attrs: {
-                                                    "x-large": "",
-                                                    disabled: !valid,
-                                                    loading: _vm.loadingOrder
-                                                  },
-                                                  on: { click: _vm.submitOrder }
-                                                },
-                                                [_vm._v("Submit")]
-                                              )
-                                            ],
-                                            1
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("SKU")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("Non-FoC Quantity")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("FoC Quantity")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("Total Quantity")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("Unit Price Excl. VAT")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-left" },
+                                            [_vm._v("Line Amount Excl. VAT")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            { staticClass: "text-right" },
+                                            [_vm._v("Action")]
                                           )
-                                        ],
-                                        1
-                                      )
+                                        ])
+                                      ]),
+                                      _vm._v(" "),
+                                      _vm.orderDetails.length > 0
+                                        ? _c(
+                                            "tbody",
+                                            _vm._l(_vm.orderDetails, function(
+                                              item
+                                            ) {
+                                              return _c(
+                                                "tr",
+                                                { key: item.id },
+                                                [
+                                                  _c("td", [
+                                                    _vm._v(_vm._s(item.sku))
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _vm._v(
+                                                      _vm._s(item.location_code)
+                                                    )
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _vm._v(
+                                                      _vm._s(
+                                                        item.non_foc_quantity
+                                                      )
+                                                    )
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _vm._v(
+                                                      _vm._s(item.foc_quantity)
+                                                    )
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _vm._v(
+                                                      _vm._s(
+                                                        item.total_quantity
+                                                      )
+                                                    )
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _vm._v(_vm._s(item.price))
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _vm._v(
+                                                      _vm._s(item.line_price)
+                                                    )
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "td",
+                                                    {
+                                                      staticClass: "text-right"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "v-btn",
+                                                        {
+                                                          staticClass:
+                                                            "transparent mr-1",
+                                                          attrs: {
+                                                            fab: "",
+                                                            "x-small": "",
+                                                            depressed: ""
+                                                          },
+                                                          on: {
+                                                            click: function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.viewSubmission(
+                                                                item
+                                                              )
+                                                            }
+                                                          }
+                                                        },
+                                                        [
+                                                          _c(
+                                                            "v-icon",
+                                                            {
+                                                              attrs: {
+                                                                small: ""
+                                                              }
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                " mdi-eye "
+                                                              )
+                                                            ]
+                                                          )
+                                                        ],
+                                                        1
+                                                      )
+                                                    ],
+                                                    1
+                                                  )
+                                                ]
+                                              )
+                                            }),
+                                            0
+                                          )
+                                        : _vm._e()
                                     ]
-                                  }
+                                  },
+                                  proxy: true
                                 }
                               ])
                             })
@@ -21983,6 +22224,235 @@ var render = function() {
                   1
                 )
               ])
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { persistent: "", "max-width": "600px" },
+          model: {
+            value: _vm.dialogOrder,
+            callback: function($$v) {
+              _vm.dialogOrder = $$v
+            },
+            expression: "dialogOrder"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            {
+              attrs: { loading: _vm.loadingOrder, disabled: _vm.loadingOrder }
+            },
+            [
+              _c("v-card-title", [
+                _c("div", { staticClass: "text-capitalize mb-3" }, [
+                  _vm._v("Add Item")
+                ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-text",
+                [
+                  _c("ValidationObserver", {
+                    ref: "order_observer",
+                    scopedSlots: _vm._u([
+                      {
+                        key: "default",
+                        fn: function(ref) {
+                          var valid = ref.valid
+                          return [
+                            _c(
+                              "v-form",
+                              { ref: "form" },
+                              [
+                                _c("ValidationProvider", {
+                                  attrs: {
+                                    rules: "required",
+                                    name: "Non-FoC Quantity"
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "default",
+                                        fn: function(ref) {
+                                          var errors = ref.errors
+                                          return [
+                                            _c("v-autocomplete", {
+                                              attrs: {
+                                                items: _vm.itemList,
+                                                label: "Item",
+                                                "item-text": "sku",
+                                                "item-value": "id",
+                                                outlined: "",
+                                                loading: _vm.loadingItem
+                                              },
+                                              on: {
+                                                click: _vm.setItems,
+                                                blur: _vm.setItems
+                                              },
+                                              model: {
+                                                value: _vm.orderObj.item,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.orderObj,
+                                                    "item",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "orderObj.item"
+                                              }
+                                            })
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    true
+                                  )
+                                }),
+                                _vm._v(" "),
+                                _c("ValidationProvider", {
+                                  attrs: {
+                                    rules: "required",
+                                    name: "Non-FoC Quantity"
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "default",
+                                        fn: function(ref) {
+                                          var errors = ref.errors
+                                          return [
+                                            _c("v-text-field", {
+                                              attrs: {
+                                                type: "number",
+                                                outlined: "",
+                                                label: "Non-FoC Quantity*",
+                                                "error-messages": errors,
+                                                required: ""
+                                              },
+                                              model: {
+                                                value:
+                                                  _vm.orderObj.non_foc_quantity,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.orderObj,
+                                                    "non_foc_quantity",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression:
+                                                  "orderObj.non_foc_quantity"
+                                              }
+                                            })
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    true
+                                  )
+                                }),
+                                _vm._v(" "),
+                                _c("ValidationProvider", {
+                                  attrs: {
+                                    rules: "required",
+                                    name: "FoC Quantity"
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "default",
+                                        fn: function(ref) {
+                                          var errors = ref.errors
+                                          return [
+                                            _c("v-text-field", {
+                                              attrs: {
+                                                type: "number",
+                                                outlined: "",
+                                                label: "FoC Quantity*",
+                                                "error-messages": errors,
+                                                required: ""
+                                              },
+                                              model: {
+                                                value:
+                                                  _vm.orderObj.foc_quantity,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.orderObj,
+                                                    "foc_quantity",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression:
+                                                  "orderObj.foc_quantity"
+                                              }
+                                            })
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    true
+                                  )
+                                }),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "d-flex" },
+                                  [
+                                    _c("v-spacer"),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-btn",
+                                      {
+                                        staticClass: "mr-2",
+                                        attrs: {
+                                          color: "primary darken-1",
+                                          text: ""
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.dialogOrder = false
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                cancel\n              "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-btn",
+                                      {
+                                        staticClass: "primary",
+                                        attrs: { loading: _vm.loadingOrder },
+                                        on: { click: _vm.submitOrder }
+                                      },
+                                      [_vm._v("Submit")]
+                                    )
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ])
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
         ],
         1
       )
