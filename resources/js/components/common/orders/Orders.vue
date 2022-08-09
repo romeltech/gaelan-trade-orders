@@ -1,0 +1,262 @@
+<template>
+  <div>
+    <page-title :title="'Items'"></page-title>
+    <v-container class="py-8">
+      <v-row v-if="pageLoading == true">
+        <v-col cols="12">
+          <v-skeleton-loader
+            class="mx-auto"
+            max-width="100%"
+            type="list-item-avatar-three-line, image, article"
+          ></v-skeleton-loader>
+        </v-col>
+      </v-row>
+      <v-row v-else>
+        <v-col cols="12" class="py-5">
+          <v-card>
+            <v-card-title>
+              <h4>Orders</h4>
+              <v-spacer></v-spacer>
+              <!-- <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field> -->
+            </v-card-title>
+            <v-simple-table>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Order Number</th>
+                    <th class="text-left">Location Code</th>
+                    <th class="text-left">Order Details</th>
+                    <th class="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody v-if="Object.keys(order_list).length > 0">
+                  <tr v-for="item in order_list" :key="item.id">
+                    <td>
+                      {{ item.order_number }}
+                    </td>
+                    <td>{{ item.location_id ? item.location.code : "-" }}</td>
+                    <td>
+                      {{ item.price }}
+                    </td>
+                    <td class="text-right">
+                      <v-btn
+                        fab
+                        x-small
+                        depressed
+                        @click="openorderDialog('edit', item)"
+                        class="transparent mr-1"
+                      >
+                        <v-icon small> mdi-pencil </v-icon>
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+            <div
+              v-if="Object.keys(order_list).length == 0"
+              class="text-center caption text-capitalize py-3"
+            >
+              Result Not Found
+            </div>
+          </v-card>
+          <v-pagination
+            v-if="pageCount > 1"
+            class="mt-3"
+            v-model="page"
+            :length="pageCount"
+            @input="onPageChange"
+            :total-visible="10"
+          ></v-pagination>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <!-- Dialogs -->
+    <v-dialog v-model="orderDialog.status" persistent max-width="600px">
+      <v-card :loading="loadingOrderDialog" :disabled="loadingOrderDialog">
+        <v-card-title>
+          <div class="text-capitalize mb-3">{{ orderDialog.title }} Item</div>
+        </v-card-title>
+        <v-card-text>
+          <ValidationObserver ref="item_observer" v-slot="{ valid }">
+            <v-form ref="form">
+              <ValidationProvider
+                v-slot="{ errors }"
+                rules="required"
+                name="Item Name"
+              >
+                <v-text-field
+                  dense
+                  type="text"
+                  v-model="orderDialogData.name"
+                  label="Item Name"
+                  outlined
+                  required
+                  name="Item Name"
+                  :error-messages="errors"
+                ></v-text-field>
+              </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                rules="required"
+                name="SKU"
+              >
+                <v-text-field
+                  dense
+                  type="text"
+                  v-model="orderDialogData.sku"
+                  label="SKU"
+                  outlined
+                  required
+                  name="SKU"
+                  :error-messages="errors"
+                ></v-text-field>
+              </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                rules="required"
+                name="Price"
+              >
+                <v-text-field
+                  dense
+                  type="number"
+                  v-model="orderDialogData.price"
+                  label="Price"
+                  outlined
+                  required
+                  name="Price"
+                  :error-messages="errors"
+                ></v-text-field>
+              </ValidationProvider>
+              <div class="d-flex">
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="primary darken-1"
+                  class="mr-2"
+                  text
+                  @click="orderDialog.status = false"
+                >
+                  cancel
+                </v-btn>
+                <v-btn
+                  :disabled="!valid"
+                  :loading="loadingOrderDialog"
+                  color="primary"
+                  @click="saveItem"
+                >
+                  Save
+                </v-btn>
+              </div>
+            </v-form>
+          </ValidationObserver>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <snack-bar :snackbar-options="sbOptions"></snack-bar>
+  </div>
+</template>
+
+<script>
+import {
+  ValidationObserver,
+  ValidationProvider,
+} from "vee-validate/dist/vee-validate.full";
+export default {
+  components: {
+    ValidationProvider,
+    ValidationObserver,
+  },
+  data() {
+    return {
+      // Pagination
+      pageCount: 0,
+      page: 1,
+      itemsPerPage: 10,
+
+      pageLoading: true,
+      order_list: [],
+
+      sbOptions: {},
+      orderDialog: {
+        status: false,
+        title: "",
+      },
+      loadingOrderDialog: false,
+      orderDialogData: {},
+    };
+  },
+  watch: {
+    $route(to, from) {
+      this.getPaginatedItems(this.$route.params.page);
+    },
+  },
+  computed: {},
+  methods: {
+    async saveItem() {
+      this.loadingOrderDialog = true;
+      await axios
+        .post("/d/order/save", this.orderDialogData)
+        .then((response) => {
+          console.log("response.data.message", response.data.message);
+          this.getPaginatedItems().then(() => {
+            this.sbOptions = {
+              status: true,
+              type: "success",
+              text: response.data.message,
+            };
+            this.orderDialog.status = false;
+            this.$refs.item_observer.reset();
+            this.loadingOrderDialog = false;
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.sbOptions = {
+            status: true,
+            type: "error",
+            text: "Error saving data",
+          };
+          this.loadingOrderDialog = false;
+        });
+    },
+    openorderDialog(title, obj = null) {
+      this.orderDialogData = {};
+      this.orderDialog = {
+        status: true,
+        title: title,
+      };
+      if (obj) {
+        console.log("obj", obj);
+        this.orderDialogData = Object.assign({}, obj);
+      }
+    },
+    openImportPage() {
+      this.$router.push({
+        name: "ImportItem",
+      });
+    },
+    onPageChange() {
+      this.$router.push("/orders/page/" + this.page).catch((err) => {});
+    },
+    async getPaginatedItems(page) {
+      const response = await axios.get("/orders/get/paginated?page=" + page);
+      this.order_list = Object.assign([], response.data.data);
+      this.page = response.data.current_page;
+      this.pageCount = response.data.last_page;
+      console.log("this.order_list", this.order_list);
+    },
+  },
+  created() {
+    this.getPaginatedItems(this.$route.params.page).then(() => {
+      this.pageLoading = false;
+    });
+  },
+};
+</script>

@@ -12,6 +12,9 @@ import Locations from "../components/admin/locations/Locations";
 import ImportLocation from "../components/admin/locations/ImportLocation";
 
 import OrderForm from "../components/staff/orders/OrderForm";
+import NewOrder from "../components/staff/orders/NewOrder";
+import EditOrder from "../components/staff/orders/EditOrder";
+import Orders from "../components/common/orders/Orders";
 export const routes = [
     /**
      * Admin Pages
@@ -94,8 +97,27 @@ export const routes = [
      * Locations
      */
     {
+        path: "/staff/order/new",
+        component: NewOrder,
+        name: "NewOrder"
+    },
+    {
+        path: "/staff/order/edit/:ordernum",
+        component: EditOrder,
+        name: "EditOrder"
+    },
+    {
         path: "/staff/order-form",
         component: OrderForm,
         name: "OrderForm"
     },
+
+    /**
+     * Orders
+     */
+    {
+        path: "/staff/orders",
+        component: Orders,
+        name: "Orders"
+    }
 ];

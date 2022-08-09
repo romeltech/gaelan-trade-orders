@@ -7,6 +7,46 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function getPaginatedOrders()
+    {
+        $orders = Order::with('user', 'location')->paginate(10);
+        return response()->json($orders, 200);
+    }
+
+    public function addOrderDetail(Request $request)
+    {
+        $order = Order::where("order_number", $request['order_number'])->firstOrFail();
+        $orderDetailArr = array(
+            "sku" => $request['sku'],
+            "item_name" => $request['item_name'],
+            "non_foc_quantity" => $request['non_foc_quantity'],
+            "foc_quantity" => $request['foc_quantity'],
+            "total_quantity" => $request['total_quantity'],
+            "price" => $request['price'],
+            "line_price" => $request['line_price'],
+        );
+        // $order->order_details()->updateOrCreate(["order_id" => $request['order_id']], $orderDetailArr);
+        $order->order_details()->create($orderDetailArr);
+        return response()->json($order, 200);
+    }
+
+    public function getSingleOrder($ordernum)
+    {
+        $order = Order::where("order_number", $ordernum)->with('order_details')->first();
+        return response()->json($order, 200);
+    }
+
+    public function createOrder(Request $request)
+    {
+
+        $order = Order::create([
+            'status' => 'draft',
+            'order_number' => auth()->id()."-".date('Y-mdHis'),
+            'user_id' => auth()->id()
+        ]);
+        return response()->json($order, 200);
+    }
+
     public function saveOrder(Request $request)
     {
         $msg = isset($request['id']) ? 'updated' : 'created';

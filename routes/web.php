@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\DashboardController;
@@ -109,7 +110,13 @@ Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], functio
     /**
      * Orders
      */
+    Route::post('/order/add-item', [OrderController::class, 'addOrderDetail'])->name('order.add.order.detail');
+    Route::post('/order/create', [OrderController::class, 'createOrder'])->name('order.create');
+    Route::get('/order/get/{ordernum}', [OrderController::class, 'getSingleOrder'])->name('order.get.single.order');
+    Route::get('/order/edit/{ordernum}', [DashboardController::class, 'dashboard'])->name('order.edit');
     Route::get('/order-form', [DashboardController::class, 'dashboard'])->name('order.form');
     Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
-    // Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
+    Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
 });
+
+Route::get('/orders/get/paginated', [OrderController::class, 'getPaginatedOrders'])->middleware('auth')->name('order.get.paginated');

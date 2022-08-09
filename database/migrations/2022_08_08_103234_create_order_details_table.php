@@ -15,8 +15,8 @@ class CreateOrderDetailsTable extends Migration
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
-            $table->string('sku')->unique()->nullable();
-            $table->string('item_name');
+            $table->string('sku')->nullable();
+            $table->string('item_name')->nullable();
             $table->smallInteger('non_foc_quantity')->nullable();
             $table->smallInteger('foc_quantity')->nullable();
             $table->smallInteger('total_quantity')->nullable();

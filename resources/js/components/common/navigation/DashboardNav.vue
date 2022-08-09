@@ -140,9 +140,9 @@ export default {
       //   ],
       staffNav: [
         {
-          title: "Order Form",
+          title: "New Order",
           icon: "mdi-playlist-edit",
-          location: "/staff/order-form",
+          location: "/staff/order/new",
         },
         {
           title: "Orders",

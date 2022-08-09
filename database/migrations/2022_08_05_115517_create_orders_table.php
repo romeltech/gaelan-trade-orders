@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->string('status')->default('draft'); // draft, confirmed
             $table->string('order_number')->nullable();
-            $table->string('location_code')->nullable();
+            $table->foreignId('location_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
