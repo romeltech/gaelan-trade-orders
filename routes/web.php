@@ -122,4 +122,6 @@ Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], functio
 Route::get('/orders/get/paginated', [OrderController::class, 'getPaginatedOrders'])->middleware('auth')->name('order.get.paginated');
 
 
+Route::post('/order/detail/remove', [OrderController::class, 'removeOrderDetail'])->middleware('auth')->name('order.remove.item');
 Route::post('/order/update', [OrderController::class, 'updateOrder'])->middleware('auth')->name('order.update');
+Route::post('/order/update-erp', [OrderController::class, 'updateERPOrder'])->middleware('auth')->name('order.update.erp');

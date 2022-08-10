@@ -16,6 +16,7 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('status')->default('draft'); // draft, confirmed
+            $table->boolean('erp')->default(false);
             $table->string('order_number')->nullable();
             $table->foreignId('location_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();

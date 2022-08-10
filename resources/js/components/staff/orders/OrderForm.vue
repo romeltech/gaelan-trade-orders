@@ -63,7 +63,7 @@
                 icon
                 x-small
                 depressed
-                @click="removeOrder(item)"
+                @click="removeItem(item)"
                 class="transparent"
               >
                 <v-icon small color="primary"> mdi-trash-can </v-icon>
@@ -82,7 +82,6 @@
     >
       No orders to display
     </v-sheet>
-
     <div class="d-flex align-center mt-5" style="width: 100%">
       <v-spacer></v-spacer>
       <v-btn
@@ -92,13 +91,14 @@
         :loading="loadingSaveLater"
         @click="() => updateOrder('draft')"
       >
-        save for later
+        save as draft
       </v-btn>
       <v-btn
+        v-if="orderObj.status == 'draft'"
         class="primary"
-        :loading="loadingConfirm"
-        @click="() => updateOrder('confirm')"
-        >confirm</v-btn
+        :loading="loadingSubmit"
+        @click="() => updateOrder('submitted')"
+        >submit</v-btn
       >
     </div>
     <!-- Dialogs -->
@@ -145,7 +145,7 @@
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
-                rules=""
+                rules="numeric|alpha_num|min_value:0"
                 name="Non-FoC Quantity"
               >
                 <v-text-field
@@ -159,7 +159,7 @@
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
-                rules=""
+                rules="numeric|alpha_num|min_value:0"
                 name="FoC Quantity"
               >
                 <v-text-field
@@ -173,7 +173,7 @@
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
-                rules="required"
+                rules="required|numeric|alpha_num|min_value:0"
                 name="Total Quantity"
               >
                 <v-text-field
@@ -252,6 +252,10 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <confirmation-dialog
+      :confOptions="confirmOptions"
+      @response="confirmRemove"
+    ></confirmation-dialog>
   </div>
 </template>
 
@@ -302,8 +306,11 @@ export default {
       dialogOrderBtn: "Add",
       loadingDialogOrder: false,
 
-      loadingConfirm: false,
+      loadingSubmit: false,
       loadingSaveLater: false,
+
+      confirmOptions: {},
+      toRemove: {},
     };
   },
   watch: {
@@ -334,11 +341,37 @@ export default {
     ...mapStores(useItemsStore),
   },
   methods: {
+    confirmRemove() {
+      let data = {
+        order_detail_id: this.toRemove.id,
+      };
+      this.confirmOptions.loading = true;
+      axios
+        .post("/order/detail/remove", data)
+        .then((response) => {
+          this.$emit("saved", true);
+          this.confirmOptions.loading = false;
+          this.confirmOptions.status = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    removeItem(item) {
+      this.toRemove = Object.assign({}, item);
+      this.confirmOptions = {
+        title: `Remove ${item.sku}`,
+        status: true,
+        loading: false,
+        msg: `Are you sure you want to remove ${item.sku} from the list?`,
+      };
+      console.log("this.toRemove", this.toRemove);
+    },
     async updateOrder(status = "draft", emmit = true) {
       if (status == "draft") {
         this.loadingSaveLater = true;
       } else {
-        this.loadingConfirm = true;
+        this.loadingSubmit = true;
       }
       let data = {
         order_number: this.$route.params.ordernum,
@@ -349,7 +382,7 @@ export default {
         .post("/order/update", data)
         .then((response) => {
           this.loadingSaveLater = false;
-          this.loadingConfirm = false;
+          this.loadingSubmit = false;
           if (emmit == true) {
             this.$emit("saved", true);
           }
@@ -357,26 +390,26 @@ export default {
         .catch((err) => {
           console.log(err);
           this.loadingSaveLater = false;
-          this.loadingConfirm = false;
+          this.loadingSubmit = false;
         });
     },
     clearOrderData() {
-      this.$refs.order_observer.reset();
       this.orderData = {
-        location_code: null,
+        ...this.orderData,
         order_number: null,
         order_id: null,
         sku: null,
+        item_id: null,
         item_name: null,
-        non_foc_quantity: null,
-        foc_quantity: null,
+        non_foc_quantity: 0,
+        foc_quantity: 0,
         total_quantity: null,
         oum: null,
         price: null,
         line_price: null,
       };
+      console.log(this.orderData);
     },
-    removeOrder() {},
     calculate() {
       // calculate quantity
       this.orderData.total_quantity = Math.abs(
@@ -389,7 +422,7 @@ export default {
         this.totalPrice =
           parseFloat(this.orderData.price) *
           parseInt(this.orderData.total_quantity);
-        this.orderData.line_price = this.totalPrice;
+        this.orderData.line_price = this.totalPrice ? this.totalPrice : null;
       }
     },
     changeItem() {
@@ -416,6 +449,7 @@ export default {
     },
     openAddItem(item = null, action) {
       if (action == "add") {
+        this.clearOrderData();
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
       } else {
@@ -435,14 +469,11 @@ export default {
         this.orderProp.location_id == null &&
         this.orderData.location_id == null
       ) {
-        console.log("orderProp = null");
         this.saveItem();
       } else {
         if (this.orderProp.location_id == this.orderData.location_id) {
-          console.log("orderProp == orderData ");
           this.saveItem();
         } else {
-          console.log("orderProp != orderData ");
           this.loadingDialogOrder = true;
           this.updateOrder(this.orderProp.status, false).then(() => {
             this.saveItem();
@@ -459,6 +490,8 @@ export default {
         .then((response) => {
           this.dialogOrder = false;
           this.loadingDialogOrder = false;
+          this.clearOrderData();
+          this.$refs.order_observer.reset();
           this.$emit("saved", true);
         })
         .catch((err) => {
@@ -467,14 +500,13 @@ export default {
         });
     },
     setLocations() {
-      this.loadingLocation = true;
       if (this.locationList.length == 0) {
+        this.loadingLocation = true;
         this.locationsStore.fetchAllLocations().then(() => {
           this.locationList = this.location_list;
           this.loadingLocation = false;
         });
       } else {
-        this.loadingLocation = false;
         this.locationList = this.location_list;
       }
     },

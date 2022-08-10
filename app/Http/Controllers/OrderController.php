@@ -3,13 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function removeOrderDetail(Request $request)
+    {
+        $removeItemFromOrder = OrderDetail::where('id', $request['order_detail_id'])->delete();
+        return response()->json([
+            "message" => "Item has been deleted"
+        ], 200);
+    }
+
     public function getPaginatedOrders()
     {
-        $orders = Order::with('user.profile', 'location', 'order_details')->paginate(10);
+        if( auth()->user()->role == "admin"){
+            $orders = Order::where('status', 'submitted')->latest()->with('user.profile', 'location', 'order_details')->paginate(10);
+        }else{
+            $orders = Order::latest()->with('user.profile', 'location', 'order_details')->paginate(10);
+        }
         return response()->json($orders, 200);
     }
 
@@ -35,6 +48,14 @@ class OrderController extends Controller
     {
         $order = Order::where("order_number", $ordernum)->with('order_details', 'location')->first();
         return response()->json($order, 200);
+    }
+
+    public function updateERPOrder(Request $request)
+    {
+        $order = Order::where('id', $request['order_id'])->update(["erp" => $request['erp']]);
+        return response()->json([
+            'message' => "Order has been updated"
+        ], 200);
     }
 
     public function updateOrder(Request $request)

@@ -13,13 +13,6 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="py-5">
-          <v-btn
-            x-large
-            class="primary mb-5"
-            :loading="loadingCreateOrder"
-            @click="createOrder"
-            >Create Order</v-btn
-          >
           <v-card>
             <v-card-title>
               <h4>Orders</h4>
@@ -41,7 +34,7 @@
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Submitted date</th>
                     <th class="text-left">Order Details</th>
-                    <th class="text-right">Action</th>
+                    <th class="text-right">ERP</th>
                   </tr>
                 </thead>
                 <tbody v-if="Object.keys(order_list).length > 0">
@@ -62,15 +55,25 @@
                       >
                     </td>
                     <td class="text-right">
-                      <v-btn
-                        fab
-                        x-small
-                        depressed
-                        @click="openOrder(item)"
-                        class="transparent mr-1"
-                      >
-                        <v-icon small> mdi-pencil </v-icon>
-                      </v-btn>
+                      <div>
+                        <v-progress-circular
+                          v-if="loadingERP[item.id] == true"
+                          :size="20"
+                          :width="2"
+                          color="primary"
+                          class="ml-auto"
+                          indeterminate
+                        ></v-progress-circular>
+                        <v-checkbox
+                          v-else
+                          v-model="item.erp"
+                          class="ma-0 ml-auto"
+                          hide-details
+                          color="success"
+                          style="width: 20px"
+                          @click="() => updateStatus(item)"
+                        ></v-checkbox>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -207,7 +210,8 @@ export default {
       },
       loadingOrderDialog: false,
       orderDialogData: {},
-      loadingCreateOrder: false,
+
+      loadingERP: [],
     };
   },
   watch: {
@@ -216,26 +220,35 @@ export default {
     },
   },
   methods: {
-    async createOrder() {
-      this.loadingCreateOrder = true;
+    async updateStatus(item) {
+      console.log("item", item);
+      this.loadingERP[item.id] = true;
+      let data = {
+        order_id: item.id,
+        erp: item.erp,
+      };
       await axios
-        .post("/staff/order/create")
+        .post("/order/update-erp", data)
         .then((response) => {
-          this.loadingCreateOrder = false;
-          //   console.log(response);
-          this.$router.push({
-            name: "EditOrder",
-            params: {
-              ordernum: response.data.order_number,
-            },
+          //   console.log("response.data.message", response.data.message);
+          this.getPaginatedItems(this.$route.params.page).then(() => {
+            this.sbOptions = {
+              status: true,
+              type: "success",
+              text: response.data.message,
+            };
           });
         })
         .catch((err) => {
           console.log(err);
-          this.loadingCreateOrder = false;
+          this.sbOptions = {
+            status: true,
+            type: "error",
+            text: "Error updating order",
+          };
+          this.loadingERP[item.id] = false;
         });
     },
-
     downloadCSV(item) {
       // setup json
       let rawJson = [];
@@ -291,19 +304,6 @@ export default {
           this.loadingOrderDialog = false;
         });
     },
-    openOrder(obj) {
-      this.$router.push({
-        name: "EditOrder",
-        params: {
-          ordernum: obj.order_number,
-        },
-      });
-    },
-    openImportPage() {
-      this.$router.push({
-        name: "ImportItem",
-      });
-    },
     onPageChange() {
       this.$router.push("/orders/page/" + this.page).catch((err) => {});
     },
@@ -312,7 +312,9 @@ export default {
       this.order_list = Object.assign([], response.data.data);
       this.page = response.data.current_page;
       this.pageCount = response.data.last_page;
-      //   console.log("this.order_list", this.order_list);
+      this.order_list.map((ol) => {
+        this.loadingERP[ol.id] = false;
+      });
     },
   },
   created() {
