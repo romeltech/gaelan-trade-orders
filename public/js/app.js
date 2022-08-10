@@ -4680,11 +4680,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       //     //   location: "/d/profile",
       //     // },
       //   ],
-      staffNav: [{
-        title: "New Order",
-        icon: "mdi-playlist-edit",
-        location: "/staff/order/new"
-      }, {
+      staffNav: [// {
+      //   title: "New Order",
+      //   icon: "mdi-playlist-edit",
+      //   location: "/staff/order/new",
+      // },
+      {
         title: "Orders",
         icon: "mdi-format-list-checkbox",
         location: "/staff/orders"
@@ -4806,28 +4807,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.map.js */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.assign.js */ "./node_modules/core-js/modules/es.object.assign.js");
-/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.promise.js */ "./node_modules/core-js/modules/es.promise.js");
-/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.map.js */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.assign.js */ "./node_modules/core-js/modules/es.object.assign.js");
+/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.promise.js */ "./node_modules/core-js/modules/es.promise.js");
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
 /* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
+
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-
-
-
-
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5023,7 +5031,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         title: ""
       },
       loadingOrderDialog: false,
-      orderDialogData: {}
+      orderDialogData: {},
+      loadingCreateOrder: false
     };
   },
   watch: {
@@ -5032,6 +5041,39 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   methods: {
+    createOrder: function createOrder() {
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default().mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this.loadingCreateOrder = true;
+                _context.next = 3;
+                return axios.post("/staff/order/create").then(function (response) {
+                  _this.loadingCreateOrder = false; //   console.log(response);
+
+                  //   console.log(response);
+                  _this.$router.push({
+                    name: "EditOrder",
+                    params: {
+                      ordernum: response.data.order_number
+                    }
+                  });
+                }).catch(function (err) {
+                  console.log(err);
+                  _this.loadingCreateOrder = false;
+                });
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
     downloadCSV: function downloadCSV(item) {
       // setup json
       var rawJson = [];
@@ -5056,46 +5098,45 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$papa.download(csv, item.order_number ? item.order_number : "order-details");
     },
     saveItem: function saveItem() {
-      var _this = this;
+      var _this2 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default().mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default().wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                _this.loadingOrderDialog = true;
-                _context.next = 3;
-                return axios.post("/d/order/save", _this.orderDialogData).then(function (response) {
-                  console.log("response.data.message", response.data.message);
-
-                  _this.getPaginatedItems().then(function () {
-                    _this.sbOptions = {
+                _this2.loadingOrderDialog = true;
+                _context2.next = 3;
+                return axios.post("/d/order/save", _this2.orderDialogData).then(function (response) {
+                  //   console.log("response.data.message", response.data.message);
+                  _this2.getPaginatedItems().then(function () {
+                    _this2.sbOptions = {
                       status: true,
                       type: "success",
                       text: response.data.message
                     };
-                    _this.orderDialog.status = false;
+                    _this2.orderDialog.status = false;
 
-                    _this.$refs.item_observer.reset();
+                    _this2.$refs.item_observer.reset();
 
-                    _this.loadingOrderDialog = false;
+                    _this2.loadingOrderDialog = false;
                   });
                 }).catch(function (err) {
                   console.log(err);
-                  _this.sbOptions = {
+                  _this2.sbOptions = {
                     status: true,
                     type: "error",
                     text: "Error saving data"
                   };
-                  _this.loadingOrderDialog = false;
+                  _this2.loadingOrderDialog = false;
                 });
 
               case 3:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee);
+        }, _callee2);
       }))();
     },
     openOrder: function openOrder(obj) {
@@ -5115,38 +5156,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$router.push("/orders/page/" + this.page).catch(function (err) {});
     },
     getPaginatedItems: function getPaginatedItems(page) {
-      var _this2 = this;
+      var _this3 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default().mark(function _callee3() {
         var response;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                _context2.next = 2;
+                _context3.next = 2;
                 return axios.get("/orders/get/paginated?page=" + page);
 
               case 2:
-                response = _context2.sent;
-                _this2.order_list = Object.assign([], response.data.data);
-                _this2.page = response.data.current_page;
-                _this2.pageCount = response.data.last_page;
-                console.log("this.order_list", _this2.order_list);
+                response = _context3.sent;
+                _this3.order_list = Object.assign([], response.data.data);
+                _this3.page = response.data.current_page;
+                _this3.pageCount = response.data.last_page; //   console.log("this.order_list", this.order_list);
 
-              case 7:
+              case 6:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2);
+        }, _callee3);
       }))();
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this4 = this;
 
     this.getPaginatedItems(this.$route.params.page).then(function () {
-      _this3.pageLoading = false;
+      _this4.pageLoading = false;
     });
   }
 });
@@ -5966,6 +6006,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 
@@ -6006,6 +6049,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       orderObj: {},
       totalPrice: null,
       dialogOrder: false,
+      dialogOrderBtn: "Add",
       loadingDialogOrder: false,
       loadingConfirm: false,
       loadingSaveLater: false
@@ -6024,19 +6068,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       },
       deep: true,
       immediate: true
+    },
+    orderData: {
+      handler: function handler(newVal, oldVal) {
+        this.calculate();
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_14__.mapState)(_stores_locations__WEBPACK_IMPORTED_MODULE_11__.useLocationsStore, ["location_list"])), (0,pinia__WEBPACK_IMPORTED_MODULE_14__.mapStores)(_stores_locations__WEBPACK_IMPORTED_MODULE_11__.useLocationsStore)), (0,pinia__WEBPACK_IMPORTED_MODULE_14__.mapState)(_stores_items__WEBPACK_IMPORTED_MODULE_12__.useItemsStore, ["item_list"])), (0,pinia__WEBPACK_IMPORTED_MODULE_14__.mapStores)(_stores_items__WEBPACK_IMPORTED_MODULE_12__.useItemsStore)),
   methods: {
-    updateOrder: function updateOrder(status) {
-      var _this = this;
+    updateOrder: function updateOrder() {
+      var _arguments = arguments,
+          _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var data;
+        var status, emmit, data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                status = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : "draft";
+                emmit = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : true;
+
                 if (status == "draft") {
                   _this.loadingSaveLater = true;
                 } else {
@@ -6048,19 +6103,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   status: status,
                   location_id: _this.orderData.location_id
                 };
-                _context.next = 4;
+                _context.next = 6;
                 return axios.post("/order/update", data).then(function (response) {
                   _this.loadingSaveLater = false;
                   _this.loadingConfirm = false;
 
-                  _this.$emit("saved", true);
+                  if (emmit == true) {
+                    _this.$emit("saved", true);
+                  }
                 }).catch(function (err) {
                   console.log(err);
                   _this.loadingSaveLater = false;
                   _this.loadingConfirm = false;
                 });
 
-              case 4:
+              case 6:
               case "end":
                 return _context.stop();
             }
@@ -6085,8 +6142,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     },
     removeOrder: function removeOrder() {},
-    calculateTotalQuantity: function calculateTotalQuantity() {
-      this.orderData.total_quantity = Math.abs(parseInt(this.orderData.non_foc_quantity) + parseInt(this.orderData.foc_quantity));
+    calculate: function calculate() {
+      // calculate quantity
+      this.orderData.total_quantity = Math.abs(parseInt(this.orderData.non_foc_quantity) + parseInt(this.orderData.foc_quantity)); // calculate price
 
       if (this.orderData.price && this.orderData.total_quantity) {
         this.totalPrice = parseFloat(this.orderData.price) * parseInt(this.orderData.total_quantity);
@@ -6096,15 +6154,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     changeItem: function changeItem() {
       var _this2 = this;
 
+      // set item data
       var selectedItem = this.itemList.filter(function (i) {
         return i.id == _this2.orderData.item_id;
       });
-      selectedItem = selectedItem[0]; // set item data
-
-      this.orderData.item_id = selectedItem.id;
-      this.orderData.item_name = selectedItem.name;
-      this.orderData.sku = selectedItem.sku;
-      this.orderData.price = selectedItem.price;
+      this.orderData.item_id = selectedItem[0].id;
+      this.orderData.item_name = selectedItem[0].name;
+      this.orderData.sku = selectedItem[0].sku;
+      this.orderData.price = selectedItem[0].price;
     },
     setItems: function setItems() {
       var _this3 = this;
@@ -6143,37 +6200,66 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee2);
       }))();
     },
-    editOrder: function editOrder(item) {
+    openAddItem: function openAddItem() {
       var _this4 = this;
 
-      this.setItems().then(function () {
-        console.log("editOrder", item);
-        _this4.dialogOrder = true;
-        _this4.orderData = item;
-        _this4.orderData.item_id = item.id;
-        console.log("this.itemList", _this4.itemList);
-      });
+      var item = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var action = arguments.length > 1 ? arguments[1] : undefined;
+
+      if (action == "add") {
+        this.dialogOrderBtn = "Add";
+        this.dialogOrder = true;
+      } else {
+        this.dialogOrderBtn = "Update";
+        this.dialogOrder = true;
+        this.loadingDialogOrder = true;
+        this.setItems().then(function () {
+          _this4.orderData = item;
+          _this4.orderData.item_id = item.item_id;
+          _this4.loadingDialogOrder = false;
+          console.log("this.itemList", _this4.itemList);
+        });
+      }
     },
     addItem: function addItem() {
       var _this5 = this;
+
+      if (this.orderProp.location_id == null && this.orderData.location_id == null) {
+        console.log("orderProp = null");
+        this.saveItem();
+      } else {
+        if (this.orderProp.location_id == this.orderData.location_id) {
+          console.log("orderProp == orderData ");
+          this.saveItem();
+        } else {
+          console.log("orderProp != orderData ");
+          this.loadingDialogOrder = true;
+          this.updateOrder(this.orderProp.status, false).then(function () {
+            _this5.saveItem();
+          });
+        }
+      }
+    },
+    saveItem: function saveItem() {
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _this5.loadingDialogOrder = true;
-                _this5.orderData.order_number = _this5.$route.params.ordernum;
-                _this5.orderData.order_id = _this5.orderObj.id;
+                _this6.loadingDialogOrder = true;
+                _this6.orderData.order_number = _this6.$route.params.ordernum;
+                _this6.orderData.order_id = _this6.orderObj.id;
                 _context3.next = 5;
-                return axios.post("/staff/order/add-item", _this5.orderData).then(function (response) {
-                  _this5.dialogOrder = false;
-                  _this5.loadingDialogOrder = false;
+                return axios.post("/staff/order/add-item", _this6.orderData).then(function (response) {
+                  _this6.dialogOrder = false;
+                  _this6.loadingDialogOrder = false;
 
-                  _this5.$emit("saved", true);
+                  _this6.$emit("saved", true);
                 }).catch(function (err) {
                   console.log(err);
-                  _this5.loadingDialogOrder = false;
+                  _this6.loadingDialogOrder = false;
                 });
 
               case 5:
@@ -6185,14 +6271,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }))();
     },
     setLocations: function setLocations() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.loadingLocation = true;
 
       if (this.locationList.length == 0) {
         this.locationsStore.fetchAllLocations().then(function () {
-          _this6.locationList = _this6.location_list;
-          _this6.loadingLocation = false;
+          _this7.locationList = _this7.location_list;
+          _this7.loadingLocation = false;
         });
       } else {
         this.loadingLocation = false;
@@ -6303,7 +6389,7 @@ var helpers_plugin = {
       return new Date(date).toLocaleString("en-US", {
         day: "2-digit",
         year: "numeric",
-        month: "long",
+        month: "short",
         hour12: true,
         hour: "numeric",
         minute: "numeric"
@@ -22827,7 +22913,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("page-title", { attrs: { title: "Items" } }),
+      _c("page-title", { attrs: { title: "Orders" } }),
       _vm._v(" "),
       _c(
         "v-container",
@@ -22861,6 +22947,19 @@ var render = function() {
                     "v-col",
                     { staticClass: "py-5", attrs: { cols: "12" } },
                     [
+                      _c(
+                        "v-btn",
+                        {
+                          staticClass: "primary mb-5",
+                          attrs: {
+                            "x-large": "",
+                            loading: _vm.loadingCreateOrder
+                          },
+                          on: { click: _vm.createOrder }
+                        },
+                        [_vm._v("Create Order")]
+                      ),
+                      _vm._v(" "),
                       _c(
                         "v-card",
                         [
@@ -23797,6 +23896,7 @@ var render = function() {
           "item-text": "name",
           "item-value": "id",
           outlined: "",
+          clearable: "",
           loading: _vm.loadingLocation
         },
         on: { click: _vm.setLocations, blur: _vm.setLocations },
@@ -23822,8 +23922,8 @@ var render = function() {
             {
               staticClass: "secondary mx-3",
               on: {
-                click: function($event) {
-                  _vm.dialogOrder = true
+                click: function() {
+                  return _vm.openAddItem(null, "add")
                 }
               }
             },
@@ -23915,7 +24015,7 @@ var render = function() {
                                         },
                                         on: {
                                           click: function($event) {
-                                            return _vm.editOrder(item)
+                                            return _vm.openAddItem(item, "edit")
                                           }
                                         }
                                       },
@@ -23978,7 +24078,7 @@ var render = function() {
               ],
               null,
               false,
-              2109174381
+              2712812623
             )
           })
         : _c(
@@ -24182,10 +24282,7 @@ var render = function() {
                                                 label: "Non-FoC Quantity*",
                                                 "error-messages": errors
                                               },
-                                              on: {
-                                                change:
-                                                  _vm.calculateTotalQuantity
-                                              },
+                                              on: { change: _vm.calculate },
                                               model: {
                                                 value:
                                                   _vm.orderData
@@ -24226,10 +24323,7 @@ var render = function() {
                                                 label: "FoC Quantity*",
                                                 "error-messages": errors
                                               },
-                                              on: {
-                                                change:
-                                                  _vm.calculateTotalQuantity
-                                              },
+                                              on: { change: _vm.calculate },
                                               model: {
                                                 value:
                                                   _vm.orderData.foc_quantity,
@@ -24418,7 +24512,7 @@ var render = function() {
                                         },
                                         on: { click: _vm.addItem }
                                       },
-                                      [_vm._v("Add")]
+                                      [_vm._v(_vm._s(_vm.dialogOrderBtn))]
                                     )
                                   ],
                                   1

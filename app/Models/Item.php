@@ -11,4 +11,9 @@ class Item extends Model
 
     protected $guarded = [];
 
+    public function order_detail()
+    {
+        return $this->belongsTo(OrderDetail::class);
+    }
+
 }

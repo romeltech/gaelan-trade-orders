@@ -139,11 +139,11 @@ export default {
       //     // },
       //   ],
       staffNav: [
-        {
-          title: "New Order",
-          icon: "mdi-playlist-edit",
-          location: "/staff/order/new",
-        },
+        // {
+        //   title: "New Order",
+        //   icon: "mdi-playlist-edit",
+        //   location: "/staff/order/new",
+        // },
         {
           title: "Orders",
           icon: "mdi-format-list-checkbox",

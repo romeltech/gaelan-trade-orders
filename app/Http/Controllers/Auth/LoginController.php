@@ -60,7 +60,7 @@ class LoginController extends Controller
             if($role == 'admin' || $role === 'super_admin'){
                 return redirect('d/orders');
             }elseif($role == 'staff'){
-                return redirect('staff/order-form');
+                return redirect('staff/orders');
             }else{
                 return redirect('home');
             }

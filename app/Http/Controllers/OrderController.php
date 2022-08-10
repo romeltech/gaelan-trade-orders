@@ -18,6 +18,7 @@ class OrderController extends Controller
         $order = Order::where("order_number", $request['order_number'])->firstOrFail();
         $orderDetailArr = array(
             "sku" => $request['sku'],
+            "item_id" => $request['item_id'],
             "item_name" => $request['item_name'],
             "non_foc_quantity" => $request['non_foc_quantity'],
             "foc_quantity" => $request['foc_quantity'],
@@ -72,6 +73,7 @@ class OrderController extends Controller
             'user_id' => auth()->id()
         );
         $orderDetailsArr = array(
+            'item_id' => $request['item_id'],
             'sku' => $request['sku'],
             'item_name' => $request['item_name'],
             'non_foc_quantity' => $request['non_foc_quantity'],

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-title :title="'Items'"></page-title>
+    <page-title :title="'Orders'"></page-title>
     <v-container class="py-8">
       <v-row v-if="pageLoading == true">
         <v-col cols="12">
@@ -13,6 +13,13 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="py-5">
+          <v-btn
+            x-large
+            class="primary mb-5"
+            :loading="loadingCreateOrder"
+            @click="createOrder"
+            >Create Order</v-btn
+          >
           <v-card>
             <v-card-title>
               <h4>Orders</h4>
@@ -200,6 +207,7 @@ export default {
       },
       loadingOrderDialog: false,
       orderDialogData: {},
+      loadingCreateOrder: false,
     };
   },
   watch: {
@@ -208,6 +216,26 @@ export default {
     },
   },
   methods: {
+    async createOrder() {
+      this.loadingCreateOrder = true;
+      await axios
+        .post("/staff/order/create")
+        .then((response) => {
+          this.loadingCreateOrder = false;
+          //   console.log(response);
+          this.$router.push({
+            name: "EditOrder",
+            params: {
+              ordernum: response.data.order_number,
+            },
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.loadingCreateOrder = false;
+        });
+    },
+
     downloadCSV(item) {
       // setup json
       let rawJson = [];
@@ -241,7 +269,7 @@ export default {
       await axios
         .post("/d/order/save", this.orderDialogData)
         .then((response) => {
-          console.log("response.data.message", response.data.message);
+          //   console.log("response.data.message", response.data.message);
           this.getPaginatedItems().then(() => {
             this.sbOptions = {
               status: true,
@@ -284,7 +312,7 @@ export default {
       this.order_list = Object.assign([], response.data.data);
       this.page = response.data.current_page;
       this.pageCount = response.data.last_page;
-      console.log("this.order_list", this.order_list);
+      //   console.log("this.order_list", this.order_list);
     },
   },
   created() {

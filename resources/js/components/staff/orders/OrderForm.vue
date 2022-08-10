@@ -7,6 +7,7 @@
       item-text="name"
       item-value="id"
       outlined
+      clearable
       @click="setLocations"
       @blur="setLocations"
       :loading="loadingLocation"
@@ -14,7 +15,9 @@
     </v-autocomplete>
     <div class="d-flex align-center mb-3">
       <div class="text-subtitle-1 textcolor--text">Order Details</div>
-      <v-btn @click="dialogOrder = true" class="secondary mx-3">Add Item</v-btn>
+      <v-btn @click="() => openAddItem(null, 'add')" class="secondary mx-3"
+        >Add Item</v-btn
+      >
     </div>
     <v-simple-table
       v-if="orderObj.order_details && orderObj.order_details.length > 0"
@@ -51,7 +54,7 @@
                 icon
                 x-small
                 depressed
-                @click="editOrder(item)"
+                @click="openAddItem(item, 'edit')"
                 class="transparent mr-1"
               >
                 <v-icon small color="primary"> mdi-pencil </v-icon>
@@ -151,7 +154,7 @@
                   v-model="orderData.non_foc_quantity"
                   label="Non-FoC Quantity*"
                   :error-messages="errors"
-                  @change="calculateTotalQuantity"
+                  @change="calculate"
                 ></v-text-field>
               </ValidationProvider>
               <ValidationProvider
@@ -165,7 +168,7 @@
                   v-model="orderData.foc_quantity"
                   label="FoC Quantity*"
                   :error-messages="errors"
-                  @change="calculateTotalQuantity"
+                  @change="calculate"
                 ></v-text-field>
               </ValidationProvider>
               <ValidationProvider
@@ -241,7 +244,7 @@
                   class="primary"
                   :loading="loadingDialogOrder"
                   @click="addItem"
-                  >Add</v-btn
+                  >{{ dialogOrderBtn }}</v-btn
                 >
               </div>
             </v-form>
@@ -296,6 +299,7 @@ export default {
       orderObj: {},
       totalPrice: null,
       dialogOrder: false,
+      dialogOrderBtn: "Add",
       loadingDialogOrder: false,
 
       loadingConfirm: false,
@@ -315,6 +319,13 @@ export default {
       deep: true,
       immediate: true,
     },
+    orderData: {
+      handler(newVal, oldVal) {
+        this.calculate();
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   computed: {
     ...mapState(useLocationsStore, ["location_list"]),
@@ -323,7 +334,7 @@ export default {
     ...mapStores(useItemsStore),
   },
   methods: {
-    async updateOrder(status) {
+    async updateOrder(status = "draft", emmit = true) {
       if (status == "draft") {
         this.loadingSaveLater = true;
       } else {
@@ -339,7 +350,9 @@ export default {
         .then((response) => {
           this.loadingSaveLater = false;
           this.loadingConfirm = false;
-          this.$emit("saved", true);
+          if (emmit == true) {
+            this.$emit("saved", true);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -364,12 +377,14 @@ export default {
       };
     },
     removeOrder() {},
-    calculateTotalQuantity() {
+    calculate() {
+      // calculate quantity
       this.orderData.total_quantity = Math.abs(
         parseInt(this.orderData.non_foc_quantity) +
           parseInt(this.orderData.foc_quantity)
       );
 
+      // calculate price
       if (this.orderData.price && this.orderData.total_quantity) {
         this.totalPrice =
           parseFloat(this.orderData.price) *
@@ -378,15 +393,14 @@ export default {
       }
     },
     changeItem() {
+      // set item data
       let selectedItem = this.itemList.filter(
         (i) => i.id == this.orderData.item_id
       );
-      selectedItem = selectedItem[0];
-      // set item data
-      this.orderData.item_id = selectedItem.id;
-      this.orderData.item_name = selectedItem.name;
-      this.orderData.sku = selectedItem.sku;
-      this.orderData.price = selectedItem.price;
+      this.orderData.item_id = selectedItem[0].id;
+      this.orderData.item_name = selectedItem[0].name;
+      this.orderData.sku = selectedItem[0].sku;
+      this.orderData.price = selectedItem[0].price;
     },
     async setItems() {
       this.loadingItem = true;
@@ -400,16 +414,43 @@ export default {
         this.loadingItem = false;
       }
     },
-    editOrder(item) {
-      this.setItems().then(() => {
-        console.log("editOrder", item);
+    openAddItem(item = null, action) {
+      if (action == "add") {
+        this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
-        this.orderData = item;
-        this.orderData.item_id = item.id;
-        console.log("this.itemList", this.itemList);
-      });
+      } else {
+        this.dialogOrderBtn = "Update";
+        this.dialogOrder = true;
+        this.loadingDialogOrder = true;
+        this.setItems().then(() => {
+          this.orderData = item;
+          this.orderData.item_id = item.item_id;
+          this.loadingDialogOrder = false;
+          console.log("this.itemList", this.itemList);
+        });
+      }
     },
-    async addItem() {
+    addItem() {
+      if (
+        this.orderProp.location_id == null &&
+        this.orderData.location_id == null
+      ) {
+        console.log("orderProp = null");
+        this.saveItem();
+      } else {
+        if (this.orderProp.location_id == this.orderData.location_id) {
+          console.log("orderProp == orderData ");
+          this.saveItem();
+        } else {
+          console.log("orderProp != orderData ");
+          this.loadingDialogOrder = true;
+          this.updateOrder(this.orderProp.status, false).then(() => {
+            this.saveItem();
+          });
+        }
+      }
+    },
+    async saveItem() {
       this.loadingDialogOrder = true;
       this.orderData.order_number = this.$route.params.ordernum;
       this.orderData.order_id = this.orderObj.id;
