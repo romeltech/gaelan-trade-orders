@@ -41,7 +41,10 @@ const helpers_plugin = {
             return new Date(date).toLocaleString("en-US", {
                 day: "2-digit",
                 year: "numeric",
-                month: "long"
+                month: "long",
+                hour12: true,
+                hour: "numeric",
+                minute: "numeric"
             });
         };
 

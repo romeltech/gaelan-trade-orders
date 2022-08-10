@@ -120,3 +120,6 @@ Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], functio
 });
 
 Route::get('/orders/get/paginated', [OrderController::class, 'getPaginatedOrders'])->middleware('auth')->name('order.get.paginated');
+
+
+Route::post('/order/update', [OrderController::class, 'updateOrder'])->middleware('auth')->name('order.update');

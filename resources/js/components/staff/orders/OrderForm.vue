@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-autocomplete
-      v-model="orderData.location_code"
+      v-model="orderData.location_id"
       :items="locationList"
-      label="Location"
+      label="Pharmacy Location"
       item-text="name"
-      item-value="code"
+      item-value="id"
       outlined
       @click="setLocations"
       @blur="setLocations"
@@ -14,13 +14,13 @@
     </v-autocomplete>
     <div class="d-flex align-center mb-3">
       <div class="text-subtitle-1 textcolor--text">Order Details</div>
-      <v-btn
-        @click="dialogOrder = true"
-        class="primary mx-3"
-        >Add Item</v-btn
-      >
+      <v-btn @click="dialogOrder = true" class="secondary mx-3">Add Item</v-btn>
     </div>
-    <v-simple-table v-if="orderObj.order_details" class="elevation-0" style="border: 1px solid #ddd">
+    <v-simple-table
+      v-if="orderObj.order_details && orderObj.order_details.length > 0"
+      class="elevation-0"
+      style="border: 1px solid #ddd"
+    >
       <template v-slot:default>
         <thead>
           <tr>
@@ -70,6 +70,34 @@
         </tbody>
       </template>
     </v-simple-table>
+    <v-sheet
+      v-else
+      rounded
+      class="mx-auto text-center py-3"
+      width="100%"
+      color="grey lighten-5"
+    >
+      No orders to display
+    </v-sheet>
+
+    <div class="d-flex align-center mt-5" style="width: 100%">
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary darken-1"
+        class="mr-2"
+        text
+        :loading="loadingSaveLater"
+        @click="() => updateOrder('draft')"
+      >
+        save for later
+      </v-btn>
+      <v-btn
+        class="primary"
+        :loading="loadingConfirm"
+        @click="() => updateOrder('confirm')"
+        >confirm</v-btn
+      >
+    </div>
     <!-- Dialogs -->
     <v-dialog v-model="dialogOrder" persistent max-width="600px">
       <v-card :loading="loadingOrder" :disabled="loadingOrder">
@@ -85,7 +113,7 @@
                 name="Item SKU"
               >
                 <v-autocomplete
-                  v-model="orderData.item"
+                  v-model="orderData.item_id"
                   :items="itemList"
                   label="Item SKU"
                   item-text="sku"
@@ -269,14 +297,18 @@ export default {
       totalPrice: null,
       dialogOrder: false,
       loadingDialogOrder: false,
+
+      loadingConfirm: false,
+      loadingSaveLater: false,
     };
   },
   watch: {
     orderProp: {
       handler(newVal, oldVal) {
-        this.orderObj = newVal;
+        this.orderObj = Object.assign({}, newVal);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
-        if (this.orderObj.location_code == null) {
+        this.orderData.location_id = this.orderObj.location_id;
+        if (this.orderObj.location_id == null) {
           this.setLocations();
         }
       },
@@ -291,6 +323,30 @@ export default {
     ...mapStores(useItemsStore),
   },
   methods: {
+    async updateOrder(status) {
+      if (status == "draft") {
+        this.loadingSaveLater = true;
+      } else {
+        this.loadingConfirm = true;
+      }
+      let data = {
+        order_number: this.$route.params.ordernum,
+        status: status,
+        location_id: this.orderData.location_id,
+      };
+      await axios
+        .post("/order/update", data)
+        .then((response) => {
+          this.loadingSaveLater = false;
+          this.loadingConfirm = false;
+          this.$emit("saved", true);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.loadingSaveLater = false;
+          this.loadingConfirm = false;
+        });
+    },
     clearOrderData() {
       this.$refs.order_observer.reset();
       this.orderData = {
@@ -323,29 +379,35 @@ export default {
     },
     changeItem() {
       let selectedItem = this.itemList.filter(
-        (i) => i.id == this.orderData.item
+        (i) => i.id == this.orderData.item_id
       );
       selectedItem = selectedItem[0];
       // set item data
+      this.orderData.item_id = selectedItem.id;
       this.orderData.item_name = selectedItem.name;
       this.orderData.sku = selectedItem.sku;
       this.orderData.price = selectedItem.price;
     },
-    setItems() {
+    async setItems() {
       this.loadingItem = true;
       if (this.itemList.length == 0) {
-        this.itemsStore.fetchAllItems().then(() => {
+        await this.itemsStore.fetchAllItems().then(() => {
           this.itemList = this.item_list;
           this.loadingItem = false;
+          console.log("fetched");
         });
       } else {
         this.loadingItem = false;
       }
     },
     editOrder(item) {
-      this.dialogOrder = true;
-      this.orderData = item;
-      console.log("editOrder", this.orderData);
+      this.setItems().then(() => {
+        console.log("editOrder", item);
+        this.dialogOrder = true;
+        this.orderData = item;
+        this.orderData.item_id = item.id;
+        console.log("this.itemList", this.itemList);
+      });
     },
     async addItem() {
       this.loadingDialogOrder = true;

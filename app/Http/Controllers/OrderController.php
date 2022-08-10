@@ -9,7 +9,7 @@ class OrderController extends Controller
 {
     public function getPaginatedOrders()
     {
-        $orders = Order::with('user', 'location')->paginate(10);
+        $orders = Order::with('user.profile', 'location', 'order_details')->paginate(10);
         return response()->json($orders, 200);
     }
 
@@ -32,8 +32,23 @@ class OrderController extends Controller
 
     public function getSingleOrder($ordernum)
     {
-        $order = Order::where("order_number", $ordernum)->with('order_details')->first();
+        $order = Order::where("order_number", $ordernum)->with('order_details', 'location')->first();
         return response()->json($order, 200);
+    }
+
+    public function updateOrder(Request $request)
+    {
+        $orderArr = array(
+            'status' => $request['status'],
+            'location_id' => $request['location_id'],
+            'user_id' => auth()->id()
+        );
+        $order = Order::where('order_number', $request['order_number'])->update($orderArr);
+
+
+        return response()->json([
+            'message' => "Order has been updated"
+        ], 200);
     }
 
     public function createOrder(Request $request)
@@ -53,7 +68,7 @@ class OrderController extends Controller
         $orderArr = array(
             'status' => $request['status'],
             'order_number' => $request['item_name'],
-            'location_code' => $request['location_code'],
+            'location_id' => $request['location_id'],
             'user_id' => auth()->id()
         );
         $orderDetailsArr = array(

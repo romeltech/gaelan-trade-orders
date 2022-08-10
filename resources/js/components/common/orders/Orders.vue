@@ -32,24 +32,34 @@
                     <th class="text-left">Order Number</th>
                     <th class="text-left">Location Code</th>
                     <th class="text-left">Order Details</th>
+                    <th class="text-left">Submitted by</th>
+                    <th class="text-left">Submitted date</th>
                     <th class="text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody v-if="Object.keys(order_list).length > 0">
                   <tr v-for="item in order_list" :key="item.id">
-                    <td>
-                      {{ item.order_number }}
-                    </td>
+                    <td>{{ item.order_number }}</td>
                     <td>{{ item.location_id ? item.location.code : "-" }}</td>
                     <td>
-                      {{ item.price }}
+                      <v-btn
+                        small
+                        color="success"
+                        @click="() => downloadCSV(item)"
+                        >Download
+                        <v-icon small class="ml-1" color="white"
+                          >mdi-microsoft-excel</v-icon
+                        ></v-btn
+                      >
                     </td>
+                    <td>{{ item.user.profile.full_name }}</td>
+                    <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td class="text-right">
                       <v-btn
                         fab
                         x-small
                         depressed
-                        @click="openorderDialog('edit', item)"
+                        @click="openOrder(item)"
                         class="transparent mr-1"
                       >
                         <v-icon small> mdi-pencil </v-icon>
@@ -197,8 +207,35 @@ export default {
       this.getPaginatedItems(this.$route.params.page);
     },
   },
-  computed: {},
   methods: {
+    downloadCSV(item) {
+      // setup json
+      let rawJson = [];
+      item.order_details.map((i) => {
+        rawJson.push({
+          type: "Item",
+          sku: i.sku,
+          location_code: i.location ? i.location.code : "-",
+          non_foc_quantity: i.non_foc_quantity,
+          foc_quantity: i.foc_quantity,
+          total_quantity: i.total_quantity,
+          unit_of_measure: i.uom ? i.uom : "-",
+          unit_price: i.price,
+          line_price: i.line_price,
+        });
+      });
+
+      // unparse json
+      let csv = this.$papa.unparse(rawJson, {
+        delimiter: ",",
+      });
+
+      // setup csv to download
+      this.$papa.download(
+        csv,
+        item.order_number ? item.order_number : "order-details"
+      );
+    },
     async saveItem() {
       this.loadingOrderDialog = true;
       await axios
@@ -226,16 +263,13 @@ export default {
           this.loadingOrderDialog = false;
         });
     },
-    openorderDialog(title, obj = null) {
-      this.orderDialogData = {};
-      this.orderDialog = {
-        status: true,
-        title: title,
-      };
-      if (obj) {
-        console.log("obj", obj);
-        this.orderDialogData = Object.assign({}, obj);
-      }
+    openOrder(obj) {
+      this.$router.push({
+        name: "EditOrder",
+        params: {
+          ordernum: obj.order_number,
+        },
+      });
     },
     openImportPage() {
       this.$router.push({
