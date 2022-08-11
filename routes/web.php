@@ -91,7 +91,8 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
      * Orders
      */
     Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
-    Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
+    Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.page.paginated');
+    Route::get('/orders/get/paginated', [OrderController::class, 'getPaginatedOrdersForAdmin'])->name('orders.get.paginated');
 });
 
 
@@ -114,12 +115,12 @@ Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], functio
     Route::post('/order/create', [OrderController::class, 'createOrder'])->name('order.create');
     Route::get('/order/get/{ordernum}', [OrderController::class, 'getSingleOrder'])->name('order.get.single.order');
     Route::get('/order/edit/{ordernum}', [DashboardController::class, 'dashboard'])->name('order.edit');
-    Route::get('/order-form', [DashboardController::class, 'dashboard'])->name('order.form');
-    Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
+    // Route::get('/order-form', [DashboardController::class, 'dashboard'])->name('order.form');
+    Route::get('/orders/{status?}', [DashboardController::class, 'dashboard'])->name('orders');
     Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
 });
 
-Route::get('/orders/get/paginated', [OrderController::class, 'getPaginatedOrders'])->middleware('auth')->name('order.get.paginated');
+Route::get('/orders/get/paginated/{status?}', [OrderController::class, 'getPaginatedOrders'])->middleware('auth')->name('order.get.paginated');
 
 
 Route::post('/order/detail/remove', [OrderController::class, 'removeOrderDetail'])->middleware('auth')->name('order.remove.item');

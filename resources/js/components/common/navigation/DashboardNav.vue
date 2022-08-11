@@ -146,8 +146,20 @@ export default {
         // },
         {
           title: "Orders",
-          icon: "mdi-format-list-checkbox",
-          location: "/staff/orders",
+          icon: "mdi-playlist-edit",
+          location: "/staff/orders/draft",
+          subs: [
+            {
+              title: "Draft",
+              icon: "mdi-clipboard-edit-outline",
+              location: "/staff/orders/draft",
+            },
+            {
+              title: "Submitted",
+              icon: "mdi-check-all",
+              location: "/staff/orders/submitted",
+            },
+          ],
         },
       ],
       adminNav: [

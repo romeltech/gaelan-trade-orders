@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-title :title="'Orders'"></page-title>
+    <page-title :title="$route.params.status"></page-title>
     <v-container class="py-8">
       <v-row v-if="pageLoading == true">
         <v-col cols="12">
@@ -20,9 +20,11 @@
             @click="createOrder"
             >Create Order</v-btn
           >
-          <v-card>
+          <v-card :loading="loadingOrderList" :disabled="loadingOrderList">
             <v-card-title>
-              <h4>Orders</h4>
+              <h4 class="text-capitalize">
+                {{ $route.params.status + " Orders" }}
+              </h4>
               <v-spacer></v-spacer>
               <!-- <v-text-field
                 v-model="search"
@@ -39,7 +41,7 @@
                     <th class="text-left">Order Number</th>
                     <th class="text-left">Location Code</th>
                     <th class="text-left">Submitted by</th>
-                    <th class="text-left">Submitted date</th>
+                    <th class="text-left">Updated date</th>
                     <th class="text-left">Order Details</th>
                     <th class="text-right">Action</th>
                   </tr>
@@ -199,6 +201,7 @@ export default {
 
       pageLoading: true,
       order_list: [],
+      loadingOrderList: false,
 
       sbOptions: {},
       orderDialog: {
@@ -305,10 +308,20 @@ export default {
       });
     },
     onPageChange() {
-      this.$router.push("/orders/page/" + this.page).catch((err) => {});
+      this.$router
+        .push(
+          "/staff/orders/" + this.$route.params.status + "/page/" + this.page
+        )
+        .catch((err) => {});
     },
     async getPaginatedItems(page) {
-      const response = await axios.get("/orders/get/paginated?page=" + page);
+      this.loadingOrderList = true;
+      const response = await axios.get(
+        "/orders/get/paginated/" + this.$route.params.status + "?page=" + page
+      );
+      if (response.data) {
+        this.loadingOrderList = false;
+      }
       this.order_list = Object.assign([], response.data.data);
       this.page = response.data.current_page;
       this.pageCount = response.data.last_page;
@@ -319,6 +332,7 @@ export default {
     this.getPaginatedItems(this.$route.params.page).then(() => {
       this.pageLoading = false;
     });
+    console.log(this.$route.params.status);
   },
 };
 </script>

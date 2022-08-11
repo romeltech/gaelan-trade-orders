@@ -16,13 +16,16 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function getPaginatedOrders()
+    public function getPaginatedOrdersForAdmin()
     {
-        if( auth()->user()->role == "admin"){
-            $orders = Order::where('status', 'submitted')->latest()->with('user.profile', 'location', 'order_details')->paginate(10);
-        }else{
-            $orders = Order::latest()->with('user.profile', 'location', 'order_details')->paginate(10);
-        }
+        $orders = Order::where('status', 'submitted')->latest()->with('user.profile', 'location', 'order_details')->paginate(10);
+        return response()->json($orders, 200);
+    }
+
+
+    public function getPaginatedOrders($status = "draft")
+    {
+        $orders = Order::where('status', $status)->latest()->with('user.profile', 'location', 'order_details')->paginate(10);
         return response()->json($orders, 200);
     }
 

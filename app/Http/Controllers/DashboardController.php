@@ -33,7 +33,7 @@ class DashboardController extends Controller
         if($role == 'admin' || $role == 'editor'){
             return redirect('d/users');
         }else if($role == 'staff'){
-            return redirect('staff/request-form');
+            return redirect('staff/orders/draft');
         }else{
             // other roles
         }

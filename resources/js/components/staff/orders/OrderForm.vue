@@ -89,7 +89,7 @@
         class="mr-2"
         text
         :loading="loadingSaveLater"
-        @click="() => updateOrder('draft')"
+        @click="() => updateOrder('draft', false, true)"
       >
         save as draft
       </v-btn>
@@ -97,7 +97,7 @@
         v-if="orderObj.status == 'draft'"
         class="primary"
         :loading="loadingSubmit"
-        @click="() => updateOrder('submitted')"
+        @click="() => updateOrder('submitted', false, true)"
         >submit</v-btn
       >
     </div>
@@ -173,7 +173,7 @@
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
-                rules="required|numeric|alpha_num|min_value:0"
+                rules="required|numeric|min_value:1"
                 name="Total Quantity"
               >
                 <v-text-field
@@ -184,6 +184,8 @@
                   label="Total Quantity*"
                   :error-messages="errors"
                   required
+                  persistent-hint
+                  hint="Total quantity is the sum of FoC and Non-FoC quantities."
                 ></v-text-field>
               </ValidationProvider>
               <!-- <ValidationProvider
@@ -242,6 +244,7 @@
                 </v-btn>
                 <v-btn
                   class="primary"
+                  :disabled="!valid"
                   :loading="loadingDialogOrder"
                   @click="addItem"
                   >{{ dialogOrderBtn }}</v-btn
@@ -367,7 +370,7 @@ export default {
       };
       console.log("this.toRemove", this.toRemove);
     },
-    async updateOrder(status = "draft", emmit = true) {
+    async updateOrder(status = "draft", emmit = true, redirect = false) {
       if (status == "draft") {
         this.loadingSaveLater = true;
       } else {
@@ -378,11 +381,23 @@ export default {
         status: status,
         location_id: this.orderData.location_id,
       };
+
+      console.log("status", status);
+      console.log("emmit", emmit);
+      console.log("redirect", redirect);
       await axios
         .post("/order/update", data)
         .then((response) => {
           this.loadingSaveLater = false;
           this.loadingSubmit = false;
+          if (redirect == true) {
+            this.$router.push({
+              name: "StaffOrders",
+              params: {
+                status: status,
+              },
+            });
+          }
           if (emmit == true) {
             this.$emit("saved", true);
           }
@@ -403,7 +418,7 @@ export default {
         item_name: null,
         non_foc_quantity: 0,
         foc_quantity: 0,
-        total_quantity: null,
+        total_quantity: 0,
         oum: null,
         price: null,
         line_price: null,
@@ -485,6 +500,7 @@ export default {
       this.loadingDialogOrder = true;
       this.orderData.order_number = this.$route.params.ordernum;
       this.orderData.order_id = this.orderObj.id;
+      console.log("saveItem", this.orderData);
       await axios
         .post("/staff/order/add-item", this.orderData)
         .then((response) => {

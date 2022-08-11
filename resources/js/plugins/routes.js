@@ -17,7 +17,7 @@ import AdminOrders from "../components/admin/orders/AdminOrders";
 import OrderForm from "../components/staff/orders/OrderForm";
 import NewOrder from "../components/staff/orders/NewOrder";
 import EditOrder from "../components/staff/orders/EditOrder";
-import Orders from "../components/common/orders/Orders";
+import Orders from "../components/staff/orders/Orders";
 export const routes = [
     /**
      * Admin Pages
@@ -109,20 +109,31 @@ export const routes = [
         component: EditOrder,
         name: "EditOrder"
     },
-    {
-        path: "/staff/order-form",
-        component: OrderForm,
-        name: "OrderForm"
-    },
+    // {
+    //     path: "/staff/order-form",
+    //     component: OrderForm,
+    //     name: "OrderForm"
+    // },
 
     /**
      * Orders
      */
+    // {
+    //     path: "/staff/orders",
+    //     component: Orders,
+    //     name: "Orders"
+    // },
     {
-        path: "/staff/orders",
+        path: "/staff/orders/:status?",
         component: Orders,
-        name: "Orders"
+        name: "StaffOrders"
     },
+    {
+        path: "/staff/orders/:status/page/:page",
+        component: Orders,
+        name: "PaginatedStaffOrders"
+    },
+
 
     /**
      * Admin - Orders
