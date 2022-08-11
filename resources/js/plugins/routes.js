@@ -13,11 +13,16 @@ import ImportLocation from "../components/admin/locations/ImportLocation";
 
 import AdminOrders from "../components/admin/orders/AdminOrders";
 
-
-import OrderForm from "../components/staff/orders/OrderForm";
 import NewOrder from "../components/staff/orders/NewOrder";
 import EditOrder from "../components/staff/orders/EditOrder";
 import Orders from "../components/staff/orders/Orders";
+
+// Vuex Store
+import store from "../store";
+let auth_user = store.state.authUser;
+let admin_access = ["admin"];
+let staff_access = ["staff"];
+
 export const routes = [
     /**
      * Admin Pages
@@ -45,17 +50,32 @@ export const routes = [
     {
         path: "/d/users",
         component: Users,
-        name: "Users"
+        name: "Users",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/user/new",
         component: NewUser,
-        name: "NewUser"
+        name: "NewUser",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/user/edit/:id",
         component: EditUser,
-        name: "EditUser"
+        name: "EditUser",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
 
     /**
@@ -64,17 +84,32 @@ export const routes = [
     {
         path: "/d/items",
         component: Items,
-        name: "Items"
+        name: "Items",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/items/import",
         component: ImportItem,
-        name: "ImportItem"
+        name: "ImportItem",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/items/page/:page",
         component: Items,
-        name: "PaginatedItems"
+        name: "PaginatedItems",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
 
     /**
@@ -83,17 +118,32 @@ export const routes = [
     {
         path: "/d/locations",
         component: Locations,
-        name: "Locations"
+        name: "Locations",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/locations/import",
         component: ImportLocation,
-        name: "ImportLocation"
+        name: "ImportLocation",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/locations/page/:page",
         component: Locations,
-        name: "PaginatedLocations"
+        name: "PaginatedLocations",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
 
     /**
@@ -102,12 +152,22 @@ export const routes = [
     {
         path: "/staff/order/new",
         component: NewOrder,
-        name: "NewOrder"
+        name: "NewOrder",
+        beforeEnter: (to, from, next) => {
+            staff_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/staff/order/edit/:ordernum",
         component: EditOrder,
-        name: "EditOrder"
+        name: "EditOrder",
+        beforeEnter: (to, from, next) => {
+            staff_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     // {
     //     path: "/staff/order-form",
@@ -126,14 +186,23 @@ export const routes = [
     {
         path: "/staff/orders/:status?",
         component: Orders,
-        name: "StaffOrders"
+        name: "StaffOrders",
+        beforeEnter: (to, from, next) => {
+            staff_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/staff/orders/:status/page/:page",
         component: Orders,
-        name: "PaginatedStaffOrders"
+        name: "PaginatedStaffOrders",
+        beforeEnter: (to, from, next) => {
+            staff_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
-
 
     /**
      * Admin - Orders
@@ -141,11 +210,21 @@ export const routes = [
     {
         path: "/d/orders",
         component: AdminOrders,
-        name: "AdminOrders"
+        name: "AdminOrders",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
     },
     {
         path: "/d/orders/page/:page",
         component: AdminOrders,
-        name: "PaginatedAdminOrders"
-    },
+        name: "PaginatedAdminOrders",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
+    }
 ];

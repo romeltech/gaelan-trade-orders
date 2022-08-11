@@ -4,7 +4,7 @@
       <v-row>
         <div class="col-12 col-md-8 mx-auto py-5">
           <v-alert
-            class="elevation-gag pa-5"
+            class="elevation-1 pa-5"
             border="top"
             colored-border
             color="red"
