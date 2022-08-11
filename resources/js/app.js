@@ -9,15 +9,9 @@ require("./bootstrap");
 // window.Vue = require('vue').default;
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from "./store";
 import { routes } from "./plugins/routes";
 import vuetify from "./plugins/vuetify";
-
-/**
- * Pinia
- */
-import { createPinia, PiniaVuePlugin } from "pinia";
-Vue.use(PiniaVuePlugin);
-const pinia = createPinia();
 
 /**
  * Vue Router
@@ -123,57 +117,47 @@ Vue.component(
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-import { mapStores, mapState } from "pinia";
-import { useAuthUserStore } from "./stores/authUser";
-const app = new Vue({
-    vuetify,
-    pinia,
-    router,
-    data() {
-        return {
-            isLoading: true,
-            loginValid: true,
-            loginEmail: "",
-            loginEmailrules: [
-                value => !!value || "Required"
-                // value => /.+@.+\..+/.test(value) || "E-mail must be valid"
-            ],
-            loginPassword: "",
-            loginPasswordrules: [
-                value => !!value || "Required",
-                value =>
-                    (value && value.length > 8) ||
-                    "Password must be atleast 8 characters"
-            ]
-        };
-    },
-    watch: {
-        isLoading: function(newVal, oldVal) {
-            this.isLoading = newVal;
-        }
-    },
-    computed: {
-        ...mapState(useAuthUserStore, ["authUserObj"]),
-        ...mapStores(useAuthUserStore)
-    },
-    methods: {
-        loginValidate() {
-            if (this.$refs.form.validate()) {
-                this.snackbar = true;
+store.dispatch("fetchAuthUser").then(() => {
+    const app = new Vue({
+        vuetify,
+        store,
+        router,
+        data() {
+            return {
+                isLoading: true,
+                loginValid: true,
+                loginEmail: "",
+                loginEmailrules: [
+                    value => !!value || "Required"
+                    // value => /.+@.+\..+/.test(value) || "E-mail must be valid"
+                ],
+                loginPassword: "",
+                loginPasswordrules: [
+                    value => !!value || "Required",
+                    value =>
+                        (value && value.length > 8) ||
+                        "Password must be atleast 8 characters"
+                ]
+            };
+        },
+        watch: {
+            isLoading: function(newVal, oldVal) {
+                this.isLoading = newVal;
             }
         },
-        logout: function(event) {
-            event.preventDefault();
-            document.getElementById("logout-form").submit();
-        }
-    },
-    created() {
-        if (Object.keys(this.authUserObj).length == 0) {
-            this.authUserStore.fetchAuthUser().then(() => {
-                this.isLoading = false;
-            });
-        } else {
+        methods: {
+            loginValidate() {
+                if (this.$refs.form.validate()) {
+                    this.snackbar = true;
+                }
+            },
+            logout: function(event) {
+                event.preventDefault();
+                document.getElementById("logout-form").submit();
+            }
+        },
+        created() {
             this.isLoading = false;
         }
-    }
-}).$mount("#app");
+    }).$mount("#app");
+});

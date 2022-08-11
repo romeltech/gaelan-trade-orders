@@ -263,9 +263,8 @@
 </template>
 
 <script>
-import { mapState, mapStores } from "pinia";
-import { useLocationsStore } from "../../../stores/locations";
-import { useItemsStore } from "../../../stores/items";
+import store from "../../../store";
+import { mapActions, mapGetters, mapState } from "vuex";
 import {
   ValidationObserver,
   ValidationProvider,
@@ -338,10 +337,8 @@ export default {
     },
   },
   computed: {
-    ...mapState(useLocationsStore, ["location_list"]),
-    ...mapStores(useLocationsStore),
-    ...mapState(useItemsStore, ["item_list"]),
-    ...mapStores(useItemsStore),
+    ...mapGetters(["all_item_list", "all_location_list"]),
+    ...mapActions(["fetchAllItems", "fetchAllLocations"]),
   },
   methods: {
     confirmRemove() {
@@ -368,7 +365,6 @@ export default {
         loading: false,
         msg: `Are you sure you want to remove ${item.sku} from the list?`,
       };
-      console.log("this.toRemove", this.toRemove);
     },
     async updateOrder(status = "draft", emmit = true, redirect = false) {
       if (status == "draft") {
@@ -381,10 +377,6 @@ export default {
         status: status,
         location_id: this.orderData.location_id,
       };
-
-      console.log("status", status);
-      console.log("emmit", emmit);
-      console.log("redirect", redirect);
       await axios
         .post("/order/update", data)
         .then((response) => {
@@ -423,7 +415,6 @@ export default {
         price: null,
         line_price: null,
       };
-      console.log(this.orderData);
     },
     calculate() {
       // calculate quantity
@@ -452,11 +443,10 @@ export default {
     },
     async setItems() {
       this.loadingItem = true;
-      if (this.itemList.length == 0) {
-        await this.itemsStore.fetchAllItems().then(() => {
-          this.itemList = this.item_list;
+      if (this.all_item_list.length == 0) {
+        await store.dispatch("fetchAllItems").then(() => {
+          this.itemList = this.all_item_list;
           this.loadingItem = false;
-          console.log("fetched");
         });
       } else {
         this.loadingItem = false;
@@ -475,7 +465,6 @@ export default {
           this.orderData = item;
           this.orderData.item_id = item.item_id;
           this.loadingDialogOrder = false;
-          console.log("this.itemList", this.itemList);
         });
       }
     },
@@ -500,7 +489,6 @@ export default {
       this.loadingDialogOrder = true;
       this.orderData.order_number = this.$route.params.ordernum;
       this.orderData.order_id = this.orderObj.id;
-      console.log("saveItem", this.orderData);
       await axios
         .post("/staff/order/add-item", this.orderData)
         .then((response) => {
@@ -515,15 +503,15 @@ export default {
           this.loadingDialogOrder = false;
         });
     },
-    setLocations() {
-      if (this.locationList.length == 0) {
+    async setLocations() {
+      if (this.all_location_list.length == 0) {
         this.loadingLocation = true;
-        this.locationsStore.fetchAllLocations().then(() => {
-          this.locationList = this.location_list;
+        await store.dispatch("fetchAllLocations").then(() => {
+          this.locationList = this.all_location_list;
           this.loadingLocation = false;
         });
       } else {
-        this.locationList = this.location_list;
+        this.locationList = this.all_location_list;
       }
     },
   },

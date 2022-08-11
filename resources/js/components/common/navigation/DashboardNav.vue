@@ -115,8 +115,6 @@
 </template>
 
 <script>
-import { mapState } from "pinia";
-import { useAuthUserStore } from "../../../stores/authUser";
 import NavItem from "./NavItem";
 export default {
   components: {
@@ -124,6 +122,7 @@ export default {
   },
   data() {
     return {
+      auth_user: this.$store.state.authUser.userObject,
       drawer: true,
       menu: false,
       //   commonNav: [
@@ -192,9 +191,6 @@ export default {
         },
       ],
     };
-  },
-  computed: {
-    ...mapState(useAuthUserStore, ["auth_user"]),
   },
   methods: {
     logout: function (event) {

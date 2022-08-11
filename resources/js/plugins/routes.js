@@ -142,5 +142,10 @@ export const routes = [
         path: "/d/orders",
         component: AdminOrders,
         name: "AdminOrders"
-    }
+    },
+    {
+        path: "/d/orders/page/:page",
+        component: AdminOrders,
+        name: "PaginatedAdminOrders"
+    },
 ];

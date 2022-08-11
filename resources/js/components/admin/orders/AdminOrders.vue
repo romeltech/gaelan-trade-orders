@@ -13,7 +13,7 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="py-5">
-          <v-card>
+          <v-card :loading="loadingOrdersTable" :disabled="loadingOrdersTable">
             <v-card-title>
               <h4>Orders</h4>
               <v-spacer></v-spacer>
@@ -212,6 +212,8 @@ export default {
       orderDialogData: {},
 
       loadingERP: [],
+
+      loadingOrdersTable: false,
     };
   },
   watch: {
@@ -305,11 +307,15 @@ export default {
         });
     },
     onPageChange() {
-      this.$router.push("/orders/page/" + this.page).catch((err) => {});
+      this.$router.push("/d/orders/page/" + this.page).catch((err) => {});
     },
     async getPaginatedItems(page) {
+      this.loadingOrdersTable = true;
       const response = await axios.get("/orders/get/paginated?page=" + page);
       this.order_list = Object.assign([], response.data.data);
+      if (response.data) {
+        this.loadingOrdersTable = false;
+      }
       this.page = response.data.current_page;
       this.pageCount = response.data.last_page;
       this.order_list.map((ol) => {
