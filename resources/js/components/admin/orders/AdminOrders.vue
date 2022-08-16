@@ -311,7 +311,7 @@ export default {
     },
     async getPaginatedItems(page) {
       this.loadingOrdersTable = true;
-      const response = await axios.get("/orders/get/paginated?page=" + page);
+      const response = await axios.get("/d/orders/get/paginated?page=" + page);
       this.order_list = Object.assign([], response.data.data);
       if (response.data) {
         this.loadingOrdersTable = false;
