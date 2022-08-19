@@ -15,7 +15,7 @@
         <v-col cols="12" class="py-5">
           <v-card :loading="loadingOrdersTable" :disabled="loadingOrdersTable">
             <v-card-title>
-              <h4>Orders</h4>
+              <h4 class="text-capitalize">{{$route.params.status}} Orders</h4>
               <v-spacer></v-spacer>
               <!-- <v-text-field
                 v-model="search"
@@ -30,7 +30,7 @@
                 <thead>
                   <tr>
                     <th class="text-left">Order Number</th>
-                    <th class="text-left">Location Code</th>
+                    <th class="text-left">Customer Code</th>
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Submitted date</th>
                     <th class="text-left">Order Details</th>
@@ -258,13 +258,14 @@ export default {
         rawJson.push({
           type: "Item",
           sku: i.sku,
-          location_code: i.location ? i.location.code : "-",
+          customer_code: i.location ? i.location.code : "-",
           non_foc_quantity: i.non_foc_quantity,
           foc_quantity: i.foc_quantity,
           total_quantity: i.total_quantity,
           unit_of_measure: i.uom ? i.uom : "-",
           unit_price: i.price,
           line_price: i.line_price,
+          remarks: i.remarks,
         });
       });
 
@@ -307,11 +308,15 @@ export default {
         });
     },
     onPageChange() {
-      this.$router.push("/d/orders/page/" + this.page).catch((err) => {});
+      this.$router
+        .push("/d/orders/" + this.$route.params.status + "/page/" + this.page)
+        .catch((err) => {});
     },
     async getPaginatedItems(page) {
       this.loadingOrdersTable = true;
-      const response = await axios.get("/d/orders/get/paginated?page=" + page);
+      const response = await axios.get(
+        "/d/orders/get/paginated/" + this.$route.params.status + "?page=" + page
+      );
       this.order_list = Object.assign([], response.data.data);
       if (response.data) {
         this.loadingOrdersTable = false;

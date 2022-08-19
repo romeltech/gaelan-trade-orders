@@ -16,9 +16,9 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function getPaginatedOrdersForAdmin()
+    public function getPaginatedOrdersForAdmin($status = "draft")
     {
-        $orders = Order::where('status', 'submitted')->with('user.profile', 'location', 'order_details')->latest()->paginate(10);
+        $orders = Order::where('status', $status)->with('user.profile', 'location', 'order_details')->latest()->paginate(10);
         // $orders = Order::where('status', 'submitted')->paginate(10);
         return response()->json($orders, 200);
     }
@@ -42,6 +42,7 @@ class OrderController extends Controller
             "total_quantity" => $request['total_quantity'],
             "price" => $request['price'],
             "line_price" => $request['line_price'],
+            "remarks" => $request['remarks'],
         );
         // $order->order_details()->updateOrCreate(["order_id" => $request['order_id']], $orderDetailArr);
         $order->order_details()->create($orderDetailArr);
@@ -56,7 +57,10 @@ class OrderController extends Controller
 
     public function updateERPOrder(Request $request)
     {
-        $order = Order::where('id', $request['order_id'])->update(["erp" => $request['erp']]);
+        $order = Order::where('id', $request['order_id'])->update([
+            "status" => $request['erp'] == true ? 'completed' : 'submitted',
+            "erp" => $request['erp']
+        ]);
         return response()->json([
             'message' => "Order has been updated"
         ], 200);
@@ -79,10 +83,15 @@ class OrderController extends Controller
 
     public function createOrder(Request $request)
     {
-        $max = Order::max('id');
+        // $max = Order::max('id');
+        $latestID = Order::latest()->limit(1)->get();
+        $incremental = 1;
+        if(count($latestID) == 1){
+            $incremental = $latestID[0]->id + 1;
+        }
         $order = Order::create([
             'status' => 'draft',
-            'order_number' => auth()->id()."-".date('dmy')."-".$max,
+            'order_number' => auth()->id()."-".date('dmy')."-".$incremental,
             'user_id' => auth()->id()
         ]);
         return response()->json($order, 200);
@@ -108,6 +117,7 @@ class OrderController extends Controller
             'uom' => $request['uom'],
             'price' => $request['price'],
             'line_price' => $request['line_price'],
+            'remarks' => $request['remarks'],
         );
         $order = Order::updateOrCreate(['id' => $request['id']], $orderArr);
         $order->order_details()->create($orderDetailsArr);

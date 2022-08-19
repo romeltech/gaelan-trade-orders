@@ -25,6 +25,7 @@ class CreateOrderDetailsTable extends Migration
             $table->decimal('line_price', 8,2)->nullable();
             $table->foreignId('order_id')->constrained();
             $table->foreignId('item_id')->constrained();
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-title :title="'Locations'"></page-title>
+    <page-title :title="'Customers'"></page-title>
     <v-container class="py-8">
       <v-row v-if="pageLoading == true">
         <v-col cols="12">
@@ -15,15 +15,15 @@
         <v-col cols="12" class="py-5">
           <div class="d-flex mb-5">
             <v-btn class="primary mr-2" @click="openlocationDialog('new', null)"
-              >New Location</v-btn
+              >New Customer</v-btn
             >
             <v-btn @click="openImportPage" class="orange white--text"
-              >Import Location</v-btn
+              >Import Customers</v-btn
             >
           </div>
           <v-card>
             <v-card-title>
-              <h4>Location</h4>
+              <h4>Customer</h4>
               <v-spacer></v-spacer>
               <!-- <v-text-field
                 v-model="search"
@@ -37,7 +37,7 @@
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left">Location Name</th>
+                    <th class="text-left">Customer Name</th>
                     <th class="text-left">Code</th>
                     <th class="text-right">Action</th>
                   </tr>
@@ -88,7 +88,7 @@
       >
         <v-card-title>
           <div class="text-capitalize mb-3">
-            {{ locationDialog.title }} Location
+            {{ locationDialog.title }} Customer
           </div>
         </v-card-title>
         <v-card-text>
@@ -97,16 +97,16 @@
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
-                name="Location Name"
+                name="Customer Name"
               >
                 <v-text-field
                   dense
                   type="text"
                   v-model="locationDialogData.name"
-                  label="Location Name"
+                  label="Customer Name"
                   outlined
                   required
-                  name="Location Name"
+                  name="Customer Name"
                   :error-messages="errors"
                 ></v-text-field>
               </ValidationProvider>
@@ -233,10 +233,10 @@ export default {
       });
     },
     onPageChange() {
-      this.$router.push("/d/locations/page/" + this.page).catch((err) => {});
+      this.$router.push("/d/customers/page/" + this.page).catch((err) => {});
     },
     async getPaginatedLocations(page) {
-      const response = await axios.get("/d/locations/get/all?page=" + page);
+      const response = await axios.get("/d/customers/get/all?page=" + page);
       this.location_list = Object.assign([], response.data.data);
       this.page = response.data.current_page;
       this.pageCount = response.data.last_page;

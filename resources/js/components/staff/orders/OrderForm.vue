@@ -36,6 +36,7 @@
             <!-- <th class="text-left">Unit of Measure</th> -->
             <th class="text-left">Unit Price Excl. VAT</th>
             <th class="text-left">Line Amount Excl. VAT</th>
+            <th class="text-left">Remarks</th>
             <th class="text-right">Action</th>
           </tr>
         </thead>
@@ -49,6 +50,7 @@
             <td>{{ item.total_quantity }}</td>
             <td>{{ item.price }}</td>
             <td>{{ item.line_price }}</td>
+            <td>{{ item.remarks }}</td>
             <td class="text-right">
               <v-btn
                 icon
@@ -232,6 +234,11 @@
                   required
                 ></v-text-field>
               </ValidationProvider>
+              <v-text-field
+                outlined
+                v-model="orderData.remarks"
+                label="Remarks"
+              ></v-text-field>
               <div class="d-flex">
                 <v-spacer></v-spacer>
                 <v-btn
@@ -427,7 +434,7 @@ export default {
       if (this.orderData.price && this.orderData.total_quantity) {
         this.totalPrice =
           parseFloat(this.orderData.price) *
-          parseInt(this.orderData.total_quantity);
+          parseInt(this.orderData.non_foc_quantity);
         this.orderData.line_price = this.totalPrice ? this.totalPrice : null;
       }
     },

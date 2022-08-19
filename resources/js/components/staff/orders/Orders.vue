@@ -39,11 +39,16 @@
                 <thead>
                   <tr>
                     <th class="text-left">Order Number</th>
-                    <th class="text-left">Location Code</th>
+                    <th class="text-left">Customer</th>
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Updated date</th>
                     <th class="text-left">Order Details</th>
-                    <th class="text-right">Action</th>
+                    <th
+                      class="text-right"
+                      v-if="$route.params.status != 'completed'"
+                    >
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody v-if="Object.keys(order_list).length > 0">
@@ -63,7 +68,10 @@
                         ></v-btn
                       >
                     </td>
-                    <td class="text-right">
+                    <td
+                      class="text-right"
+                      v-if="$route.params.status != 'completed'"
+                    >
                       <v-btn
                         fab
                         x-small
@@ -246,13 +254,14 @@ export default {
         rawJson.push({
           type: "Item",
           sku: i.sku,
-          location_code: i.location ? i.location.code : "-",
+          customer_code: i.location ? i.location.code : "-",
           non_foc_quantity: i.non_foc_quantity,
           foc_quantity: i.foc_quantity,
           total_quantity: i.total_quantity,
           unit_of_measure: i.uom ? i.uom : "-",
           unit_price: i.price,
           line_price: i.line_price,
+          remarks: i.remarks,
         });
       });
 

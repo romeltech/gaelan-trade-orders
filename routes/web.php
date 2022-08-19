@@ -82,17 +82,19 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     Route::get('/locations/fetch/all', [LocationController::class, 'getAllLocations'])->name('location.get.all');
 
     Route::post('/location/save', [LocationController::class, 'saveLocation'])->name('location.save');
-    Route::get('/locations/get/all', [LocationController::class, 'getPaginatedLocations'])->name('location.get.paginated');
-    Route::get('/locations/page/{page}', [DashboardController::class, 'dashboard'])->name('location.paginated');
-    Route::get('/locations/import', [DashboardController::class, 'dashboard'])->name('location.import');
-    Route::post('/import/locations', [LocationController::class, 'importLocations'])->name('location.save.import');
+    Route::get('/customers/get/all', [LocationController::class, 'getPaginatedLocations'])->name('location.get.paginated');
+    Route::get('/customers/page/{page}', [DashboardController::class, 'dashboard'])->name('location.paginated');
+    Route::get('/customers/import', [DashboardController::class, 'dashboard'])->name('location.import');
+    Route::post('/import/customers', [LocationController::class, 'importLocations'])->name('location.save.import');
 
     /**
      * Orders
      */
+    Route::get('/orders/{status?}', [DashboardController::class, 'dashboard'])->name('orders');
+    // Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
     Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
     Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.page.paginated');
-    Route::get('/orders/get/paginated', [OrderController::class, 'getPaginatedOrdersForAdmin'])->name('orders.get.paginated');
+    Route::get('/orders/get/paginated/{status?}', [OrderController::class, 'getPaginatedOrdersForAdmin'])->name('orders.get.paginated');
 });
 
 

@@ -22,6 +22,7 @@ import store from "../store";
 let auth_user = store.state.authUser;
 let admin_access = ["admin"];
 let staff_access = ["staff"];
+let staff_admin_access = ["staff", "admin"];
 
 export const routes = [
     /**
@@ -116,7 +117,7 @@ export const routes = [
      * Locations
      */
     {
-        path: "/d/locations",
+        path: "/d/customers",
         component: Locations,
         name: "Locations",
         beforeEnter: (to, from, next) => {
@@ -126,7 +127,7 @@ export const routes = [
         }
     },
     {
-        path: "/d/locations/import",
+        path: "/d/customers/import",
         component: ImportLocation,
         name: "ImportLocation",
         beforeEnter: (to, from, next) => {
@@ -136,7 +137,7 @@ export const routes = [
         }
     },
     {
-        path: "/d/locations/page/:page",
+        path: "/d/customers/page/:page",
         component: Locations,
         name: "PaginatedLocations",
         beforeEnter: (to, from, next) => {
@@ -208,7 +209,7 @@ export const routes = [
      * Admin - Orders
      */
     {
-        path: "/d/orders",
+        path: "/d/orders/:status?",
         component: AdminOrders,
         name: "AdminOrders",
         beforeEnter: (to, from, next) => {
@@ -217,6 +218,26 @@ export const routes = [
                 : next({ name: "NotFoundPage" });
         }
     },
+    // {
+    //     path: "/d/orders/submitted",
+    //     component: AdminOrders,
+    //     name: "AdminOrders",
+    //     beforeEnter: (to, from, next) => {
+    //         admin_access.includes(auth_user.userObject.role) == true
+    //             ? next()
+    //             : next({ name: "NotFoundPage" });
+    //     }
+    // },
+    // {
+    //     path: "/d/orders/completed",
+    //     component: AdminOrdersCompleted,
+    //     name: "AdminOrdersCompleted",
+    //     beforeEnter: (to, from, next) => {
+    //         admin_access.includes(auth_user.userObject.role) == true
+    //             ? next()
+    //             : next({ name: "NotFoundPage" });
+    //     }
+    // },
     {
         path: "/d/orders/page/:page",
         component: AdminOrders,

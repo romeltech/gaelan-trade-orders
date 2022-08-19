@@ -1,23 +1,23 @@
 <template>
   <div>
-    <page-title :title="'Import Locations'"></page-title>
+    <page-title :title="'Import Customers'"></page-title>
     <v-container class="py-8">
       <v-row>
         <div class="col-12">
           <v-card>
-            <v-card-title>Import Locations</v-card-title>
+            <v-card-title>Import Customers</v-card-title>
             <v-divider></v-divider>
             <v-card-text class="pb-10">
               <div class="d-flex align-center">
                 <ImportData
-                  :route="'/d/import/locations'"
+                  :route="'/d/import/customers'"
                   @responded="importResponse"
                 />
                 <v-btn
                   class="ml-2"
                   text
                   color="primary"
-                  :href="`${$baseUrl}/csv/import-location-template.csv`"
+                  :href="`${$baseUrl}/csv/import-customer-template.csv`"
                   download
                   >Download CSV Template
                   <v-icon small class="ml-2">mdi-download</v-icon></v-btn
@@ -43,7 +43,7 @@
                   href="#"
                   class="success--text"
                   @click="() => goToRoute('Locations')"
-                  >Locations</a
+                  >Customers</a
                 >
                 {{ " in... " + countdown }}
               </span>

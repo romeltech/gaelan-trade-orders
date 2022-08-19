@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-title :title="'Items'"></page-title>
+    <page-title :title="'Order'"></page-title>
     <v-container class="py-8">
       <v-row v-if="loadingPage == true">
         <v-col cols="12">

@@ -171,6 +171,18 @@ export default {
           title: "Orders",
           icon: "mdi-format-list-bulleted",
           location: "/d/orders",
+          subs: [
+            {
+              title: "Submitted",
+              icon: "mdi-email-fast",
+              location: "/d/orders/submitted",
+            },
+            {
+              title: "Completed",
+              icon: "mdi-check-all",
+              location: "/d/orders/completed",
+            },
+          ],
         },
         {
           title: "Settings",
@@ -183,9 +195,9 @@ export default {
               location: "/d/items",
             },
             {
-              title: "Locations",
+              title: "Customers",
               icon: "mdi-store",
-              location: "/d/locations",
+              location: "/d/customers",
             },
             {
               title: "Users",
