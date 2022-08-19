@@ -3,7 +3,7 @@
     <v-autocomplete
       v-model="orderData.location_id"
       :items="locationList"
-      label="Pharmacy Location"
+      label="Customer"
       item-text="name"
       item-value="id"
       outlined

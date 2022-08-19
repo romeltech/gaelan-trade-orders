@@ -155,8 +155,13 @@ export default {
             },
             {
               title: "Submitted",
-              icon: "mdi-check-all",
+              icon: "mdi-email-fast",
               location: "/staff/orders/submitted",
+            },
+            {
+              title: "Completed",
+              icon: "mdi-check-all",
+              location: "/staff/orders/completed",
             },
           ],
         },

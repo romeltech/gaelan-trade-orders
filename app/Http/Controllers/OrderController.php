@@ -79,10 +79,10 @@ class OrderController extends Controller
 
     public function createOrder(Request $request)
     {
-
+        $max = Order::max('id');
         $order = Order::create([
             'status' => 'draft',
-            'order_number' => auth()->id()."-".date('Y-mdHis'),
+            'order_number' => auth()->id()."-".date('dmy')."-".$max,
             'user_id' => auth()->id()
         ]);
         return response()->json($order, 200);
