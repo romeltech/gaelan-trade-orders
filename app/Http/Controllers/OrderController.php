@@ -44,8 +44,8 @@ class OrderController extends Controller
             "line_price" => $request['line_price'],
             "remarks" => $request['remarks'],
         );
-        // $order->order_details()->updateOrCreate(["order_id" => $request['order_id']], $orderDetailArr);
-        $order->order_details()->create($orderDetailArr);
+        $order->order_details()->updateOrCreate(["order_id" => $request['order_id']], $orderDetailArr);
+        // $order->order_details()->create($orderDetailArr);
         return response()->json($order, 200);
     }
 

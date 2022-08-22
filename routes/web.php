@@ -113,7 +113,7 @@ Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], functio
     /**
      * Orders
      */
-    Route::post('/order/add-item', [OrderController::class, 'addOrderDetail'])->name('order.add.order.detail');
+    Route::post('/order/save/detail', [OrderController::class, 'addOrderDetail'])->name('order.add.order.detail');
     Route::post('/order/create', [OrderController::class, 'createOrder'])->name('order.create');
     Route::get('/order/get/{ordernum}', [OrderController::class, 'getSingleOrder'])->name('order.get.single.order');
     Route::get('/order/edit/{ordernum}', [DashboardController::class, 'dashboard'])->name('order.edit');

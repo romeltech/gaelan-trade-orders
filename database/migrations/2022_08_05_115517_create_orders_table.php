@@ -17,6 +17,8 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->string('status')->default('draft'); // draft, confirmed
             $table->boolean('erp')->default(false);
+            $table->boolean('is_cash_sale')->default(false);
+            $table->string('cash_sale_customer')->nullable();
             $table->string('order_number')->nullable();
             $table->foreignId('location_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();

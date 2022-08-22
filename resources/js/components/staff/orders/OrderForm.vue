@@ -1,9 +1,27 @@
 <template>
   <div>
+    <div class="mb-2">
+      <div class="text-subtitle-1 textcolor--text mb-2">Cash Sales</div>
+      <v-switch
+        class="ma-0"
+        inset
+        style="max-width: 120px"
+        v-model="switchCashSales"
+        :color="`${switchCashSales == true ? 'success' : 'grey'}`"
+        :label="`${switchCashSales == true ? 'Yes' : 'No'}`"
+      ></v-switch>
+    </div>
+    <v-text-field
+      v-if="switchCashSales == true"
+      outlined
+      v-model="orderData.cash_sale_customer"
+      label="Input Customer"
+    ></v-text-field>
     <v-autocomplete
+      v-else
       v-model="orderData.location_id"
       :items="locationList"
-      label="Customer"
+      label="Select Customer"
       item-text="name"
       item-value="id"
       outlined
@@ -13,11 +31,44 @@
       :loading="loadingLocation"
     >
     </v-autocomplete>
-    <div class="d-flex align-center mb-3">
-      <div class="text-subtitle-1 textcolor--text">Order Details</div>
-      <v-btn @click="() => openAddItem(null, 'add')" class="secondary mx-3"
-        >Add Item</v-btn
-      >
+
+    <div class="mb-3">
+      <div class="text-subtitle-1 textcolor--text mb-2">Order Details</div>
+      <div class="d-flex align-center">
+        <v-btn @click="() => openAddItem(null, 'add')" class="secondary mr-3"
+          >Add Item</v-btn
+        >
+        <v-btn
+          @click="() => addAttachment()"
+          class="open-uploader secondary mr-3"
+          ><v-icon small class="mr-1">mdi-paperclip</v-icon> Attachment</v-btn
+        >
+        <!-- <div class="d-flex align-center">
+          <a href="#" target="_blank" class="mr-1 text-decoration-none"
+            >Preview Attachment</a
+          >
+          <v-icon small color="primary">mdi-open-in-new</v-icon>
+        </div> -->
+        <vue-dropzone
+          class="file-upload"
+          ref="myVueDropzone"
+          id="dropzone"
+          :options="dropzoneOptions"
+          :duplicateCheck="true"
+          :include-styling="false"
+          :useCustomSlot="preview"
+          v-on:vdropzone-file-added="addedFunction"
+          v-on:vdropzone-files-added="addedFunction"
+          v-on:vdropzone-sending="sendingFunction"
+          v-on:vdropzone-drop="dropFunction"
+          v-on:vdropzone-success-multiple="uploadSuccessFuntion"
+          v-on:vdropzone-removed-file="removedFunction"
+          v-on:vdropzone-processingFunction-multiple="processingFunction"
+          v-on:vdropzone-error-multiple="uploadErrorFunction"
+          v-on:vdropzone-duplicate-file="duplicateFileFunction"
+        >
+        </vue-dropzone>
+      </div>
     </div>
     <v-simple-table
       v-if="orderObj.order_details && orderObj.order_details.length > 0"
@@ -107,7 +158,7 @@
     <v-dialog v-model="dialogOrder" persistent max-width="600px">
       <v-card :loading="loadingOrder" :disabled="loadingOrder">
         <v-card-title>
-          <div class="text-capitalize mb-3">Add Item</div>
+          <div class="text-capitalize mb-3">{{ dialogOrderBtn }} Item</div>
         </v-card-title>
         <v-card-text>
           <ValidationObserver ref="order_observer" v-slot="{ valid }">
@@ -270,6 +321,7 @@
 </template>
 
 <script>
+import vueDropzone from "vue2-dropzone";
 import store from "../../../store";
 import { mapActions, mapGetters, mapState } from "vuex";
 import {
@@ -284,11 +336,13 @@ export default {
     },
   },
   components: {
+    vueDropzone,
     ValidationProvider,
     ValidationObserver,
   },
   data() {
     return {
+      switchCashSales: false,
       itemList: [],
       loadingItem: false,
       locationList: [],
@@ -308,6 +362,7 @@ export default {
         oum: null,
         price: null,
         line_price: null,
+        remarks: "",
       },
       orderObj: {},
       totalPrice: null,
@@ -320,6 +375,28 @@ export default {
 
       confirmOptions: {},
       toRemove: {},
+
+      // dropzone
+      preview: true,
+      dropzoneOptions: {
+        url: "/r/save/feedback",
+        thumbnailWidth: 150,
+        thumbnailHeight: 150,
+        uploadMultiple: true,
+        autoProcessQueue: false,
+        maxFiles: 5,
+        parallelUploads: 5,
+        maxFilesize: 5,
+        timeout: 180000,
+        acceptedFiles: ".jpeg,.jpg,.png,.jfif,.pdf",
+        previewTemplate: this.dropzoneTemplate(),
+        clickable: ".open-uploader",
+        headers: {
+          "x-csrf-token": document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content"),
+        },
+      },
     };
   },
   watch: {
@@ -348,6 +425,93 @@ export default {
     ...mapActions(["fetchAllItems", "fetchAllLocations"]),
   },
   methods: {
+    uploadFunction() {
+      this.loading = true;
+      if (this.$refs.myVueDropzone.getQueuedFiles().length === 0) {
+        this.submit();
+      } else {
+        this.$refs.myVueDropzone.processQueue();
+      }
+    },
+    processingFunction() {
+      this.sbOptions = {
+        snackbar: false,
+        type: "",
+        text: "",
+      };
+      this.loading = true;
+    },
+    duplicateFileFunction(e) {
+      console.log(
+        "Duplicated file will not be inserted in upload queue: " + e.name
+      );
+    },
+    dropFunction(e) {
+      e.preventDefault();
+      // console.log(e);
+    },
+    addedFunction(file) {
+      // console.log(file);
+    },
+    removeAllFilesFunction() {
+      this.$refs.myVueDropzone.removeAllFiles();
+      this.preview = true;
+    },
+    removedFunction(file, xhr, formData) {
+      // console.log(formData);
+    },
+    sendingFunction(file, xhr, formData) {
+      this.feedback.type = this.typeValue;
+      this.feedback.item_numbers = JSON.stringify(this.itemNumbersArray);
+      formData.append("feedback", JSON.stringify(this.feedback));
+      //   console.log("formData", formData);
+    },
+    uploadSuccessFuntion(files, response) {
+      this.sbOptions = {
+        status: true,
+        type: "success",
+        text: response.message,
+      };
+      this.resetForm();
+      this.loading = false;
+      this.removeAllFilesFunction();
+    },
+    uploadErrorFunction(files, message, xhr) {
+      this.loading = false;
+      this.sbOptions = {
+        status: true,
+        type: "error",
+        text: "Error uploading file(s)",
+      };
+    },
+    dropzoneTemplate() {
+      return `<div class="dz-preview dz-file-preview d-flex align-center">
+                <div class="dz-details d-flex align-center justify-start mr-3" style="width: 100%">
+                  <div class="px-1 d-flex align-center" style="width: 100%">
+                    <div class="dz-filename mr-2" data-dz-name></div>
+                    <div class="dz-size mr-1" data-dz-size></div>
+                    <div class="error--text" data-dz-errormessage></div>
+                  </div>
+                  <div class="dz-progress d-flex align-center justify-center caption">
+                    <span class="dz-upload" data-dz-uploadprogress></span>
+                  </div>
+                </div>
+                <v-spacer></v-spacer>
+                <button
+                  data-dz-remove
+                  type="button"
+                  class="dz-remove-text mr-auto v-btn v-btn--flat theme--light error--text"
+                >
+                  <span class="v-btn__content">
+                   remove
+                  </span>
+                </button>
+              </div>`;
+    },
+
+    addAttachment() {
+      console.log("attachment");
+    },
     confirmRemove() {
       let data = {
         order_detail_id: this.toRemove.id,
@@ -421,6 +585,7 @@ export default {
         oum: null,
         price: null,
         line_price: null,
+        remarks: "",
       };
     },
     calculate() {
@@ -480,14 +645,17 @@ export default {
         this.orderProp.location_id == null &&
         this.orderData.location_id == null
       ) {
+        console.log("location_id == null");
         this.saveItem();
       } else {
         if (this.orderProp.location_id == this.orderData.location_id) {
           this.saveItem();
+          console.log("orderProp != orderData");
         } else {
+          console.log("update");
           this.loadingDialogOrder = true;
           this.updateOrder(this.orderProp.status, false).then(() => {
-            this.saveItem();
+            this.clearOrderData();
           });
         }
       }
@@ -497,7 +665,7 @@ export default {
       this.orderData.order_number = this.$route.params.ordernum;
       this.orderData.order_id = this.orderObj.id;
       await axios
-        .post("/staff/order/add-item", this.orderData)
+        .post("/staff/order/save/detail", this.orderData)
         .then((response) => {
           this.dialogOrder = false;
           this.loadingDialogOrder = false;
@@ -527,3 +695,85 @@ export default {
   },
 };
 </script>
+
+
+<style lang="scss">
+.loading-sheet {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  bottom: auto;
+  right: auto;
+}
+.file-upload {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  .dz-message {
+    display: none !important;
+    border: 1px dashed #333333;
+    background-color: #eeeeee;
+    width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    // min-height: 200px;
+  }
+  .dz-preview {
+    .dz-details {
+      color: #233464;
+      .dz-filename {
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
+      .dz-size {
+        strong {
+          font-weight: normal !important;
+        }
+      }
+      img {
+        width: 30px;
+        height: auto;
+      }
+    }
+    .dz-remove-text {
+      font-size: 12px;
+    }
+    // &.dz-error.dz-complete {
+    //     background-color: #ffebee !important;
+    // }
+  }
+}
+.drop-wrapper {
+  background-color: #fdfdfd;
+  .drop-msg {
+    position: absolute;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+  }
+  .textfield {
+    width: 100%;
+    border-top: 1px solid #f1f1f1;
+    background-color: #ffffff;
+  }
+}
+</style>
