@@ -5339,7 +5339,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return axios.get("/staff/order/get/" + _this.$route.params.ordernum).then(function (response) {
                   _this.loadingOrder = false;
                   _this.orderObj = Object.assign({}, response.data);
-                  console.log("getOrder", _this.orderObj);
                 }).catch(function (err) {
                   console.log(err);
                   _this.loadingOrder = false;
@@ -5859,6 +5858,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -5891,9 +5894,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         order_number: null,
         sku: null,
         item_name: null,
-        non_foc_quantity: null,
-        foc_quantity: null,
-        total_quantity: null,
+        non_foc_quantity: 0,
+        foc_quantity: 0,
+        total_quantity: 0,
         oum: null,
         price: null,
         line_price: null,
@@ -5935,6 +5938,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.orderObj = Object.assign({}, newVal);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
         this.orderData.location_id = this.orderObj.location_id;
+        this.switchCashSales = newVal.is_cash_sale;
+        this.orderData.cash_sale_customer = newVal.cash_sale_customer;
 
         if (this.orderObj.location_id == null) {
           this.setLocations();
@@ -6061,9 +6066,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 data = {
                   order_number: _this2.$route.params.ordernum,
                   status: status,
-                  location_id: _this2.orderData.location_id
+                  location_id: _this2.orderData.location_id,
+                  is_cash_sale: _this2.switchCashSales,
+                  cash_sale_customer: _this2.orderData.cash_sale_customer
                 };
-                _context.next = 7;
+                console.log("updateOrder", data);
+                _context.next = 8;
                 return axios.post("/order/update", data).then(function (response) {
                   _this2.loadingSaveLater = false;
                   _this2.loadingSubmit = false;
@@ -6086,7 +6094,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   _this2.loadingSubmit = false;
                 });
 
-              case 7:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -6095,7 +6103,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }))();
     },
     clearOrderData: function clearOrderData() {
-      this.orderData = _objectSpread(_objectSpread({}, this.orderData), {}, {
+      this.orderData = {
         order_number: null,
         order_id: null,
         sku: null,
@@ -6108,7 +6116,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         price: null,
         line_price: null,
         remarks: ""
-      });
+      };
     },
     calculate: function calculate() {
       // calculate quantity
@@ -6174,7 +6182,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var action = arguments.length > 1 ? arguments[1] : undefined;
 
       if (action == "add") {
-        this.clearOrderData();
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
       } else {
@@ -6191,21 +6198,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     addItem: function addItem() {
       var _this6 = this;
 
-      if (this.orderProp.location_id == null && this.orderData.location_id == null) {
-        console.log("location_id == null");
-        this.saveItem();
-      } else {
-        if (this.orderProp.location_id == this.orderData.location_id) {
-          this.saveItem();
-          console.log("orderProp != orderData");
-        } else {
-          console.log("update");
-          this.loadingDialogOrder = true;
-          this.updateOrder(this.orderProp.status, false).then(function () {
-            _this6.clearOrderData();
-          });
-        }
-      }
+      this.loadingDialogOrder = true;
+      this.updateOrder(this.orderProp.status, false).then(function () {
+        _this6.saveItem();
+      }); //   if (
+      //     this.orderProp.location_id == null &&
+      //     this.orderData.location_id == null
+      //   ) {
+      //     console.log("location_id == null");
+      //     this.saveItem();
+      //   } else {
+      //     if (this.orderProp.location_id == this.orderData.location_id) {
+      //       this.saveItem();
+      //       console.log("orderProp == orderData");
+      //     } else {
+      //       console.log("orderProp != orderData");
+      //       this.loadingDialogOrder = true;
+      //       this.updateOrder(this.orderProp.status, false).then(() => {
+      //         this.saveItem();
+      //       });
+      //     }
+      //   }
     },
     saveItem: function saveItem() {
       var _this7 = this;
@@ -6218,14 +6231,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 _this7.loadingDialogOrder = true;
                 _this7.orderData.order_number = _this7.$route.params.ordernum;
                 _this7.orderData.order_id = _this7.orderObj.id;
-                _context3.next = 5;
+                console.log("saveItem", _this7.orderData);
+                _context3.next = 6;
                 return axios.post("/staff/order/save/detail", _this7.orderData).then(function (response) {
                   _this7.dialogOrder = false;
                   _this7.loadingDialogOrder = false;
 
-                  _this7.clearOrderData();
-
                   _this7.$refs.order_observer.reset();
+
+                  _this7.clearOrderData();
 
                   _this7.$emit("saved", true);
                 }).catch(function (err) {
@@ -6233,7 +6247,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   _this7.loadingDialogOrder = false;
                 });
 
-              case 5:
+              case 6:
               case "end":
                 return _context3.stop();
             }
@@ -12383,7 +12397,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".loading-sheet {\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  bottom: auto;\n  right: auto;\n}\n.file-upload {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n}\n.file-upload .dz-message {\n  display: none !important;\n  border: 1px dashed #333333;\n  background-color: #eeeeee;\n  width: 150px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n}\n.file-upload .dz-preview .dz-details {\n  color: #233464;\n}\n.file-upload .dz-preview .dz-details .dz-filename {\n  font-weight: normal;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  -webkit-box-orient: vertical;\n}\n.file-upload .dz-preview .dz-details .dz-size strong {\n  font-weight: normal !important;\n}\n.file-upload .dz-preview .dz-details img {\n  width: 30px;\n  height: auto;\n}\n.file-upload .dz-preview .dz-remove-text {\n  font-size: 12px;\n}\n.drop-wrapper {\n  background-color: #fdfdfd;\n}\n.drop-wrapper .drop-msg {\n  position: absolute;\n  top: auto;\n  left: 0;\n  right: 0;\n  bottom: 20px;\n  width: 100%;\n  text-align: center;\n}\n.drop-wrapper .textfield {\n  width: 100%;\n  border-top: 1px solid #f1f1f1;\n  background-color: #ffffff;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".gm-item-table td,\n.gm-item-table th {\n  padding-left: 5px !important;\n  padding-right: 5px !important;\n}\n.loading-sheet {\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  bottom: auto;\n  right: auto;\n}\n.file-upload {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n}\n.file-upload .dz-message {\n  display: none !important;\n  border: 1px dashed #333333;\n  background-color: #eeeeee;\n  width: 150px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n}\n.file-upload .dz-preview .dz-details {\n  color: #233464;\n}\n.file-upload .dz-preview .dz-details .dz-filename {\n  font-weight: normal;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  -webkit-box-orient: vertical;\n}\n.file-upload .dz-preview .dz-details .dz-size strong {\n  font-weight: normal !important;\n}\n.file-upload .dz-preview .dz-details img {\n  width: 30px;\n  height: auto;\n}\n.file-upload .dz-preview .dz-remove-text {\n  font-size: 12px;\n}\n.drop-wrapper {\n  background-color: #fdfdfd;\n}\n.drop-wrapper .drop-msg {\n  position: absolute;\n  top: auto;\n  left: 0;\n  right: 0;\n  bottom: 20px;\n  width: 100%;\n  text-align: center;\n}\n.drop-wrapper .textfield {\n  width: 100%;\n  border-top: 1px solid #f1f1f1;\n  background-color: #ffffff;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22989,6 +23003,10 @@ var render = function() {
         1
       ),
       _vm._v(" "),
+      _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
+        _vm._v("Customer")
+      ]),
+      _vm._v(" "),
       _vm.switchCashSales == true
         ? _c("v-text-field", {
             attrs: { outlined: "", label: "Input Customer" },
@@ -23020,19 +23038,19 @@ var render = function() {
             }
           }),
       _vm._v(" "),
-      _c("div", { staticClass: "mb-3" }, [
+      _c("div", {}, [
         _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
           _vm._v("Order Details")
         ]),
         _vm._v(" "),
         _c(
           "div",
-          { staticClass: "d-flex align-center" },
+          { staticClass: "d-flex align-center flex-wrap" },
           [
             _c(
               "v-btn",
               {
-                staticClass: "secondary mr-3",
+                staticClass: "secondary mr-3 mb-3",
                 on: {
                   click: function() {
                     return _vm.openAddItem(null, "add")
@@ -23045,7 +23063,7 @@ var render = function() {
             _c(
               "v-btn",
               {
-                staticClass: "open-uploader secondary mr-3",
+                staticClass: "open-uploader secondary mr-3 mb-3",
                 on: {
                   click: function() {
                     return _vm.addAttachment()
@@ -23090,7 +23108,7 @@ var render = function() {
       _vm._v(" "),
       _vm.orderObj.order_details && _vm.orderObj.order_details.length > 0
         ? _c("v-simple-table", {
-            staticClass: "elevation-0",
+            staticClass: "elevation-0 gm-item-table",
             staticStyle: { border: "1px solid #ddd" },
             scopedSlots: _vm._u(
               [
@@ -23163,7 +23181,10 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "td",
-                                  { staticClass: "text-right" },
+                                  {
+                                    staticClass: "text-right",
+                                    staticStyle: { width: "60px" }
+                                  },
                                   [
                                     _c(
                                       "v-btn",
@@ -23239,7 +23260,7 @@ var render = function() {
               ],
               null,
               false,
-              3455908835
+              2507631150
             )
           })
         : _c(
@@ -23486,7 +23507,7 @@ var render = function() {
                                               attrs: {
                                                 type: "number",
                                                 outlined: "",
-                                                label: "FoC Quantity*",
+                                                label: "FoC Quantity",
                                                 "error-messages": errors
                                               },
                                               on: { change: _vm.calculate },

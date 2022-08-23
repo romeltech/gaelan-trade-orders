@@ -11,6 +11,8 @@
         :label="`${switchCashSales == true ? 'Yes' : 'No'}`"
       ></v-switch>
     </div>
+
+    <div class="text-subtitle-1 textcolor--text mb-2">Customer</div>
     <v-text-field
       v-if="switchCashSales == true"
       outlined
@@ -32,15 +34,17 @@
     >
     </v-autocomplete>
 
-    <div class="mb-3">
+    <div class="">
       <div class="text-subtitle-1 textcolor--text mb-2">Order Details</div>
-      <div class="d-flex align-center">
-        <v-btn @click="() => openAddItem(null, 'add')" class="secondary mr-3"
+      <div class="d-flex align-center flex-wrap">
+        <v-btn
+          @click="() => openAddItem(null, 'add')"
+          class="secondary mr-3 mb-3"
           >Add Item</v-btn
         >
         <v-btn
           @click="() => addAttachment()"
-          class="open-uploader secondary mr-3"
+          class="open-uploader secondary mr-3 mb-3"
           ><v-icon small class="mr-1">mdi-paperclip</v-icon> Attachment</v-btn
         >
         <!-- <div class="d-flex align-center">
@@ -72,7 +76,7 @@
     </div>
     <v-simple-table
       v-if="orderObj.order_details && orderObj.order_details.length > 0"
-      class="elevation-0"
+      class="elevation-0 gm-item-table"
       style="border: 1px solid #ddd"
     >
       <template v-slot:default>
@@ -102,7 +106,7 @@
             <td>{{ item.price }}</td>
             <td>{{ item.line_price }}</td>
             <td>{{ item.remarks }}</td>
-            <td class="text-right">
+            <td class="text-right" style="width: 60px">
               <v-btn
                 icon
                 x-small
@@ -219,7 +223,7 @@
                   type="number"
                   outlined
                   v-model="orderData.foc_quantity"
-                  label="FoC Quantity*"
+                  label="FoC Quantity"
                   :error-messages="errors"
                   @change="calculate"
                 ></v-text-field>
@@ -356,9 +360,9 @@ export default {
         order_number: null,
         sku: null,
         item_name: null,
-        non_foc_quantity: null,
-        foc_quantity: null,
-        total_quantity: null,
+        non_foc_quantity: 0,
+        foc_quantity: 0,
+        total_quantity: 0,
         oum: null,
         price: null,
         line_price: null,
@@ -405,6 +409,8 @@ export default {
         this.orderObj = Object.assign({}, newVal);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
         this.orderData.location_id = this.orderObj.location_id;
+        this.switchCashSales = newVal.is_cash_sale;
+        this.orderData.cash_sale_customer = newVal.cash_sale_customer;
         if (this.orderObj.location_id == null) {
           this.setLocations();
         }
@@ -547,7 +553,10 @@ export default {
         order_number: this.$route.params.ordernum,
         status: status,
         location_id: this.orderData.location_id,
+        is_cash_sale: this.switchCashSales,
+        cash_sale_customer: this.orderData.cash_sale_customer,
       };
+      console.log("updateOrder", data);
       await axios
         .post("/order/update", data)
         .then((response) => {
@@ -573,7 +582,6 @@ export default {
     },
     clearOrderData() {
       this.orderData = {
-        ...this.orderData,
         order_number: null,
         order_id: null,
         sku: null,
@@ -626,7 +634,6 @@ export default {
     },
     openAddItem(item = null, action) {
       if (action == "add") {
-        this.clearOrderData();
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
       } else {
@@ -641,36 +648,41 @@ export default {
       }
     },
     addItem() {
-      if (
-        this.orderProp.location_id == null &&
-        this.orderData.location_id == null
-      ) {
-        console.log("location_id == null");
+      this.loadingDialogOrder = true;
+      this.updateOrder(this.orderProp.status, false).then(() => {
         this.saveItem();
-      } else {
-        if (this.orderProp.location_id == this.orderData.location_id) {
-          this.saveItem();
-          console.log("orderProp != orderData");
-        } else {
-          console.log("update");
-          this.loadingDialogOrder = true;
-          this.updateOrder(this.orderProp.status, false).then(() => {
-            this.clearOrderData();
-          });
-        }
-      }
+      });
+      //   if (
+      //     this.orderProp.location_id == null &&
+      //     this.orderData.location_id == null
+      //   ) {
+      //     console.log("location_id == null");
+      //     this.saveItem();
+      //   } else {
+      //     if (this.orderProp.location_id == this.orderData.location_id) {
+      //       this.saveItem();
+      //       console.log("orderProp == orderData");
+      //     } else {
+      //       console.log("orderProp != orderData");
+      //       this.loadingDialogOrder = true;
+      //       this.updateOrder(this.orderProp.status, false).then(() => {
+      //         this.saveItem();
+      //       });
+      //     }
+      //   }
     },
     async saveItem() {
       this.loadingDialogOrder = true;
       this.orderData.order_number = this.$route.params.ordernum;
       this.orderData.order_id = this.orderObj.id;
+      console.log("saveItem", this.orderData);
       await axios
         .post("/staff/order/save/detail", this.orderData)
         .then((response) => {
           this.dialogOrder = false;
           this.loadingDialogOrder = false;
-          this.clearOrderData();
           this.$refs.order_observer.reset();
+          this.clearOrderData();
           this.$emit("saved", true);
         })
         .catch((err) => {
@@ -698,6 +710,13 @@ export default {
 
 
 <style lang="scss">
+.gm-item-table {
+  td,
+  th {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+}
 .loading-sheet {
   position: absolute;
   height: 100%;

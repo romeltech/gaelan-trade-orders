@@ -54,7 +54,6 @@ export default {
         .then((response) => {
           this.loadingOrder = false;
           this.orderObj = Object.assign({}, response.data);
-          console.log("getOrder", this.orderObj);
         })
         .catch((err) => {
           console.log(err);

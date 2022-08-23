@@ -44,8 +44,13 @@ class OrderController extends Controller
             "line_price" => $request['line_price'],
             "remarks" => $request['remarks'],
         );
-        $order->order_details()->updateOrCreate(["order_id" => $request['order_id']], $orderDetailArr);
-        // $order->order_details()->create($orderDetailArr);
+        if(isset($request['id'])){
+            $order->order_details()->where("id", $request['id'])->update($orderDetailArr);
+        }else{
+            $order->order_details()->create($orderDetailArr);
+        }
+        // $order->order_details()->updateOrCreate(["item_id" => $request['item_id']], $orderDetailArr);
+
         return response()->json($order, 200);
     }
 
@@ -70,12 +75,12 @@ class OrderController extends Controller
     {
         $orderArr = array(
             'status' => $request['status'],
-            'location_id' => $request['location_id'],
+            'is_cash_sale' => $request['is_cash_sale'],
+            'cash_sale_customer' => $request['cash_sale_customer'],
+            'location_id' => $request['is_cash_sale'] == false ? $request['location_id'] : null,
             'user_id' => auth()->id()
         );
         $order = Order::where('order_number', $request['order_number'])->update($orderArr);
-
-
         return response()->json([
             'message' => "Order has been updated"
         ], 200);
