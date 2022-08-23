@@ -9,6 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
 {
+
+    public function searchItem(Request $request)
+    {
+        $itemsQuery = Item::query();
+        $searchParam = $request['keyword'];
+        if($searchParam){
+            $itemsQuery = Item::search($searchParam);
+        }
+        $items = $itemsQuery->get();
+        return response()->json($items, 200);
+    }
+
     public function getAllItems()
     {
         $items = Item::all();

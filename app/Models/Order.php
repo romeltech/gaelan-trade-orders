@@ -2,18 +2,26 @@
 
 namespace App\Models;
 
-use App\Models\User;
 use App\Models\File;
+use App\Models\User;
 use App\Models\Location;
 use App\Models\OrderDetail;
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $guarded = [];
+
+    public function toSearchableArray()
+    {
+        return [
+            'order_number' => $this->order_number
+        ];
+    }
 
     public function order_details()
     {

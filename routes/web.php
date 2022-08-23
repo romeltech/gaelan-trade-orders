@@ -40,6 +40,12 @@ Auth::routes([
 
 Route::get('/', [DashboardController::class, 'home'])->name('home');
 Route::get('/home', [DashboardController::class, 'home'])->name('home');
+
+/**
+ * Search UIem
+ */
+Route::post('/item/search', [ItemController::class, 'searchItem'])->name('search.item');
+
 Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], function(){
 
     /**

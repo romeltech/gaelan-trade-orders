@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $guarded = [];
 
@@ -16,4 +17,11 @@ class Item extends Model
         return $this->belongsTo(OrderDetail::class);
     }
 
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+            'sku' => $this->sku
+        ];
+    }
 }

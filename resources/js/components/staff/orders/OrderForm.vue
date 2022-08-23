@@ -184,12 +184,62 @@
         <v-card-text>
           <ValidationObserver ref="order_observer" v-slot="{ valid }">
             <v-form ref="form">
+              <div class="d-flex align-center flex-wrap mb-5">
+                <v-autocomplete
+                  ref="search_item_list"
+                  v-model="selectedFromSearch"
+                  :items="searchItemList"
+                  :loading="loadingSearch"
+                  :search-input.sync="toSearch"
+                  clearable
+                  hide-details
+                  hide-no-data
+                  item-text="name"
+                  item-value="id"
+                  label="Search SKU or Item Name"
+                  class="mr-2"
+                  outlined
+                >
+                  <!-- hide-selected -->
+                  <template v-slot:selection="{ attr, on, item, selected }">
+                    <v-chip
+                      v-bind="attr"
+                      :input-value="selected"
+                      color="primary"
+                      class="white--text"
+                      v-on="on"
+                    >
+                      <span>{{ item.name + " (" + item.sku + ")" }}</span>
+                    </v-chip>
+                  </template>
+                  <template v-slot:item="{ item }">
+                    <div>{{ item.name + " (" + item.sku + ")" }}</div>
+                  </template>
+                </v-autocomplete>
+                <!-- <v-text-field
+                  class="mr-2"
+                  outlined
+                  v-model="toSearch"
+                  label="Search SKU or Item Name"
+                  hide-details
+                ></v-text-field> -->
+                <!-- <v-btn large class="primary" @click="searchItem">Search</v-btn> -->
+              </div>
+
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
                 name="Item SKU"
               >
-                <v-autocomplete
+                <v-text-field
+                  readonly
+                  outlined
+                  v-model="orderData.sku"
+                  label="Item SKU*"
+                  :error-messages="errors"
+                  required
+                ></v-text-field>
+                <!-- <v-autocomplete
                   v-model="orderData.item_id"
                   :items="itemList"
                   label="Item SKU"
@@ -201,7 +251,7 @@
                   @change="changeItem"
                   :loading="loadingItem"
                 >
-                </v-autocomplete>
+                </v-autocomplete> -->
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
@@ -363,6 +413,11 @@ export default {
   },
   data() {
     return {
+      searchItemList: [],
+      loadingSearch: false,
+      toSearch: "",
+      selectedFromSearch: null,
+
       selectedFile: null,
       switchCashSales: false,
       itemList: [],
@@ -422,6 +477,31 @@ export default {
     };
   },
   watch: {
+    toSearch(val) {
+      if (val && val.length > 3) {
+        this.searchItemList = [];
+        this.loadingSearch = true;
+        let data = {
+          keyword: val,
+        };
+        axios
+          .post("/item/search", data)
+          .then((res) => {
+            this.loadingSearch = false;
+            this.searchItemList = Object.assign([], res.data);
+            this.$refs.search_item_list.isMenuActive = true;
+            console.log(
+              "this.$refs.search_item_list.isMenuActive",
+              this.$refs.search_item_list.isMenuActive
+            );
+            console.log("search results", this.searchItemList);
+          })
+          .catch((err) => {
+            this.loadingSearch = false;
+            console.error(err);
+          });
+      }
+    },
     orderProp: {
       handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
@@ -446,10 +526,33 @@ export default {
     },
   },
   computed: {
+    // resultsArray() {
+    //   return this.searchItemList;
+    // },
     ...mapGetters(["all_item_list", "all_location_list"]),
     ...mapActions(["fetchAllItems", "fetchAllLocations"]),
   },
   methods: {
+    // async searchItem() {
+    //   return;
+    //   if (this.toSearch && this.toSearch.length > 3) {
+    //     this.loadingSearch = true;
+    //     let data = {
+    //       keyword: this.toSearch,
+    //     };
+    //     await axios
+    //       .post("/item/search", data)
+    //       .then((res) => {
+    //         this.loadingSearch = false;
+    //         this.searchItemList = res.data;
+    //         console.log("search results", res);
+    //       })
+    //       .catch((err) => {
+    //         this.loadingSearch = false;
+    //         console.error(err);
+    //       });
+    //   }
+    // },
     uploadFunction() {
       this.loading = true;
       if (this.$refs.myVueDropzone.getQueuedFiles().length === 0) {

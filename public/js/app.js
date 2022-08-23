@@ -5880,6 +5880,56 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5898,6 +5948,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      searchItemList: [],
+      loadingSearch: false,
+      toSearch: "",
+      selectedFromSearch: null,
       selectedFile: null,
       switchCashSales: false,
       itemList: [],
@@ -5952,6 +6006,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   watch: {
+    toSearch: function toSearch(val) {
+      var _this = this;
+
+      if (val && val.length > 3) {
+        this.searchItemList = [];
+        this.loadingSearch = true;
+        var data = {
+          keyword: val
+        };
+        axios.post("/item/search", data).then(function (res) {
+          _this.loadingSearch = false;
+          _this.searchItemList = Object.assign([], res.data);
+          _this.$refs.search_item_list.isMenuActive = true;
+          console.log("this.$refs.search_item_list.isMenuActive", _this.$refs.search_item_list.isMenuActive);
+          console.log("search results", _this.searchItemList);
+        }).catch(function (err) {
+          _this.loadingSearch = false;
+          console.error(err);
+        });
+      }
+    },
     orderProp: {
       handler: function handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
@@ -5978,6 +6053,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_14__.mapGetters)(["all_item_list", "all_location_list"])), (0,vuex__WEBPACK_IMPORTED_MODULE_14__.mapActions)(["fetchAllItems", "fetchAllLocations"])),
   methods: {
+    // async searchItem() {
+    //   return;
+    //   if (this.toSearch && this.toSearch.length > 3) {
+    //     this.loadingSearch = true;
+    //     let data = {
+    //       keyword: this.toSearch,
+    //     };
+    //     await axios
+    //       .post("/item/search", data)
+    //       .then((res) => {
+    //         this.loadingSearch = false;
+    //         this.searchItemList = res.data;
+    //         console.log("search results", res);
+    //       })
+    //       .catch((err) => {
+    //         this.loadingSearch = false;
+    //         console.error(err);
+    //       });
+    //   }
+    // },
     uploadFunction: function uploadFunction() {
       this.loading = true;
 
@@ -6044,17 +6139,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       console.log("attachment");
     },
     confirmRemove: function confirmRemove() {
-      var _this = this;
+      var _this2 = this;
 
       var data = {
         order_detail_id: this.toRemove.id
       };
       this.confirmOptions.loading = true;
       axios.post("/order/detail/remove", data).then(function (response) {
-        _this.$emit("saved", true);
+        _this2.$emit("saved", true);
 
-        _this.confirmOptions.loading = false;
-        _this.confirmOptions.status = false;
+        _this2.confirmOptions.loading = false;
+        _this2.confirmOptions.status = false;
       }).catch(function (err) {
         console.log(err);
       });
@@ -6070,7 +6165,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     updateOrder: function updateOrder() {
       var _arguments = arguments,
-          _this2 = this;
+          _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var status, emmit, redirect;
@@ -6083,28 +6178,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 redirect = _arguments.length > 2 && _arguments[2] !== undefined ? _arguments[2] : false;
 
                 if (status == "draft") {
-                  _this2.loadingSaveLater = true;
+                  _this3.loadingSaveLater = true;
                 } else {
-                  _this2.loadingSubmit = true;
+                  _this3.loadingSubmit = true;
                 }
 
-                _this2.orderData = _objectSpread(_objectSpread({}, _this2.orderData), {}, {
-                  order_number: _this2.$route.params.ordernum,
+                _this3.orderData = _objectSpread(_objectSpread({}, _this3.orderData), {}, {
+                  order_number: _this3.$route.params.ordernum,
                   status: status,
-                  location_id: _this2.orderData.location_id,
-                  is_cash_sale: _this2.switchCashSales,
-                  cash_sale_customer: _this2.orderData.cash_sale_customer
+                  location_id: _this3.orderData.location_id,
+                  is_cash_sale: _this3.switchCashSales,
+                  cash_sale_customer: _this3.orderData.cash_sale_customer
                 });
-                console.log("updateOrder", _this2.orderData);
+                console.log("updateOrder", _this3.orderData);
 
-                if (!(_this2.$refs.myVueDropzone.getQueuedFiles().length > 0)) {
+                if (!(_this3.$refs.myVueDropzone.getQueuedFiles().length > 0)) {
                   _context.next = 11;
                   break;
                 }
 
                 console.log("has File");
 
-                _this2.$refs.myVueDropzone.processQueue();
+                _this3.$refs.myVueDropzone.processQueue();
 
                 _context.next = 14;
                 break;
@@ -6112,12 +6207,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               case 11:
                 console.log("no File");
                 _context.next = 14;
-                return axios.post("/order/update", _this2.orderData).then(function (response) {
-                  _this2.loadingSaveLater = false;
-                  _this2.loadingSubmit = false;
+                return axios.post("/order/update", _this3.orderData).then(function (response) {
+                  _this3.loadingSaveLater = false;
+                  _this3.loadingSubmit = false;
 
                   if (redirect == true) {
-                    _this2.$router.push({
+                    _this3.$router.push({
                       name: "StaffOrders",
                       params: {
                         status: status
@@ -6126,12 +6221,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   }
 
                   if (emmit == true) {
-                    _this2.$emit("saved", true);
+                    _this3.$emit("saved", true);
                   }
                 }).catch(function (err) {
                   console.log(err);
-                  _this2.loadingSaveLater = false;
-                  _this2.loadingSubmit = false;
+                  _this3.loadingSaveLater = false;
+                  _this3.loadingSubmit = false;
                 });
 
               case 14:
@@ -6168,11 +6263,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     changeItem: function changeItem() {
-      var _this3 = this;
+      var _this4 = this;
 
       // set item data
       var selectedItem = this.itemList.filter(function (i) {
-        return i.id == _this3.orderData.item_id;
+        return i.id == _this4.orderData.item_id;
       });
       this.orderData.item_id = selectedItem[0].id;
       this.orderData.item_name = selectedItem[0].name;
@@ -6180,25 +6275,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.orderData.price = selectedItem[0].price;
     },
     setItems: function setItems() {
-      var _this4 = this;
+      var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _this4.loadingItem = true;
-                console.log("this.all_item_list.length", _this4.all_item_list.length);
+                _this5.loadingItem = true;
+                console.log("this.all_item_list.length", _this5.all_item_list.length);
 
-                if (!(_this4.all_item_list.length == 0)) {
+                if (!(_this5.all_item_list.length == 0)) {
                   _context2.next = 7;
                   break;
                 }
 
                 _context2.next = 5;
                 return _store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch("fetchAllItems").then(function () {
-                  _this4.itemList = _this4.all_item_list;
-                  _this4.loadingItem = false;
+                  _this5.itemList = _this5.all_item_list;
+                  _this5.loadingItem = false;
                 });
 
               case 5:
@@ -6206,8 +6301,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 break;
 
               case 7:
-                _this4.itemList = _this4.all_item_list;
-                _this4.loadingItem = false;
+                _this5.itemList = _this5.all_item_list;
+                _this5.loadingItem = false;
 
               case 9:
               case "end":
@@ -6218,7 +6313,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }))();
     },
     openAddItem: function openAddItem() {
-      var _this5 = this;
+      var _this6 = this;
 
       var item = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var action = arguments.length > 1 ? arguments[1] : undefined;
@@ -6232,45 +6327,45 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.dialogOrder = true;
         this.loadingDialogOrder = true;
         this.setItems().then(function () {
-          _this5.orderData = item;
-          _this5.orderData.item_id = item.item_id;
-          _this5.loadingDialogOrder = false;
+          _this6.orderData = item;
+          _this6.orderData.item_id = item.item_id;
+          _this6.loadingDialogOrder = false;
         });
       }
     },
     addItem: function addItem() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.loadingDialogOrder = true;
       this.updateOrder(this.orderProp.status, false).then(function () {
-        _this6.saveItem();
+        _this7.saveItem();
       });
     },
     saveItem: function saveItem() {
-      var _this7 = this;
+      var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _this7.loadingDialogOrder = true;
-                _this7.orderData.order_number = _this7.$route.params.ordernum;
-                _this7.orderData.order_id = _this7.orderObj.id;
-                console.log("saveItem", _this7.orderData);
+                _this8.loadingDialogOrder = true;
+                _this8.orderData.order_number = _this8.$route.params.ordernum;
+                _this8.orderData.order_id = _this8.orderObj.id;
+                console.log("saveItem", _this8.orderData);
                 _context3.next = 6;
-                return axios.post("/staff/order/save/detail", _this7.orderData).then(function (response) {
-                  _this7.dialogOrder = false;
-                  _this7.loadingDialogOrder = false;
+                return axios.post("/staff/order/save/detail", _this8.orderData).then(function (response) {
+                  _this8.dialogOrder = false;
+                  _this8.loadingDialogOrder = false;
 
-                  _this7.$refs.order_observer.reset();
+                  _this8.$refs.order_observer.reset();
 
-                  _this7.clearOrderData();
+                  _this8.clearOrderData();
 
-                  _this7.$emit("saved", true);
+                  _this8.$emit("saved", true);
                 }).catch(function (err) {
                   console.log(err);
-                  _this7.loadingDialogOrder = false;
+                  _this8.loadingDialogOrder = false;
                 });
 
               case 6:
@@ -6282,23 +6377,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }))();
     },
     setLocations: function setLocations() {
-      var _this8 = this;
+      var _this9 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                if (!(_this8.all_location_list.length == 0)) {
+                if (!(_this9.all_location_list.length == 0)) {
                   _context4.next = 6;
                   break;
                 }
 
-                _this8.loadingLocation = true;
+                _this9.loadingLocation = true;
                 _context4.next = 4;
                 return _store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch("fetchAllLocations").then(function () {
-                  _this8.locationList = _this8.all_location_list;
-                  _this8.loadingLocation = false;
+                  _this9.locationList = _this9.all_location_list;
+                  _this9.loadingLocation = false;
                 });
 
               case 4:
@@ -6306,7 +6401,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 break;
 
               case 6:
-                _this8.locationList = _this8.all_location_list;
+                _this9.locationList = _this9.all_location_list;
 
               case 7:
               case "end":
@@ -23458,6 +23553,116 @@ var render = function() {
                               "v-form",
                               { ref: "form" },
                               [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "d-flex align-center flex-wrap mb-5"
+                                  },
+                                  [
+                                    _c("v-autocomplete", {
+                                      ref: "search_item_list",
+                                      staticClass: "mr-2",
+                                      attrs: {
+                                        items: _vm.searchItemList,
+                                        loading: _vm.loadingSearch,
+                                        "search-input": _vm.toSearch,
+                                        clearable: "",
+                                        "hide-details": "",
+                                        "hide-no-data": "",
+                                        "item-text": "name",
+                                        "item-value": "id",
+                                        label: "Search SKU or Item Name",
+                                        outlined: ""
+                                      },
+                                      on: {
+                                        "update:searchInput": function($event) {
+                                          _vm.toSearch = $event
+                                        },
+                                        "update:search-input": function(
+                                          $event
+                                        ) {
+                                          _vm.toSearch = $event
+                                        }
+                                      },
+                                      scopedSlots: _vm._u(
+                                        [
+                                          {
+                                            key: "selection",
+                                            fn: function(ref) {
+                                              var attr = ref.attr
+                                              var on = ref.on
+                                              var item = ref.item
+                                              var selected = ref.selected
+                                              return [
+                                                _c(
+                                                  "v-chip",
+                                                  _vm._g(
+                                                    _vm._b(
+                                                      {
+                                                        staticClass:
+                                                          "white--text",
+                                                        attrs: {
+                                                          "input-value": selected,
+                                                          color: "primary"
+                                                        }
+                                                      },
+                                                      "v-chip",
+                                                      attr,
+                                                      false
+                                                    ),
+                                                    on
+                                                  ),
+                                                  [
+                                                    _c("span", [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          item.name +
+                                                            " (" +
+                                                            item.sku +
+                                                            ")"
+                                                        )
+                                                      )
+                                                    ])
+                                                  ]
+                                                )
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            key: "item",
+                                            fn: function(ref) {
+                                              var item = ref.item
+                                              return [
+                                                _c("div", [
+                                                  _vm._v(
+                                                    _vm._s(
+                                                      item.name +
+                                                        " (" +
+                                                        item.sku +
+                                                        ")"
+                                                    )
+                                                  )
+                                                ])
+                                              ]
+                                            }
+                                          }
+                                        ],
+                                        null,
+                                        true
+                                      ),
+                                      model: {
+                                        value: _vm.selectedFromSearch,
+                                        callback: function($$v) {
+                                          _vm.selectedFromSearch = $$v
+                                        },
+                                        expression: "selectedFromSearch"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
                                 _c("ValidationProvider", {
                                   attrs: {
                                     rules: "required",
@@ -23470,30 +23675,24 @@ var render = function() {
                                         fn: function(ref) {
                                           var errors = ref.errors
                                           return [
-                                            _c("v-autocomplete", {
+                                            _c("v-text-field", {
                                               attrs: {
-                                                items: _vm.itemList,
-                                                label: "Item SKU",
-                                                "item-text": "sku",
-                                                "item-value": "id",
+                                                readonly: "",
                                                 outlined: "",
-                                                loading: _vm.loadingItem
-                                              },
-                                              on: {
-                                                click: _vm.setItems,
-                                                blur: _vm.setItems,
-                                                change: _vm.changeItem
+                                                label: "Item SKU*",
+                                                "error-messages": errors,
+                                                required: ""
                                               },
                                               model: {
-                                                value: _vm.orderData.item_id,
+                                                value: _vm.orderData.sku,
                                                 callback: function($$v) {
                                                   _vm.$set(
                                                     _vm.orderData,
-                                                    "item_id",
+                                                    "sku",
                                                     $$v
                                                   )
                                                 },
-                                                expression: "orderData.item_id"
+                                                expression: "orderData.sku"
                                               }
                                             })
                                           ]
