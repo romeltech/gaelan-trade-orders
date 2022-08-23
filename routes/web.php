@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
@@ -128,3 +129,8 @@ Route::get('/orders/get/paginated/{status?}', [OrderController::class, 'getPagin
 Route::post('/order/detail/remove', [OrderController::class, 'removeOrderDetail'])->middleware('auth')->name('order.remove.item');
 Route::post('/order/update', [OrderController::class, 'updateOrder'])->middleware('auth')->name('order.update');
 Route::post('/order/update-erp', [OrderController::class, 'updateERPOrder'])->middleware('auth')->name('order.update.erp');
+
+/**
+ * Files
+ */
+Route::get('/file/{path}',  [FileController::class, 'showFile'])->name('file.show')->middleware('auth');

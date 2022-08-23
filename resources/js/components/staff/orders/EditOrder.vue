@@ -1,7 +1,7 @@
 <template>
   <div>
     <page-title :title="'Order'"></page-title>
-    <v-container class="py-8">
+    <v-container class="py-8" style="padding-bottom: 100px !important">
       <v-row v-if="loadingPage == true">
         <v-col cols="12">
           <v-skeleton-loader
@@ -54,6 +54,7 @@ export default {
         .then((response) => {
           this.loadingOrder = false;
           this.orderObj = Object.assign({}, response.data);
+          console.log("this.orderObj", this.orderObj);
         })
         .catch((err) => {
           console.log(err);

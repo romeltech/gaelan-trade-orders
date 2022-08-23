@@ -1,39 +1,42 @@
 <template>
   <div>
-    <div class="mb-2">
-      <div class="text-subtitle-1 textcolor--text mb-2">Cash Sales</div>
-      <v-switch
-        class="ma-0"
-        inset
-        style="max-width: 120px"
-        v-model="switchCashSales"
-        :color="`${switchCashSales == true ? 'success' : 'grey'}`"
-        :label="`${switchCashSales == true ? 'Yes' : 'No'}`"
-      ></v-switch>
+    <div class="d-flex align-flex-start flex-wrap">
+      <div style="width: 120px; margin-right: 5px">
+        <div class="text-subtitle-1 textcolor--text mb-2">Cash Sales</div>
+        <v-switch
+          class="ma-0 pt-4"
+          inset
+          style="max-width: 120px"
+          v-model="switchCashSales"
+          :color="`${switchCashSales == true ? 'success' : 'grey'}`"
+          :label="`${switchCashSales == true ? 'Yes' : 'No'}`"
+        ></v-switch>
+      </div>
+      <div style="width: calc(100% - 120px - 5px)">
+        <div class="text-subtitle-1 textcolor--text mb-2">Customer</div>
+        <v-text-field
+          v-if="switchCashSales == true"
+          outlined
+          v-model="orderData.cash_sale_customer"
+          label="Input Customer"
+        ></v-text-field>
+        <v-autocomplete
+          v-else
+          v-model="orderData.location_id"
+          :items="locationList"
+          label="Select Customer"
+          item-text="name"
+          item-value="id"
+          outlined
+          clearable
+          @click="setLocations"
+          @blur="setLocations"
+          :loading="loadingLocation"
+        >
+        </v-autocomplete>
+      </div>
     </div>
-
-    <div class="text-subtitle-1 textcolor--text mb-2">Customer</div>
-    <v-text-field
-      v-if="switchCashSales == true"
-      outlined
-      v-model="orderData.cash_sale_customer"
-      label="Input Customer"
-    ></v-text-field>
-    <v-autocomplete
-      v-else
-      v-model="orderData.location_id"
-      :items="locationList"
-      label="Select Customer"
-      item-text="name"
-      item-value="id"
-      outlined
-      clearable
-      @click="setLocations"
-      @blur="setLocations"
-      :loading="loadingLocation"
-    >
-    </v-autocomplete>
-
+    <v-divider class="mb-5"></v-divider>
     <div class="">
       <div class="text-subtitle-1 textcolor--text mb-2">Order Details</div>
       <div class="d-flex align-center flex-wrap">
@@ -47,12 +50,19 @@
           class="open-uploader secondary mr-3 mb-3"
           ><v-icon small class="mr-1">mdi-paperclip</v-icon> Attachment</v-btn
         >
-        <!-- <div class="d-flex align-center">
-          <a href="#" target="_blank" class="mr-1 text-decoration-none"
-            >Preview Attachment</a
-          >
-          <v-icon small color="primary">mdi-open-in-new</v-icon>
-        </div> -->
+        <div v-if="selectedFile == null" class="mb-3">
+          <div v-if="!orderObj.files">No Attachment</div>
+          <div v-else>
+            <a
+              v-if="orderObj.files[0]"
+              :href="`${$baseUrl}/file/${orderObj.files[0].path}`"
+              target="_blank"
+            >
+              {{ orderObj.files[0].path }}
+              <v-icon small color="primary">mdi-open-in-new</v-icon>
+            </a>
+          </div>
+        </div>
         <vue-dropzone
           class="file-upload"
           ref="myVueDropzone"
@@ -79,6 +89,7 @@
       class="elevation-0 gm-item-table"
       style="border: 1px solid #ddd"
     >
+      <!-- dense -->
       <template v-slot:default>
         <thead>
           <tr>
@@ -89,8 +100,14 @@
             <th class="text-left">FoC Quantity</th>
             <th class="text-left">Total Quantity</th>
             <!-- <th class="text-left">Unit of Measure</th> -->
-            <th class="text-left">Unit Price Excl. VAT</th>
-            <th class="text-left">Line Amount Excl. VAT</th>
+            <th class="text-left">
+              Unit Price <br />
+              <div style="font-size: 10px; line-height: 10px">Excl. VAT</div>
+            </th>
+            <th class="text-left">
+              Line Amount <br />
+              <div style="font-size: 10px; line-height: 10px">Excl. VAT</div>
+            </th>
             <th class="text-left">Remarks</th>
             <th class="text-right">Action</th>
           </tr>
@@ -346,6 +363,7 @@ export default {
   },
   data() {
     return {
+      selectedFile: null,
       switchCashSales: false,
       itemList: [],
       loadingItem: false,
@@ -383,13 +401,13 @@ export default {
       // dropzone
       preview: true,
       dropzoneOptions: {
-        url: "/r/save/feedback",
+        url: "/order/update",
         thumbnailWidth: 150,
         thumbnailHeight: 150,
         uploadMultiple: true,
         autoProcessQueue: false,
-        maxFiles: 5,
-        parallelUploads: 5,
+        maxFiles: 1,
+        parallelUploads: 1,
         maxFilesize: 5,
         timeout: 180000,
         acceptedFiles: ".jpeg,.jpg,.png,.jfif,.pdf",
@@ -407,6 +425,7 @@ export default {
     orderProp: {
       handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
+        console.log("watch", this.orderObj);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
         this.orderData.location_id = this.orderObj.location_id;
         this.switchCashSales = newVal.is_cash_sale;
@@ -434,7 +453,7 @@ export default {
     uploadFunction() {
       this.loading = true;
       if (this.$refs.myVueDropzone.getQueuedFiles().length === 0) {
-        this.submit();
+        this.updateOrder();
       } else {
         this.$refs.myVueDropzone.processQueue();
       }
@@ -457,19 +476,20 @@ export default {
       // console.log(e);
     },
     addedFunction(file) {
+      this.selectedFile = true;
       // console.log(file);
     },
     removeAllFilesFunction() {
       this.$refs.myVueDropzone.removeAllFiles();
       this.preview = true;
+      this.selectedFile = null;
     },
     removedFunction(file, xhr, formData) {
       // console.log(formData);
+      this.selectedFile = null;
     },
     sendingFunction(file, xhr, formData) {
-      this.feedback.type = this.typeValue;
-      this.feedback.item_numbers = JSON.stringify(this.itemNumbersArray);
-      formData.append("feedback", JSON.stringify(this.feedback));
+      formData.append("order", JSON.stringify(this.orderData));
       //   console.log("formData", formData);
     },
     uploadSuccessFuntion(files, response) {
@@ -478,12 +498,15 @@ export default {
         type: "success",
         text: response.message,
       };
-      this.resetForm();
-      this.loading = false;
+      this.loadingSaveLater = false;
+      this.loadingSubmit = false;
       this.removeAllFilesFunction();
+      this.clearOrderData();
+      this.$emit("saved", true);
     },
     uploadErrorFunction(files, message, xhr) {
-      this.loading = false;
+      this.loadingSaveLater = false;
+      this.loadingSubmit = false;
       this.sbOptions = {
         status: true,
         type: "error",
@@ -491,7 +514,7 @@ export default {
       };
     },
     dropzoneTemplate() {
-      return `<div class="dz-preview dz-file-preview d-flex align-center">
+      return `<div class="dz-preview mb-3 dz-file-preview d-flex align-center">
                 <div class="dz-details d-flex align-center justify-start mr-3" style="width: 100%">
                   <div class="px-1 d-flex align-center" style="width: 100%">
                     <div class="dz-filename mr-2" data-dz-name></div>
@@ -549,36 +572,44 @@ export default {
       } else {
         this.loadingSubmit = true;
       }
-      let data = {
+      this.orderData = {
+        ...this.orderData,
         order_number: this.$route.params.ordernum,
         status: status,
         location_id: this.orderData.location_id,
         is_cash_sale: this.switchCashSales,
         cash_sale_customer: this.orderData.cash_sale_customer,
       };
-      console.log("updateOrder", data);
-      await axios
-        .post("/order/update", data)
-        .then((response) => {
-          this.loadingSaveLater = false;
-          this.loadingSubmit = false;
-          if (redirect == true) {
-            this.$router.push({
-              name: "StaffOrders",
-              params: {
-                status: status,
-              },
-            });
-          }
-          if (emmit == true) {
-            this.$emit("saved", true);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          this.loadingSaveLater = false;
-          this.loadingSubmit = false;
-        });
+      console.log("updateOrder", this.orderData);
+
+      if (this.$refs.myVueDropzone.getQueuedFiles().length > 0) {
+        console.log("has File");
+        this.$refs.myVueDropzone.processQueue();
+      } else {
+        console.log("no File");
+        await axios
+          .post("/order/update", this.orderData)
+          .then((response) => {
+            this.loadingSaveLater = false;
+            this.loadingSubmit = false;
+            if (redirect == true) {
+              this.$router.push({
+                name: "StaffOrders",
+                params: {
+                  status: status,
+                },
+              });
+            }
+            if (emmit == true) {
+              this.$emit("saved", true);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            this.loadingSaveLater = false;
+            this.loadingSubmit = false;
+          });
+      }
     },
     clearOrderData() {
       this.orderData = {
@@ -623,12 +654,14 @@ export default {
     },
     async setItems() {
       this.loadingItem = true;
+      console.log("this.all_item_list.length", this.all_item_list.length);
       if (this.all_item_list.length == 0) {
         await store.dispatch("fetchAllItems").then(() => {
           this.itemList = this.all_item_list;
           this.loadingItem = false;
         });
       } else {
+        this.itemList = this.all_item_list;
         this.loadingItem = false;
       }
     },
@@ -636,7 +669,8 @@ export default {
       if (action == "add") {
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
-      } else {
+      } else if (action == "edit") {
+        console.log("here", item);
         this.dialogOrderBtn = "Update";
         this.dialogOrder = true;
         this.loadingDialogOrder = true;
@@ -652,24 +686,6 @@ export default {
       this.updateOrder(this.orderProp.status, false).then(() => {
         this.saveItem();
       });
-      //   if (
-      //     this.orderProp.location_id == null &&
-      //     this.orderData.location_id == null
-      //   ) {
-      //     console.log("location_id == null");
-      //     this.saveItem();
-      //   } else {
-      //     if (this.orderProp.location_id == this.orderData.location_id) {
-      //       this.saveItem();
-      //       console.log("orderProp == orderData");
-      //     } else {
-      //       console.log("orderProp != orderData");
-      //       this.loadingDialogOrder = true;
-      //       this.updateOrder(this.orderProp.status, false).then(() => {
-      //         this.saveItem();
-      //       });
-      //     }
-      //   }
     },
     async saveItem() {
       this.loadingDialogOrder = true;
@@ -711,8 +727,12 @@ export default {
 
 <style lang="scss">
 .gm-item-table {
+  tr:nth-of-type(even) {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
   td,
   th {
+    // font-size: 12px !important;
     padding-left: 5px !important;
     padding-right: 5px !important;
   }
@@ -740,14 +760,6 @@ export default {
   flex-wrap: wrap;
   .dz-message {
     display: none !important;
-    border: 1px dashed #333333;
-    background-color: #eeeeee;
-    width: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    // min-height: 200px;
   }
   .dz-preview {
     .dz-details {

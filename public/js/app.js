@@ -5339,6 +5339,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return axios.get("/staff/order/get/" + _this.$route.params.ordernum).then(function (response) {
                   _this.loadingOrder = false;
                   _this.orderObj = Object.assign({}, response.data);
+                  console.log("this.orderObj", _this.orderObj);
                 }).catch(function (err) {
                   console.log(err);
                   _this.loadingOrder = false;
@@ -5862,6 +5863,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5880,6 +5898,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      selectedFile: null,
       switchCashSales: false,
       itemList: [],
       loadingItem: false,
@@ -5914,13 +5933,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       // dropzone
       preview: true,
       dropzoneOptions: {
-        url: "/r/save/feedback",
+        url: "/order/update",
         thumbnailWidth: 150,
         thumbnailHeight: 150,
         uploadMultiple: true,
         autoProcessQueue: false,
-        maxFiles: 5,
-        parallelUploads: 5,
+        maxFiles: 1,
+        parallelUploads: 1,
         maxFilesize: 5,
         timeout: 180000,
         acceptedFiles: ".jpeg,.jpg,.png,.jfif,.pdf",
@@ -5936,6 +5955,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     orderProp: {
       handler: function handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
+        console.log("watch", this.orderObj);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
         this.orderData.location_id = this.orderObj.location_id;
         this.switchCashSales = newVal.is_cash_sale;
@@ -5962,7 +5982,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.loading = true;
 
       if (this.$refs.myVueDropzone.getQueuedFiles().length === 0) {
-        this.submit();
+        this.updateOrder();
       } else {
         this.$refs.myVueDropzone.processQueue();
       }
@@ -5981,18 +6001,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     dropFunction: function dropFunction(e) {
       e.preventDefault(); // console.log(e);
     },
-    addedFunction: function addedFunction(file) {// console.log(file);
+    addedFunction: function addedFunction(file) {
+      this.selectedFile = true; // console.log(file);
     },
     removeAllFilesFunction: function removeAllFilesFunction() {
       this.$refs.myVueDropzone.removeAllFiles();
       this.preview = true;
+      this.selectedFile = null;
     },
-    removedFunction: function removedFunction(file, xhr, formData) {// console.log(formData);
+    removedFunction: function removedFunction(file, xhr, formData) {
+      // console.log(formData);
+      this.selectedFile = null;
     },
     sendingFunction: function sendingFunction(file, xhr, formData) {
-      this.feedback.type = this.typeValue;
-      this.feedback.item_numbers = JSON.stringify(this.itemNumbersArray);
-      formData.append("feedback", JSON.stringify(this.feedback)); //   console.log("formData", formData);
+      formData.append("order", JSON.stringify(this.orderData)); //   console.log("formData", formData);
     },
     uploadSuccessFuntion: function uploadSuccessFuntion(files, response) {
       this.sbOptions = {
@@ -6000,12 +6022,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         type: "success",
         text: response.message
       };
-      this.resetForm();
-      this.loading = false;
+      this.loadingSaveLater = false;
+      this.loadingSubmit = false;
       this.removeAllFilesFunction();
+      this.clearOrderData();
+      this.$emit("saved", true);
     },
     uploadErrorFunction: function uploadErrorFunction(files, message, xhr) {
-      this.loading = false;
+      this.loadingSaveLater = false;
+      this.loadingSubmit = false;
       this.sbOptions = {
         status: true,
         type: "error",
@@ -6013,7 +6038,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     },
     dropzoneTemplate: function dropzoneTemplate() {
-      return "<div class=\"dz-preview dz-file-preview d-flex align-center\">\n                <div class=\"dz-details d-flex align-center justify-start mr-3\" style=\"width: 100%\">\n                  <div class=\"px-1 d-flex align-center\" style=\"width: 100%\">\n                    <div class=\"dz-filename mr-2\" data-dz-name></div>\n                    <div class=\"dz-size mr-1\" data-dz-size></div>\n                    <div class=\"error--text\" data-dz-errormessage></div>\n                  </div>\n                  <div class=\"dz-progress d-flex align-center justify-center caption\">\n                    <span class=\"dz-upload\" data-dz-uploadprogress></span>\n                  </div>\n                </div>\n                <v-spacer></v-spacer>\n                <button\n                  data-dz-remove\n                  type=\"button\"\n                  class=\"dz-remove-text mr-auto v-btn v-btn--flat theme--light error--text\"\n                >\n                  <span class=\"v-btn__content\">\n                   remove\n                  </span>\n                </button>\n              </div>";
+      return "<div class=\"dz-preview mb-3 dz-file-preview d-flex align-center\">\n                <div class=\"dz-details d-flex align-center justify-start mr-3\" style=\"width: 100%\">\n                  <div class=\"px-1 d-flex align-center\" style=\"width: 100%\">\n                    <div class=\"dz-filename mr-2\" data-dz-name></div>\n                    <div class=\"dz-size mr-1\" data-dz-size></div>\n                    <div class=\"error--text\" data-dz-errormessage></div>\n                  </div>\n                  <div class=\"dz-progress d-flex align-center justify-center caption\">\n                    <span class=\"dz-upload\" data-dz-uploadprogress></span>\n                  </div>\n                </div>\n                <v-spacer></v-spacer>\n                <button\n                  data-dz-remove\n                  type=\"button\"\n                  class=\"dz-remove-text mr-auto v-btn v-btn--flat theme--light error--text\"\n                >\n                  <span class=\"v-btn__content\">\n                   remove\n                  </span>\n                </button>\n              </div>";
     },
     addAttachment: function addAttachment() {
       console.log("attachment");
@@ -6048,7 +6073,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var status, emmit, redirect, data;
+        var status, emmit, redirect;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -6063,16 +6088,31 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   _this2.loadingSubmit = true;
                 }
 
-                data = {
+                _this2.orderData = _objectSpread(_objectSpread({}, _this2.orderData), {}, {
                   order_number: _this2.$route.params.ordernum,
                   status: status,
                   location_id: _this2.orderData.location_id,
                   is_cash_sale: _this2.switchCashSales,
                   cash_sale_customer: _this2.orderData.cash_sale_customer
-                };
-                console.log("updateOrder", data);
-                _context.next = 8;
-                return axios.post("/order/update", data).then(function (response) {
+                });
+                console.log("updateOrder", _this2.orderData);
+
+                if (!(_this2.$refs.myVueDropzone.getQueuedFiles().length > 0)) {
+                  _context.next = 11;
+                  break;
+                }
+
+                console.log("has File");
+
+                _this2.$refs.myVueDropzone.processQueue();
+
+                _context.next = 14;
+                break;
+
+              case 11:
+                console.log("no File");
+                _context.next = 14;
+                return axios.post("/order/update", _this2.orderData).then(function (response) {
                   _this2.loadingSaveLater = false;
                   _this2.loadingSubmit = false;
 
@@ -6094,7 +6134,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   _this2.loadingSubmit = false;
                 });
 
-              case 8:
+              case 14:
               case "end":
                 return _context.stop();
             }
@@ -6148,26 +6188,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             switch (_context2.prev = _context2.next) {
               case 0:
                 _this4.loadingItem = true;
+                console.log("this.all_item_list.length", _this4.all_item_list.length);
 
                 if (!(_this4.all_item_list.length == 0)) {
-                  _context2.next = 6;
+                  _context2.next = 7;
                   break;
                 }
 
-                _context2.next = 4;
+                _context2.next = 5;
                 return _store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch("fetchAllItems").then(function () {
                   _this4.itemList = _this4.all_item_list;
                   _this4.loadingItem = false;
                 });
 
-              case 4:
-                _context2.next = 7;
+              case 5:
+                _context2.next = 9;
                 break;
 
-              case 6:
+              case 7:
+                _this4.itemList = _this4.all_item_list;
                 _this4.loadingItem = false;
 
-              case 7:
+              case 9:
               case "end":
                 return _context2.stop();
             }
@@ -6184,7 +6226,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (action == "add") {
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
-      } else {
+      } else if (action == "edit") {
+        console.log("here", item);
         this.dialogOrderBtn = "Update";
         this.dialogOrder = true;
         this.loadingDialogOrder = true;
@@ -6201,24 +6244,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.loadingDialogOrder = true;
       this.updateOrder(this.orderProp.status, false).then(function () {
         _this6.saveItem();
-      }); //   if (
-      //     this.orderProp.location_id == null &&
-      //     this.orderData.location_id == null
-      //   ) {
-      //     console.log("location_id == null");
-      //     this.saveItem();
-      //   } else {
-      //     if (this.orderProp.location_id == this.orderData.location_id) {
-      //       this.saveItem();
-      //       console.log("orderProp == orderData");
-      //     } else {
-      //       console.log("orderProp != orderData");
-      //       this.loadingDialogOrder = true;
-      //       this.updateOrder(this.orderProp.status, false).then(() => {
-      //         this.saveItem();
-      //       });
-      //     }
-      //   }
+      });
     },
     saveItem: function saveItem() {
       var _this7 = this;
@@ -12397,7 +12423,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".gm-item-table td,\n.gm-item-table th {\n  padding-left: 5px !important;\n  padding-right: 5px !important;\n}\n.loading-sheet {\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  bottom: auto;\n  right: auto;\n}\n.file-upload {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n}\n.file-upload .dz-message {\n  display: none !important;\n  border: 1px dashed #333333;\n  background-color: #eeeeee;\n  width: 150px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n}\n.file-upload .dz-preview .dz-details {\n  color: #233464;\n}\n.file-upload .dz-preview .dz-details .dz-filename {\n  font-weight: normal;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  -webkit-box-orient: vertical;\n}\n.file-upload .dz-preview .dz-details .dz-size strong {\n  font-weight: normal !important;\n}\n.file-upload .dz-preview .dz-details img {\n  width: 30px;\n  height: auto;\n}\n.file-upload .dz-preview .dz-remove-text {\n  font-size: 12px;\n}\n.drop-wrapper {\n  background-color: #fdfdfd;\n}\n.drop-wrapper .drop-msg {\n  position: absolute;\n  top: auto;\n  left: 0;\n  right: 0;\n  bottom: 20px;\n  width: 100%;\n  text-align: center;\n}\n.drop-wrapper .textfield {\n  width: 100%;\n  border-top: 1px solid #f1f1f1;\n  background-color: #ffffff;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".gm-item-table tr:nth-of-type(even) {\n  background-color: rgba(0, 0, 0, 0.025);\n}\n.gm-item-table td,\n.gm-item-table th {\n  padding-left: 5px !important;\n  padding-right: 5px !important;\n}\n.loading-sheet {\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  bottom: auto;\n  right: auto;\n}\n.file-upload {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n}\n.file-upload .dz-message {\n  display: none !important;\n}\n.file-upload .dz-preview .dz-details {\n  color: #233464;\n}\n.file-upload .dz-preview .dz-details .dz-filename {\n  font-weight: normal;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  -webkit-box-orient: vertical;\n}\n.file-upload .dz-preview .dz-details .dz-size strong {\n  font-weight: normal !important;\n}\n.file-upload .dz-preview .dz-details img {\n  width: 30px;\n  height: auto;\n}\n.file-upload .dz-preview .dz-remove-text {\n  font-size: 12px;\n}\n.drop-wrapper {\n  background-color: #fdfdfd;\n}\n.drop-wrapper .drop-msg {\n  position: absolute;\n  top: auto;\n  left: 0;\n  right: 0;\n  bottom: 20px;\n  width: 100%;\n  text-align: center;\n}\n.drop-wrapper .textfield {\n  width: 100%;\n  border-top: 1px solid #f1f1f1;\n  background-color: #ffffff;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22771,7 +22797,10 @@ var render = function() {
       _vm._v(" "),
       _c(
         "v-container",
-        { staticClass: "py-8" },
+        {
+          staticClass: "py-8",
+          staticStyle: { "padding-bottom": "100px !important" }
+        },
         [
           _vm.loadingPage == true
             ? _c(
@@ -22975,68 +23004,79 @@ var render = function() {
   return _c(
     "div",
     [
-      _c(
-        "div",
-        { staticClass: "mb-2" },
-        [
-          _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
-            _vm._v("Cash Sales")
-          ]),
-          _vm._v(" "),
-          _c("v-switch", {
-            staticClass: "ma-0",
-            staticStyle: { "max-width": "120px" },
-            attrs: {
-              inset: "",
-              color: "" + (_vm.switchCashSales == true ? "success" : "grey"),
-              label: "" + (_vm.switchCashSales == true ? "Yes" : "No")
-            },
-            model: {
-              value: _vm.switchCashSales,
-              callback: function($$v) {
-                _vm.switchCashSales = $$v
+      _c("div", { staticClass: "d-flex align-flex-start flex-wrap" }, [
+        _c(
+          "div",
+          { staticStyle: { width: "120px", "margin-right": "5px" } },
+          [
+            _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
+              _vm._v("Cash Sales")
+            ]),
+            _vm._v(" "),
+            _c("v-switch", {
+              staticClass: "ma-0 pt-4",
+              staticStyle: { "max-width": "120px" },
+              attrs: {
+                inset: "",
+                color: "" + (_vm.switchCashSales == true ? "success" : "grey"),
+                label: "" + (_vm.switchCashSales == true ? "Yes" : "No")
               },
-              expression: "switchCashSales"
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
-        _vm._v("Customer")
+              model: {
+                value: _vm.switchCashSales,
+                callback: function($$v) {
+                  _vm.switchCashSales = $$v
+                },
+                expression: "switchCashSales"
+              }
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticStyle: { width: "calc(100% - 120px - 5px)" } },
+          [
+            _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
+              _vm._v("Customer")
+            ]),
+            _vm._v(" "),
+            _vm.switchCashSales == true
+              ? _c("v-text-field", {
+                  attrs: { outlined: "", label: "Input Customer" },
+                  model: {
+                    value: _vm.orderData.cash_sale_customer,
+                    callback: function($$v) {
+                      _vm.$set(_vm.orderData, "cash_sale_customer", $$v)
+                    },
+                    expression: "orderData.cash_sale_customer"
+                  }
+                })
+              : _c("v-autocomplete", {
+                  attrs: {
+                    items: _vm.locationList,
+                    label: "Select Customer",
+                    "item-text": "name",
+                    "item-value": "id",
+                    outlined: "",
+                    clearable: "",
+                    loading: _vm.loadingLocation
+                  },
+                  on: { click: _vm.setLocations, blur: _vm.setLocations },
+                  model: {
+                    value: _vm.orderData.location_id,
+                    callback: function($$v) {
+                      _vm.$set(_vm.orderData, "location_id", $$v)
+                    },
+                    expression: "orderData.location_id"
+                  }
+                })
+          ],
+          1
+        )
       ]),
       _vm._v(" "),
-      _vm.switchCashSales == true
-        ? _c("v-text-field", {
-            attrs: { outlined: "", label: "Input Customer" },
-            model: {
-              value: _vm.orderData.cash_sale_customer,
-              callback: function($$v) {
-                _vm.$set(_vm.orderData, "cash_sale_customer", $$v)
-              },
-              expression: "orderData.cash_sale_customer"
-            }
-          })
-        : _c("v-autocomplete", {
-            attrs: {
-              items: _vm.locationList,
-              label: "Select Customer",
-              "item-text": "name",
-              "item-value": "id",
-              outlined: "",
-              clearable: "",
-              loading: _vm.loadingLocation
-            },
-            on: { click: _vm.setLocations, blur: _vm.setLocations },
-            model: {
-              value: _vm.orderData.location_id,
-              callback: function($$v) {
-                _vm.$set(_vm.orderData, "location_id", $$v)
-              },
-              expression: "orderData.location_id"
-            }
-          }),
+      _c("v-divider", { staticClass: "mb-5" }),
       _vm._v(" "),
       _c("div", {}, [
         _c("div", { staticClass: "text-subtitle-1 textcolor--text mb-2" }, [
@@ -23078,6 +23118,42 @@ var render = function() {
               ],
               1
             ),
+            _vm._v(" "),
+            _vm.selectedFile == null
+              ? _c("div", { staticClass: "mb-3" }, [
+                  !_vm.orderObj.files
+                    ? _c("div", [_vm._v("No Attachment")])
+                    : _c("div", [
+                        _vm.orderObj.files[0]
+                          ? _c(
+                              "a",
+                              {
+                                attrs: {
+                                  href:
+                                    _vm.$baseUrl +
+                                    "/file/" +
+                                    _vm.orderObj.files[0].path,
+                                  target: "_blank"
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n            " +
+                                    _vm._s(_vm.orderObj.files[0].path) +
+                                    "\n            "
+                                ),
+                                _c(
+                                  "v-icon",
+                                  { attrs: { small: "", color: "primary" } },
+                                  [_vm._v("mdi-open-in-new")]
+                                )
+                              ],
+                              1
+                            )
+                          : _vm._e()
+                      ])
+                ])
+              : _vm._e(),
             _vm._v(" "),
             _c("vue-dropzone", {
               ref: "myVueDropzone",
@@ -23139,11 +23215,35 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("th", { staticClass: "text-left" }, [
-                            _vm._v("Unit Price Excl. VAT")
+                            _vm._v("\n            Unit Price "),
+                            _c("br"),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticStyle: {
+                                  "font-size": "10px",
+                                  "line-height": "10px"
+                                }
+                              },
+                              [_vm._v("Excl. VAT")]
+                            )
                           ]),
                           _vm._v(" "),
                           _c("th", { staticClass: "text-left" }, [
-                            _vm._v("Line Amount Excl. VAT")
+                            _vm._v("\n            Line Amount "),
+                            _c("br"),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticStyle: {
+                                  "font-size": "10px",
+                                  "line-height": "10px"
+                                }
+                              },
+                              [_vm._v("Excl. VAT")]
+                            )
                           ]),
                           _vm._v(" "),
                           _c("th", { staticClass: "text-left" }, [
@@ -23260,7 +23360,7 @@ var render = function() {
               ],
               null,
               false,
-              2507631150
+              2168627790
             )
           })
         : _c(

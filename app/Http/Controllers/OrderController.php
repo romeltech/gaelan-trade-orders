@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image as Img;
+use Illuminate\Support\Str;
+use App\Models\File;
 
 class OrderController extends Controller
 {
@@ -56,7 +63,7 @@ class OrderController extends Controller
 
     public function getSingleOrder($ordernum)
     {
-        $order = Order::where("order_number", $ordernum)->with('order_details', 'location')->first();
+        $order = Order::where("order_number", $ordernum)->with('order_details', 'location', 'files')->first();
         return response()->json($order, 200);
     }
 
@@ -73,17 +80,106 @@ class OrderController extends Controller
 
     public function updateOrder(Request $request)
     {
-        $orderArr = array(
-            'status' => $request['status'],
-            'is_cash_sale' => $request['is_cash_sale'],
-            'cash_sale_customer' => $request['cash_sale_customer'],
-            'location_id' => $request['is_cash_sale'] == false ? $request['location_id'] : null,
-            'user_id' => auth()->id()
-        );
-        $order = Order::where('order_number', $request['order_number'])->update($orderArr);
+
+        $message = "Order has been updated";
+        $responseCode = 200;
+
+        $idsToSync = array();
+        $fileArray = array();
+        $uploadDate = Carbon::now()->format('YmdHis');
+        $files = Collection::wrap(request()->file('file'));
+        $userStorage = '/uploads';
+        if (!Storage::exists($userStorage)) {
+            Storage::makeDirectory($userStorage, 0755, true);
+        }
+
+        if(request()->file('file')){
+            $orderRequest = json_decode($request['order']);
+        }else{
+            $orderRequest = $request;
+        }
+
+        DB::beginTransaction();
+        try {
+            if(request()->file('file')){
+                $files->each(function ($file, $key) use (&$userStorage, &$fileArray, &$uploadDate) {
+                    $userStorageDir = storage_path() . '/app' . $userStorage;
+                    $fileName = $file->getClientOriginalName();
+                    $title = pathinfo($fileName, PATHINFO_FILENAME);
+                    $extn = strtolower($file->getClientOriginalExtension());
+                    $slugTitle = Str::slug($title, '-');
+                    $path = $slugTitle."-".$uploadDate.".".$extn;
+                    $mime = $file->getClientMimeType();
+
+                    if($extn != 'pdf'){
+                        // File Optimization
+                        $img = Img::make($file);
+                        $img->encode($extn, 50);
+
+                        // Save file to storage directory
+                        $img->save($userStorageDir . '/' . $path);
+                    }else{
+                        $file->move($userStorageDir, $path);
+                    }
+                    $file_type = $extn == 'pdf' ? 'doc' : 'image';
+
+                    // Setup data into array
+                    array_push( $fileArray, array(
+                        'original_name' => $fileName,
+                        'title' => $title,
+                        'disk' => 'local',
+                        'path' => $path,
+                        'file_type' => $file_type,
+                        'mime' => $mime,
+                        'user_id' => auth()->id(),
+                        'created_at' => Carbon::now(),
+                    ));
+                });
+
+                // Insert into database at once
+                // $uploadedFiles = File::insert($fileArray);
+
+                // Recursive create
+                foreach ($fileArray as $singleFile) {
+                    $id = DB::table('files')->insertGetId($singleFile);
+                    array_push($idsToSync, $id);
+                }
+            }
+
+            // $orderArr = array(
+            //     'status' => $request['status'],
+            //     'is_cash_sale' => $request['is_cash_sale'],
+            //     'cash_sale_customer' => $request['is_cash_sale'] == true ? $request['cash_sale_customer'] : "",
+            //     'location_id' => $request['is_cash_sale'] == false ? $request['location_id'] : null,
+            //     'user_id' => auth()->id()
+            // );
+            $orderArr = array(
+                'status' => $orderRequest->status,
+                'is_cash_sale' => $orderRequest->is_cash_sale,
+                'cash_sale_customer' => $orderRequest->is_cash_sale == true ? $orderRequest->cash_sale_customer : "",
+                'location_id' => $orderRequest->is_cash_sale == false ? $orderRequest->location_id : null,
+                'user_id' => auth()->id()
+            );
+            $order = Order::where('order_number', $orderRequest->order_number)->update($orderArr);
+            $theOrder = Order::where('order_number', $orderRequest->order_number)->firstOrFail();
+
+            // Sync files to customer feedback
+            if(request()->file('file')){
+                if($theOrder){
+                    $theOrder->files()->sync($idsToSync);
+                }
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            $responseCode = 500;
+            $message = "Error saving order";
+        }
+
         return response()->json([
-            'message' => "Order has been updated"
-        ], 200);
+            'message' => $message
+        ], $responseCode);
     }
 
     public function createOrder(Request $request)
