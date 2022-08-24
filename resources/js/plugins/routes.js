@@ -17,6 +17,7 @@ import NewOrder from "../components/staff/orders/NewOrder";
 import EditOrder from "../components/staff/orders/EditOrder";
 import Orders from "../components/staff/orders/Orders";
 
+import AccountSettings from "../components/common/user/AccountSettings";
 // Vuex Store
 import store from "../store";
 let auth_user = store.state.authUser;
@@ -247,5 +248,17 @@ export const routes = [
                 ? next()
                 : next({ name: "NotFoundPage" });
         }
+    },
+
+    {
+        path: "/user/account-settings",
+        component: AccountSettings,
+        name: "AccountSettings",
+        beforeEnter: (to, from, next) => {
+            auth_user.userObject.role !== "" ? next()
+                : next({ name: "NotFoundPage" });
+        }
     }
+
+
 ];

@@ -136,6 +136,8 @@ Route::post('/order/detail/remove', [OrderController::class, 'removeOrderDetail'
 Route::post('/order/update', [OrderController::class, 'updateOrder'])->middleware('auth')->name('order.update');
 Route::post('/order/update-erp', [OrderController::class, 'updateERPOrder'])->middleware('auth')->name('order.update.erp');
 
+Route::get('/user/account-settings',  [DashboardController::class, 'dashboard'])->name('user.account.settings')->middleware('auth');
+
 /**
  * Files
  */

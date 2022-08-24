@@ -39,6 +39,7 @@
                   Account Settings
                 </h2>
                 <v-switch
+                  v-if="profile == false"
                   class="mt-0"
                   style="max-width: 120px"
                   v-model="statusSwitch"
@@ -81,6 +82,7 @@
                   name="role"
                 >
                   <v-autocomplete
+                    :disabled="profile == true ? true : false"
                     dense
                     v-model="usersObj.role"
                     :items="rolesArray"
@@ -137,13 +139,13 @@
               </div>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
+                <!-- <v-btn
                   v-if="pagetitle == 'edit'"
                   text
                   color="error"
                   @click="deleteUser()"
                   >delete</v-btn
-                >
+                > -->
                 <v-btn
                   class="ml-2 primary"
                   :loading="loading"
@@ -189,9 +191,14 @@ export default {
       type: String,
       default: "new",
     },
+    profile: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
+      auth_user: this.$store.state.authUser.userObject,
       statusSwitch: true,
       rolesArray: ["admin", "staff"],
       actionSave: this.pagetitle,
@@ -301,6 +308,9 @@ export default {
           });
       }
     },
+  },
+  created() {
+    console.log("auth_user", this.auth_user);
   },
 };
 </script>

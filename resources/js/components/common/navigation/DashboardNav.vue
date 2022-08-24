@@ -65,7 +65,7 @@
       <v-spacer></v-spacer>
       <v-menu
         v-model="menu"
-        :close-on-content-click="false"
+        :close-on-content-click="true"
         :nudge-width="150"
         transition="slide-y-transition"
         offset-y
@@ -103,6 +103,24 @@
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <v-list class="py-3">
+            <v-list-item-group color="primary">
+              <v-list-item :to="'/user/account-settings'">
+                <v-list-item-content>
+                  <v-list-item-title>Account Settings</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+            <!-- <v-list-item :to="'/user/account-settings'">
+              <v-list-item-avatar small>
+                <v-icon small>mdi-account</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Account Settings</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item> -->
           </v-list>
           <v-divider></v-divider>
           <v-card-actions>
