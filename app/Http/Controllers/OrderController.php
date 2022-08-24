@@ -25,7 +25,7 @@ class OrderController extends Controller
 
     public function getPaginatedOrdersForAdmin($status = "draft")
     {
-        $orders = Order::where('status', $status)->with('user.profile', 'location', 'order_details')->latest()->paginate(10);
+        $orders = Order::where('status', $status)->with('user.profile', 'location', 'order_details', 'files')->latest()->paginate(10);
         // $orders = Order::where('status', 'submitted')->paginate(10);
         return response()->json($orders, 200);
     }

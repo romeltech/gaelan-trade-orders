@@ -23,7 +23,7 @@
                     required
                   ></v-text-field>
                 </ValidationProvider>
-                <ValidationProvider v-slot="{ errors }" rules="" name="Ecode">
+                <!-- <ValidationProvider v-slot="{ errors }" rules="" name="Ecode">
                   <v-text-field
                     dense
                     outlined
@@ -31,16 +31,16 @@
                     label="Ecode"
                     :error-messages="errors"
                   ></v-text-field>
-                </ValidationProvider>
+                </ValidationProvider> -->
               </div>
 
               <div>
-                <h2 class="text-capitalize my-3 primary--text">
+                <h2 class="text-capitalize my-3 textcolor--text">
                   Account Settings
                 </h2>
                 <v-switch
-                  v-if="profile == false"
-                  class="mt-0"
+                  v-if="isProfileProp == false"
+                  class="mt-3"
                   style="max-width: 120px"
                   v-model="statusSwitch"
                   :color="`${statusSwitch == true ? 'success' : 'grey'}`"
@@ -52,6 +52,7 @@
                   name="Username"
                 >
                   <v-text-field
+                    :disabled="isProfileProp"
                     autofocus
                     dense
                     outlined
@@ -67,6 +68,7 @@
                   name="Email"
                 >
                   <v-text-field
+                    :disabled="isProfileProp"
                     autocomplete="false"
                     dense
                     outlined
@@ -82,7 +84,7 @@
                   name="role"
                 >
                   <v-autocomplete
-                    :disabled="profile == true ? true : false"
+                    :disabled="isProfileProp"
                     dense
                     v-model="usersObj.role"
                     :items="rolesArray"
@@ -95,6 +97,7 @@
                 </ValidationProvider>
                 <ValidationProvider v-slot="{ errors }" rules="" name="Phone">
                   <v-text-field
+                    :disabled="isProfileProp"
                     dense
                     outlined
                     v-model="usersObj.account_phone"
@@ -149,7 +152,7 @@
                 <v-btn
                   class="ml-2 primary"
                   :loading="loading"
-                  :disabled="!valid"
+                  :disabled="!valid || isProfileProp"
                   @click="submit"
                   >Save</v-btn
                 >
@@ -191,7 +194,7 @@ export default {
       type: String,
       default: "new",
     },
-    profile: {
+    isProfileProp: {
       type: Boolean,
       default: false,
     },

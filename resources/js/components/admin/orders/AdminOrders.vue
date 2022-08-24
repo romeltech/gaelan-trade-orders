@@ -34,6 +34,7 @@
                     <th class="text-left">Customer Code</th>
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Submitted date</th>
+                    <th class="text-left">Attachment</th>
                     <th class="text-left">Order Details</th>
                     <th class="text-right">ERP</th>
                   </tr>
@@ -55,6 +56,23 @@
                     <td>{{ printCustomer(item) }}</td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
+                    <td>
+                      <div v-if="item.files && item.files.length > 0">
+                        <v-chip
+                          small
+                          color="primary"
+                          v-if="item.files[0]"
+                          :href="`${$baseUrl}/file/${item.files[0].path}`"
+                          target="_blank"
+                        >
+                          OPEN
+                          <v-icon class="ml-1" small color="white"
+                            >mdi-open-in-new</v-icon
+                          >
+                        </v-chip>
+                      </div>
+                      <div v-else>-</div>
+                    </td>
                     <td>
                       <v-btn
                         small

@@ -45,43 +45,6 @@
           class="secondary mr-3 mb-3"
           >Add Item</v-btn
         >
-        <v-btn
-          @click="() => addAttachment()"
-          class="open-uploader secondary mr-3 mb-3"
-          ><v-icon small class="mr-1">mdi-paperclip</v-icon> Attachment</v-btn
-        >
-        <div v-if="selectedFile == null" class="mb-3">
-          <div v-if="!orderObj.files">No Attachment</div>
-          <div v-else>
-            <a
-              v-if="orderObj.files[0]"
-              :href="`${$baseUrl}/file/${orderObj.files[0].path}`"
-              target="_blank"
-            >
-              {{ orderObj.files[0].path }}
-              <v-icon small color="primary">mdi-open-in-new</v-icon>
-            </a>
-          </div>
-        </div>
-        <vue-dropzone
-          class="file-upload"
-          ref="myVueDropzone"
-          id="dropzone"
-          :options="dropzoneOptions"
-          :duplicateCheck="true"
-          :include-styling="false"
-          :useCustomSlot="preview"
-          v-on:vdropzone-file-added="addedFunction"
-          v-on:vdropzone-files-added="addedFunction"
-          v-on:vdropzone-sending="sendingFunction"
-          v-on:vdropzone-drop="dropFunction"
-          v-on:vdropzone-success-multiple="uploadSuccessFuntion"
-          v-on:vdropzone-removed-file="removedFunction"
-          v-on:vdropzone-processingFunction-multiple="processingFunction"
-          v-on:vdropzone-error-multiple="uploadErrorFunction"
-          v-on:vdropzone-duplicate-file="duplicateFileFunction"
-        >
-        </vue-dropzone>
       </div>
     </div>
     <v-simple-table
@@ -114,7 +77,6 @@
         <tbody v-if="orderObj.order_details.length > 0">
           <tr v-for="(item, index) in orderDetails" :key="item.id">
             <td>{{ item.sku }}</td>
-            <!-- <td>{{ item.location_code }}</td> -->
             <td>{{ item.non_foc_quantity }}</td>
             <td>{{ item.foc_quantity }}</td>
             <td>{{ item.total_quantity }}</td>
@@ -155,6 +117,45 @@
       No orders to display
     </v-sheet>
     <div class="d-flex align-center mt-5" style="width: 100%">
+      <v-btn
+        :disabled="!has_order"
+        @click="() => addAttachment()"
+        class="open-uploader secondary mr-3 mb-3"
+        ><v-icon small class="mr-1">mdi-paperclip</v-icon> Attachment</v-btn
+      >
+      <div v-if="selectedFile == null" class="mb-3">
+        <div v-if="!orderObj.files">No Attachment</div>
+        <div v-else>
+          <a
+            v-if="orderObj.files[0]"
+            :href="`${$baseUrl}/file/${orderObj.files[0].path}`"
+            target="_blank"
+          >
+            {{ orderObj.files[0].path }}
+            <v-icon small color="primary">mdi-open-in-new</v-icon>
+          </a>
+        </div>
+      </div>
+      <vue-dropzone
+        class="file-upload"
+        ref="myVueDropzone"
+        id="dropzone"
+        :options="dropzoneOptions"
+        :duplicateCheck="true"
+        :include-styling="false"
+        :useCustomSlot="preview"
+        v-on:vdropzone-file-added="addedFunction"
+        v-on:vdropzone-files-added="addedFunction"
+        v-on:vdropzone-sending="sendingFunction"
+        v-on:vdropzone-drop="dropFunction"
+        v-on:vdropzone-success-multiple="uploadSuccessFuntion"
+        v-on:vdropzone-removed-file="removedFunction"
+        v-on:vdropzone-processingFunction-multiple="processingFunction"
+        v-on:vdropzone-error-multiple="uploadErrorFunction"
+        v-on:vdropzone-duplicate-file="duplicateFileFunction"
+      >
+      </vue-dropzone>
+
       <v-spacer></v-spacer>
       <v-btn
         color="primary darken-1"
@@ -167,6 +168,7 @@
       </v-btn>
       <v-btn
         v-if="orderObj.status == 'draft'"
+        :disabled="!has_order"
         class="primary"
         :loading="loadingSubmit"
         @click="() => updateOrder('submitted', false, true)"
@@ -493,6 +495,12 @@ export default {
     },
   },
   computed: {
+    has_order() {
+      return this.orderObj.order_details &&
+        this.orderObj.order_details.length < 1
+        ? false
+        : true;
+    },
     ...mapGetters(["all_item_list", "all_location_list"]),
     ...mapActions(["fetchAllItems", "fetchAllLocations"]),
   },
@@ -797,7 +805,7 @@ export default {
   }
   td,
   th {
-      // font-size: 12px !important;
+    // font-size: 12px !important;
     min-width: 60px !important;
     padding-left: 5px !important;
     padding-right: 5px !important;

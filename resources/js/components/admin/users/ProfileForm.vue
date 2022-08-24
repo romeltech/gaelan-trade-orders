@@ -14,6 +14,7 @@
                 name="Full Name"
               >
                 <v-text-field
+                  :disabled="isProfileProp"
                   dense
                   outlined
                   v-model="profileObj.full_name"
@@ -22,7 +23,7 @@
                   required
                 ></v-text-field>
               </ValidationProvider>
-              <ValidationProvider v-slot="{ errors }" rules="" name="Ecode">
+              <!-- <ValidationProvider v-slot="{ errors }" rules="" name="Ecode">
                 <v-text-field
                   dense
                   outlined
@@ -30,13 +31,13 @@
                   label="Ecode"
                   :error-messages="errors"
                 ></v-text-field>
-              </ValidationProvider>
+              </ValidationProvider> -->
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
                   class="ml-2 primary"
                   :loading="loading"
-                  :disabled="!valid"
+                  :disabled="!valid || isProfileProp"
                   @click="submit"
                   >Save</v-btn
                 >
@@ -71,6 +72,10 @@ export default {
     pagetitle: {
       type: String,
       default: "new",
+    },
+    isProfileProp: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -32,7 +32,7 @@
         v-show="component == 'account'"
         :userdata="userData"
         :pagetitle="'edit'"
-        :profile="true"
+        :is-profile-prop="true"
         @saved="savedResponse"
       ></user-form>
 
@@ -40,6 +40,7 @@
         v-show="component == 'profile'"
         :profiledata="userData.profile"
         :pagetitle="'edit'"
+        :is-profile-prop="true"
         @saved="savedResponse"
       ></profile-form>
     </v-container>
