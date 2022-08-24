@@ -26,19 +26,13 @@
                 {{ $route.params.status + " Orders" }}
               </h4>
               <v-spacer></v-spacer>
-              <!-- <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field> -->
             </v-card-title>
             <v-simple-table>
               <template v-slot:default>
                 <thead>
                   <tr>
                     <th class="text-left">Order Number</th>
+                    <th class="text-left">Cash Sales</th>
                     <th class="text-left">Customer</th>
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Updated date</th>
@@ -54,7 +48,18 @@
                 <tbody v-if="Object.keys(order_list).length > 0">
                   <tr v-for="item in order_list" :key="item.id">
                     <td>{{ item.order_number }}</td>
-                    <td>{{ item.location_id ? item.location.code : "-" }}</td>
+                    <td>
+                      <v-chip
+                        small
+                        :color="`${
+                          item.is_cash_sale == true
+                            ? 'success'
+                            : 'grey lighten-3'
+                        }`"
+                        >{{ item.is_cash_sale == true ? "Yes" : "No" }}</v-chip
+                      >
+                    </td>
+                    <td>{{ printCustomer(item) }}</td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td>
@@ -227,13 +232,23 @@ export default {
     },
   },
   methods: {
+    printCustomer(item) {
+      let customer = "";
+      if (item) {
+        if (item.is_cash_sale == true) {
+          customer = item.cash_sale_customer ? item.cash_sale_customer : "-";
+        } else {
+          customer = item.location_id ? item.location.code : "-";
+        }
+      }
+      return customer;
+    },
     async createOrder() {
       this.loadingCreateOrder = true;
       await axios
         .post("/staff/order/create")
         .then((response) => {
           this.loadingCreateOrder = false;
-          //   console.log(response);
           this.$router.push({
             name: "EditOrder",
             params: {
@@ -254,7 +269,7 @@ export default {
         rawJson.push({
           type: "Item",
           sku: i.sku,
-          customer_code: i.location ? i.location.code : "-",
+          customer_code: item.location ? item.location.code : "-",
           non_foc_quantity: i.non_foc_quantity,
           foc_quantity: i.foc_quantity,
           total_quantity: i.total_quantity,

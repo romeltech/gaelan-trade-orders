@@ -15,10 +15,12 @@
         <div class="col-12">
           <v-card :loading="loadingOrder" :disabled="loadingOrder">
             <v-card-title>
-              <h4 class="textcolor--text">
-                Order Number:
-                {{ orderObj.order_number && orderObj.order_number }}
-              </h4>
+              <div class="textcolor--text d-flex align-center">
+                <div class="mr-1">Order Number:</div>
+                <div class="font-weight-bold">
+                  {{ orderObj.order_number && orderObj.order_number }}
+                </div>
+              </div>
             </v-card-title>
             <v-card-text class="py-3">
               <order-form

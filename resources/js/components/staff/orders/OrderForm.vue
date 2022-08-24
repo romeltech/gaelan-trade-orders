@@ -184,48 +184,36 @@
         <v-card-text>
           <ValidationObserver ref="order_observer" v-slot="{ valid }">
             <v-form ref="form">
-              <div class="d-flex align-center flex-wrap mb-5">
-                <v-autocomplete
-                  ref="search_item_list"
-                  v-model="selectedFromSearch"
-                  :items="searchItemList"
-                  :loading="loadingSearch"
-                  :search-input.sync="toSearch"
-                  clearable
-                  hide-details
-                  hide-no-data
-                  item-text="name"
-                  item-value="id"
-                  label="Search SKU or Item Name"
-                  class="mr-2"
-                  outlined
-                >
-                  <!-- hide-selected -->
-                  <template v-slot:selection="{ attr, on, item, selected }">
-                    <v-chip
-                      v-bind="attr"
-                      :input-value="selected"
-                      color="primary"
-                      class="white--text"
-                      v-on="on"
-                    >
-                      <span>{{ item.name + " (" + item.sku + ")" }}</span>
-                    </v-chip>
-                  </template>
-                  <template v-slot:item="{ item }">
-                    <div>{{ item.name + " (" + item.sku + ")" }}</div>
-                  </template>
-                </v-autocomplete>
-                <!-- <v-text-field
-                  class="mr-2"
-                  outlined
-                  v-model="toSearch"
-                  label="Search SKU or Item Name"
-                  hide-details
-                ></v-text-field> -->
-                <!-- <v-btn large class="primary" @click="searchItem">Search</v-btn> -->
-              </div>
-
+              <v-autocomplete
+                ref="search_item_list"
+                v-model="selectedFromSearch"
+                :items="searchItemList"
+                :loading="loadingSearch"
+                :search-input.sync="toSearch"
+                clearable
+                hide-details
+                hide-no-data
+                item-text="search_name"
+                item-value="id"
+                label="Search SKU or Item Name"
+                class="mb-7"
+                outlined
+                @change="changeSelected"
+                return-object
+                append-icon="mdi-maginify"
+              >
+                <template v-slot:selection="{ attr, on, item, selected }">
+                  <v-chip
+                    v-bind="attr"
+                    :input-value="selected"
+                    color="primary"
+                    class="white--text"
+                    v-on="on"
+                  >
+                    <span>{{ item.name }}</span>
+                  </v-chip>
+                </template>
+              </v-autocomplete>
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
@@ -239,19 +227,6 @@
                   :error-messages="errors"
                   required
                 ></v-text-field>
-                <!-- <v-autocomplete
-                  v-model="orderData.item_id"
-                  :items="itemList"
-                  label="Item SKU"
-                  item-text="sku"
-                  item-value="id"
-                  outlined
-                  @click="setItems"
-                  @blur="setItems"
-                  @change="changeItem"
-                  :loading="loadingItem"
-                >
-                </v-autocomplete> -->
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
@@ -267,34 +242,40 @@
                   required
                 ></v-text-field>
               </ValidationProvider>
-              <ValidationProvider
-                v-slot="{ errors }"
-                rules="numeric|alpha_num|min_value:0"
-                name="Non-FoC Quantity"
-              >
-                <v-text-field
-                  type="number"
-                  outlined
-                  v-model="orderData.non_foc_quantity"
-                  label="Non-FoC Quantity*"
-                  :error-messages="errors"
-                  @change="calculate"
-                ></v-text-field>
-              </ValidationProvider>
-              <ValidationProvider
-                v-slot="{ errors }"
-                rules="numeric|alpha_num|min_value:0"
-                name="FoC Quantity"
-              >
-                <v-text-field
-                  type="number"
-                  outlined
-                  v-model="orderData.foc_quantity"
-                  label="FoC Quantity"
-                  :error-messages="errors"
-                  @change="calculate"
-                ></v-text-field>
-              </ValidationProvider>
+              <div class="row">
+                <div class="col-12 col-md-6">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="numeric|alpha_num|min_value:0"
+                    name="Non-FoC Quantity"
+                  >
+                    <v-text-field
+                      type="number"
+                      outlined
+                      v-model="orderData.non_foc_quantity"
+                      label="Non-FoC Quantity*"
+                      :error-messages="errors"
+                      @change="calculate"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+                <div class="col-12 col-md-6">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="numeric|alpha_num|min_value:0"
+                    name="FoC Quantity"
+                  >
+                    <v-text-field
+                      type="number"
+                      outlined
+                      v-model="orderData.foc_quantity"
+                      label="FoC Quantity"
+                      :error-messages="errors"
+                      @change="calculate"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+              </div>
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required|numeric|min_value:1"
@@ -312,20 +293,6 @@
                   hint="Total quantity is the sum of FoC and Non-FoC quantities."
                 ></v-text-field>
               </ValidationProvider>
-              <!-- <ValidationProvider
-                v-slot="{ errors }"
-                rules="required"
-                name="Unit of Measurement"
-              >
-                <v-text-field
-                  type="text"
-                  outlined
-                  v-model="orderData.total_quantity"
-                  label="Unit of Measurement*"
-                  :error-messages="errors"
-                  required
-                ></v-text-field>
-              </ValidationProvider> -->
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
@@ -479,22 +446,25 @@ export default {
   watch: {
     toSearch(val) {
       if (val && val.length > 3) {
-        this.searchItemList = [];
         this.loadingSearch = true;
         let data = {
           keyword: val,
         };
+        // this.$refs.search_item_list.isMenuActive = false;
         axios
           .post("/item/search", data)
           .then((res) => {
             this.loadingSearch = false;
             this.searchItemList = Object.assign([], res.data);
-            this.$refs.search_item_list.isMenuActive = true;
-            console.log(
-              "this.$refs.search_item_list.isMenuActive",
-              this.$refs.search_item_list.isMenuActive
-            );
-            console.log("search results", this.searchItemList);
+            this.searchItemList.map((si) => {
+              si.search_name = si.name + " (" + si.sku + ")";
+            });
+            // this.$refs.search_item_list.isMenuActive = true;
+            // console.log(
+            //   "isMenuActive",
+            //   this.$refs.search_item_list.isMenuActive
+            // );
+            // console.log("search results", this.searchItemList);
           })
           .catch((err) => {
             this.loadingSearch = false;
@@ -505,7 +475,6 @@ export default {
     orderProp: {
       handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
-        console.log("watch", this.orderObj);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
         this.orderData.location_id = this.orderObj.location_id;
         this.switchCashSales = newVal.is_cash_sale;
@@ -526,33 +495,19 @@ export default {
     },
   },
   computed: {
-    // resultsArray() {
-    //   return this.searchItemList;
-    // },
     ...mapGetters(["all_item_list", "all_location_list"]),
     ...mapActions(["fetchAllItems", "fetchAllLocations"]),
   },
   methods: {
-    // async searchItem() {
-    //   return;
-    //   if (this.toSearch && this.toSearch.length > 3) {
-    //     this.loadingSearch = true;
-    //     let data = {
-    //       keyword: this.toSearch,
-    //     };
-    //     await axios
-    //       .post("/item/search", data)
-    //       .then((res) => {
-    //         this.loadingSearch = false;
-    //         this.searchItemList = res.data;
-    //         console.log("search results", res);
-    //       })
-    //       .catch((err) => {
-    //         this.loadingSearch = false;
-    //         console.error(err);
-    //       });
-    //   }
-    // },
+    changeSelected() {
+      if (this.selectedFromSearch) {
+        this.orderData.item_id = this.selectedFromSearch.id;
+        this.orderData.item_name = this.selectedFromSearch.name;
+        this.orderData.sku = this.selectedFromSearch.sku;
+        this.orderData.price = this.selectedFromSearch.price;
+        console.log("orderData", this.orderData);
+      }
+    },
     uploadFunction() {
       this.loading = true;
       if (this.$refs.myVueDropzone.getQueuedFiles().length === 0) {
@@ -640,7 +595,6 @@ export default {
                 </button>
               </div>`;
     },
-
     addAttachment() {
       console.log("attachment");
     },
@@ -729,9 +683,20 @@ export default {
         line_price: null,
         remarks: "",
       };
+      setTimeout(() => {
+        this.selectedFromSearch = null;
+      }, 500);
     },
     calculate() {
       // calculate quantity
+      this.orderData.foc_quantity = this.orderData.foc_quantity
+        ? this.orderData.foc_quantity
+        : 0;
+
+      this.orderData.non_foc_quantity = this.orderData.non_foc_quantity
+        ? this.orderData.non_foc_quantity
+        : 1;
+
       this.orderData.total_quantity = Math.abs(
         parseInt(this.orderData.non_foc_quantity) +
           parseInt(this.orderData.foc_quantity)
@@ -744,16 +709,6 @@ export default {
           parseInt(this.orderData.non_foc_quantity);
         this.orderData.line_price = this.totalPrice ? this.totalPrice : null;
       }
-    },
-    changeItem() {
-      // set item data
-      let selectedItem = this.itemList.filter(
-        (i) => i.id == this.orderData.item_id
-      );
-      this.orderData.item_id = selectedItem[0].id;
-      this.orderData.item_name = selectedItem[0].name;
-      this.orderData.sku = selectedItem[0].sku;
-      this.orderData.price = selectedItem[0].price;
     },
     async setItems() {
       this.loadingItem = true;
