@@ -25,7 +25,7 @@
                 hide-details
               ></v-text-field> -->
             </v-card-title>
-            <v-simple-table>
+            <v-simple-table class="gm-admin-orders">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -357,3 +357,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.gm-admin-orders {
+  tr,
+  td {
+    min-width: 80px;
+  }
+}
+</style>

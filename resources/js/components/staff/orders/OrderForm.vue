@@ -12,7 +12,7 @@
           :label="`${switchCashSales == true ? 'Yes' : 'No'}`"
         ></v-switch>
       </div>
-      <div style="width: calc(100% - 120px - 5px)">
+      <div class="gm-customer-name">
         <div class="text-subtitle-1 textcolor--text mb-2">Customer</div>
         <v-text-field
           v-if="switchCashSales == true"
@@ -93,7 +93,6 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-left">No.</th>
             <th class="text-left">SKU</th>
             <!-- <th class="text-left">Item Name</th> -->
             <th class="text-left">Non-FoC Quantity</th>
@@ -114,7 +113,6 @@
         </thead>
         <tbody v-if="orderObj.order_details.length > 0">
           <tr v-for="(item, index) in orderDetails" :key="item.id">
-            <td>{{ index + 1 }}</td>
             <td>{{ item.sku }}</td>
             <!-- <td>{{ item.location_code }}</td> -->
             <td>{{ item.non_foc_quantity }}</td>
@@ -123,7 +121,7 @@
             <td>{{ item.price }}</td>
             <td>{{ item.line_price }}</td>
             <td>{{ item.remarks }}</td>
-            <td class="text-right" style="width: 60px">
+            <td class="text-right" style="min-width: 60px; width: 60px">
               <v-btn
                 icon
                 x-small
@@ -784,13 +782,23 @@ export default {
 
 
 <style lang="scss">
+.gm-customer-name {
+  width: calc(100% - 120px - 5px);
+}
+@media all and (max-width: 480px) {
+  .gm-customer-name {
+    width: 100%;
+  }
+}
+
 .gm-item-table {
   tr:nth-of-type(even) {
     background-color: rgba(0, 0, 0, 0.025);
   }
   td,
   th {
-    // font-size: 12px !important;
+      // font-size: 12px !important;
+    min-width: 60px !important;
     padding-left: 5px !important;
     padding-right: 5px !important;
   }

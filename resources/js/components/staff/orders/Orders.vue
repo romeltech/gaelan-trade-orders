@@ -27,7 +27,7 @@
               </h4>
               <v-spacer></v-spacer>
             </v-card-title>
-            <v-simple-table>
+            <v-simple-table class="gm-staff-orders">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -360,3 +360,11 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.gm-staff-orders {
+  tr,
+  td {
+    min-width: 80px;
+  }
+}
+</style>
