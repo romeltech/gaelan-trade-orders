@@ -10,7 +10,7 @@
       color="primary"
       dark
     >
-      <div width="100%" class="text-center pa-3">
+      <div width="100%" class="text-center pa-3 pb-3">
         <!-- <v-avatar size="150">
           <v-img :src="profileImagePath"></v-img>
         </v-avatar> -->
