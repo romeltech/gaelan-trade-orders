@@ -521,13 +521,14 @@ export default {
     orderProp: {
       handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
-        this.orderData = Object.assign({}, newVal);
+        // this.orderData = Object.assign({}, newVal);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
         this.switchCashSales = newVal.is_cash_sale;
-        // this.orderData.instructions = this.orderObj.instructions;
-        // this.orderData.cash_sale_customer = newVal.cash_sale_customer;
-        // this.orderData.files = newVal.files;
-        // this.orderData.location_id = this.orderObj.location_id;
+
+        this.orderData.instructions = this.orderObj.instructions;
+        this.orderData.cash_sale_customer = newVal.cash_sale_customer;
+        this.orderData.files = newVal.files;
+        this.orderData.location_id = this.orderObj.location_id;
         if (this.orderObj.location_id == null) {
           this.setLocations();
         }
@@ -559,8 +560,10 @@ export default {
       console.log("undoRemoveAttachment", this.orderData);
     },
     removeAttachment() {
+      console.log("before", this.orderData.files);
       this.orderData.files = [];
       this.selectedFile = null;
+      console.log("after", this.orderData.files);
     },
     changeSelected() {
       if (this.selectedFromSearch) {
@@ -782,34 +785,34 @@ export default {
         this.orderData.line_price = this.totalPrice ? this.totalPrice : null;
       }
     },
-    async setItems() {
-      this.loadingItem = true;
-      console.log("this.all_item_list.length", this.all_item_list.length);
-      if (this.all_item_list.length == 0) {
-        await store.dispatch("fetchAllItems").then(() => {
-          this.itemList = this.all_item_list;
-          this.loadingItem = false;
-        });
-      } else {
-        this.itemList = this.all_item_list;
-        this.loadingItem = false;
-      }
-    },
+    // async setItems() {
+    //   this.loadingItem = true;
+    //   console.log("this.all_item_list.length", this.all_item_list.length);
+    //   if (this.all_item_list.length == 0) {
+    //     await store.dispatch("fetchAllItems").then(() => {
+    //       this.itemList = this.all_item_list;
+    //       this.loadingItem = false;
+    //     });
+    //   } else {
+    //     this.itemList = this.all_item_list;
+    //     this.loadingItem = false;
+    //   }
+    // },
     openAddItem(item = null, action) {
       if (action == "add") {
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
       } else if (action == "edit") {
-        console.log("here", item);
         this.dialogOrderBtn = "Update";
         this.dialogOrder = true;
-        this.loadingDialogOrder = true;
-        this.setItems().then(() => {
-          this.orderData = item;
-          this.orderData.item_id = item.item_id;
-          this.loadingDialogOrder = false;
-        });
+        // this.loadingDialogOrder = true;
+        // this.setItems().then(() => {
+        this.orderData = item;
+        this.orderData.item_id = item.item_id;
+        // this.loadingDialogOrder = false;
+        // });
       }
+      console.log("openAddItem", this.orderData);
     },
     addItem() {
       this.loadingDialogOrder = true;
