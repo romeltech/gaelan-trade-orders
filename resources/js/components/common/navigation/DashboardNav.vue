@@ -165,6 +165,7 @@ export default {
           title: "Orders",
           icon: "mdi-playlist-edit",
           location: "/staff/orders/draft",
+          value: true,
           subs: [
             {
               title: "Draft",
@@ -189,6 +190,7 @@ export default {
           title: "Orders",
           icon: "mdi-format-list-bulleted",
           location: "/d/orders",
+          value: true,
           subs: [
             {
               title: "Submitted",

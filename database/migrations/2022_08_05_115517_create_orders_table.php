@@ -22,6 +22,7 @@ class CreateOrdersTable extends Migration
             $table->string('order_number')->nullable();
             $table->foreignId('location_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
+            $table->text('instructions')->nullable();
             $table->timestamps();
         });
     }

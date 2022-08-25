@@ -4,7 +4,7 @@
       active-class="ga-active-list-bg white--text"
       dark
       v-if="item.subs"
-      value="true"
+      :value="item.value ? item.value : false"
     >
       <template v-slot:activator>
         <v-list-item-action>

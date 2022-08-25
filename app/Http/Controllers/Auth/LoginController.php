@@ -58,7 +58,7 @@ class LoginController extends Controller
         {
             $role =  Auth::user()->role;
             if($role == 'admin' || $role === 'super_admin'){
-                return redirect('d/orders');
+                return redirect('d/orders/submitted');
             }elseif($role == 'staff'){
                 return redirect('staff/orders/draft');
             }else{

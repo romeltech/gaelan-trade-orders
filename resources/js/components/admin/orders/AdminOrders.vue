@@ -36,12 +36,15 @@
                     <th class="text-left">Submitted date</th>
                     <th class="text-left">Attachment</th>
                     <th class="text-left">Order Details</th>
+                    <th class="text-left">Instructions</th>
                     <th class="text-right">ERP</th>
                   </tr>
                 </thead>
                 <tbody v-if="Object.keys(order_list).length > 0">
                   <tr v-for="item in order_list" :key="item.id">
-                    <td>{{ item.order_number }}</td>
+                    <td style="min-width: 100px !important">
+                      {{ item.order_number }}
+                    </td>
                     <td>
                       <v-chip
                         small
@@ -58,7 +61,8 @@
                     <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td>
                       <div v-if="item.files && item.files.length > 0">
-                        <v-chip
+                        <v-btn
+                          rounded
                           small
                           color="primary"
                           v-if="item.files[0]"
@@ -69,13 +73,14 @@
                           <v-icon class="ml-1" small color="white"
                             >mdi-open-in-new</v-icon
                           >
-                        </v-chip>
+                        </v-btn>
                       </div>
                       <div v-else>-</div>
                     </td>
                     <td>
                       <v-btn
                         small
+                        rounded
                         color="success"
                         @click="() => downloadCSV(item)"
                         >Download
@@ -84,7 +89,20 @@
                         ></v-btn
                       >
                     </td>
-                    <td class="text-right">
+                    <td>
+                      <v-btn
+                        rounded
+                        v-if="item.instructions != ''"
+                        small
+                        color="primary"
+                        @click="() => readInstructions(item)"
+                        >Read
+                        <v-icon small class="ml-1" color="white"
+                          >mdi-eye</v-icon
+                        >
+                      </v-btn>
+                    </td>
+                    <td class="text-right" style="min-width: 40px !important">
                       <div>
                         <v-progress-circular
                           v-if="loadingERP[item.id] == true"
@@ -209,6 +227,20 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogStatusInstructions" persistent width="600">
+      <v-card>
+        <v-card-title class="text-capitalize">Instructions</v-card-title>
+        <v-card-text class="text-body-1 textColor--text">{{
+          dialogInstructions
+        }}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="primary ml-2" @click="dialogStatusInstructions = false"
+            >Okay</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <snack-bar :snackbar-options="sbOptions"></snack-bar>
   </div>
 </template>
@@ -225,6 +257,9 @@ export default {
   },
   data() {
     return {
+      dialogStatusInstructions: false,
+      dialogInstructions: "",
+
       // Pagination
       pageCount: 0,
       page: 1,
@@ -252,6 +287,10 @@ export default {
     },
   },
   methods: {
+    readInstructions(item) {
+      this.dialogStatusInstructions = true;
+      this.dialogInstructions = item.instructions;
+    },
     printCustomer(item) {
       let customer = "";
       if (item) {
@@ -379,6 +418,7 @@ export default {
 <style lang="scss">
 .gm-admin-orders {
   tr,
+  th,
   td {
     min-width: 80px;
   }

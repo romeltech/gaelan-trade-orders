@@ -18,13 +18,13 @@
           v-if="switchCashSales == true"
           outlined
           v-model="orderData.cash_sale_customer"
-          label="Input Customer"
+          label="Input"
         ></v-text-field>
         <v-autocomplete
           v-else
           v-model="orderData.location_id"
           :items="locationList"
-          label="Select Customer"
+          label="Select"
           item-text="name"
           item-value="id"
           outlined
@@ -37,19 +37,15 @@
       </div>
     </div>
     <v-divider class="mb-5"></v-divider>
-    <div class="">
-      <div class="text-subtitle-1 textcolor--text mb-2">Order Details</div>
-      <div class="d-flex align-center flex-wrap">
-        <v-btn
-          @click="() => openAddItem(null, 'add')"
-          class="secondary mr-3 mb-3"
-          >Add Item</v-btn
-        >
-      </div>
+    <div class="text-subtitle-1 textcolor--text mb-2">Order Details</div>
+    <div class="d-flex align-center flex-wrap">
+      <v-btn @click="() => openAddItem(null, 'add')" class="secondary mr-3 mb-3"
+        >Add Item</v-btn
+      >
     </div>
     <v-simple-table
       v-if="orderObj.order_details && orderObj.order_details.length > 0"
-      class="elevation-0 gm-item-table"
+      class="elevation-0 gm-item-table mb-5"
       style="border: 1px solid #ddd"
     >
       <!-- dense -->
@@ -110,70 +106,117 @@
     <v-sheet
       v-else
       rounded
-      class="mx-auto text-center py-3"
+      class="mx-auto text-center py-5 mb-5"
       width="100%"
       color="grey lighten-5"
     >
       No orders to display
     </v-sheet>
-    <div class="d-flex align-center mt-5" style="width: 100%">
-      <v-btn
-        :disabled="!has_order"
-        @click="() => addAttachment()"
-        class="open-uploader secondary mr-3 mb-3"
-        ><v-icon small class="mr-1">mdi-paperclip</v-icon> Attachment</v-btn
-      >
-      <div v-if="selectedFile == null" class="mb-3">
-        <div v-if="!orderObj.files">No Attachment</div>
-        <div v-else>
-          <a
-            v-if="orderObj.files[0]"
-            :href="`${$baseUrl}/file/${orderObj.files[0].path}`"
-            target="_blank"
-          >
-            {{ orderObj.files[0].path }}
-            <v-icon small color="primary">mdi-open-in-new</v-icon>
-          </a>
-        </div>
-      </div>
-      <vue-dropzone
-        class="file-upload"
-        ref="myVueDropzone"
-        id="dropzone"
-        :options="dropzoneOptions"
-        :duplicateCheck="true"
-        :include-styling="false"
-        :useCustomSlot="preview"
-        v-on:vdropzone-file-added="addedFunction"
-        v-on:vdropzone-files-added="addedFunction"
-        v-on:vdropzone-sending="sendingFunction"
-        v-on:vdropzone-drop="dropFunction"
-        v-on:vdropzone-success-multiple="uploadSuccessFuntion"
-        v-on:vdropzone-removed-file="removedFunction"
-        v-on:vdropzone-processingFunction-multiple="processingFunction"
-        v-on:vdropzone-error-multiple="uploadErrorFunction"
-        v-on:vdropzone-duplicate-file="duplicateFileFunction"
-      >
-      </vue-dropzone>
 
+    <div class="mb-5">
+      <div class="text-subtitle-1 textcolor--text mb-2">Instructions</div>
+      <v-textarea
+        outlined
+        hide-details
+        v-model="orderData.instructions"
+        rows="3"
+        label="Optional"
+      ></v-textarea>
+    </div>
+
+    <div class="text-subtitle-1 textcolor--text mb-2">Attachement</div>
+    <div class="d-flex align-end flex-wrap" style="width: 100%">
+      <div>
+        <div class="d-flex align-center">
+          <v-btn
+            :disabled="!has_order"
+            @click="() => addAttachment()"
+            class="open-uploader primary mr-3"
+            ><v-icon small class="mr-1">mdi-paperclip</v-icon> Add</v-btn
+          >
+          <div v-if="selectedFile == null">
+            <v-btn
+              v-if="orderData.files && orderData.files.length == 1"
+              class="mr-3"
+              color="error"
+              @click="removeAttachment"
+            >
+              <v-icon small class="mr-1">mdi-close</v-icon> remove
+            </v-btn>
+            <v-btn
+              v-if="
+                orderData.files &&
+                orderData.files.length == 0 &&
+                orderObj.files.length > 0
+              "
+              color="primary"
+              icon
+              @click="undoRemoveAttachment"
+            >
+              <v-icon small>mdi-undo</v-icon>
+            </v-btn>
+          </div>
+        </div>
+        <div v-if="selectedFile == null" class="mb-3">
+          <div v-if="!orderData.files" class="mt-3">No Attachment</div>
+          <div v-else class="d-flex align-center mt-3">
+            <a
+              v-if="orderData.files && orderData.files[0]"
+              :href="`${$baseUrl}/file/${orderData.files[0].path}`"
+              target="_blank"
+              style="font-size: 16px"
+            >
+              {{ orderData.files[0].path }}
+            </a>
+            <a
+              v-if="orderData.files && orderData.files[0]"
+              :href="`${$baseUrl}/file/${orderData.files[0].path}`"
+              target="_blank"
+              class="text-decoration-none"
+            >
+              <v-icon color="primary" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
+          </div>
+        </div>
+        <vue-dropzone
+          class="file-upload"
+          ref="myVueDropzone"
+          id="dropzone"
+          :options="dropzoneOptions"
+          :duplicateCheck="true"
+          :include-styling="false"
+          :useCustomSlot="preview"
+          v-on:vdropzone-file-added="addedFunction"
+          v-on:vdropzone-files-added="addedFunction"
+          v-on:vdropzone-sending="sendingFunction"
+          v-on:vdropzone-drop="dropFunction"
+          v-on:vdropzone-success-multiple="uploadSuccessFuntion"
+          v-on:vdropzone-removed-file="removedFunction"
+          v-on:vdropzone-processingFunction-multiple="processingFunction"
+          v-on:vdropzone-error-multiple="uploadErrorFunction"
+          v-on:vdropzone-duplicate-file="duplicateFileFunction"
+        >
+        </vue-dropzone>
+      </div>
       <v-spacer></v-spacer>
-      <v-btn
-        color="primary darken-1"
-        class="mr-2"
-        text
-        :loading="loadingSaveLater"
-        @click="() => updateOrder('draft', false, true)"
-      >
-        save as draft
-      </v-btn>
-      <v-btn
-        v-if="orderObj.status == 'draft'"
-        :disabled="!has_order"
-        class="primary"
-        :loading="loadingSubmit"
-        @click="() => updateOrder('submitted', false, true)"
-        >submit</v-btn
-      >
+      <div class="mb-3 mt-10 mt-md-auto">
+        <v-btn
+          class="mr-2 grey lighten-4 primary--text"
+          depressed
+          :loading="loadingSaveLater"
+          @click="() => updateOrder('draft', false, true)"
+        >
+          save as draft
+        </v-btn>
+        <v-btn
+          v-if="orderObj.status == 'draft'"
+          :disabled="!has_order"
+          class="primary"
+          :loading="loadingSubmit"
+          @click="() => updateOrder('submitted', false, true)"
+          >submit</v-btn
+        >
+      </div>
     </div>
     <!-- Dialogs -->
     <v-dialog v-model="dialogOrder" persistent max-width="600px">
@@ -395,6 +438,7 @@ export default {
       loadingOrder: false,
       orderDetails: [],
       orderData: {
+        files: [],
         location_code: null,
         order_id: null,
         order_number: null,
@@ -407,6 +451,8 @@ export default {
         price: null,
         line_price: null,
         remarks: "",
+        instructions: "",
+        remove_file: false,
       },
       orderObj: {},
       totalPrice: null,
@@ -475,10 +521,13 @@ export default {
     orderProp: {
       handler(newVal, oldVal) {
         this.orderObj = Object.assign({}, newVal);
+        this.orderData = Object.assign({}, newVal);
         this.orderDetails = newVal.order_details ? newVal.order_details : [];
-        this.orderData.location_id = this.orderObj.location_id;
         this.switchCashSales = newVal.is_cash_sale;
-        this.orderData.cash_sale_customer = newVal.cash_sale_customer;
+        // this.orderData.instructions = this.orderObj.instructions;
+        // this.orderData.cash_sale_customer = newVal.cash_sale_customer;
+        // this.orderData.files = newVal.files;
+        // this.orderData.location_id = this.orderObj.location_id;
         if (this.orderObj.location_id == null) {
           this.setLocations();
         }
@@ -505,6 +554,14 @@ export default {
     ...mapActions(["fetchAllItems", "fetchAllLocations"]),
   },
   methods: {
+    undoRemoveAttachment() {
+      this.orderData.files = this.orderObj.files;
+      console.log("undoRemoveAttachment", this.orderData);
+    },
+    removeAttachment() {
+      this.orderData.files = [];
+      this.selectedFile = null;
+    },
     changeSelected() {
       if (this.selectedFromSearch) {
         this.orderData.item_id = this.selectedFromSearch.id;
@@ -578,7 +635,7 @@ export default {
       };
     },
     dropzoneTemplate() {
-      return `<div class="dz-preview mb-3 dz-file-preview d-flex align-center">
+      return `<div class="dz-preview mt-3 mb-3 dz-file-preview d-flex align-center">
                 <div class="dz-details d-flex align-center justify-start mr-3" style="width: 100%">
                   <div class="px-1 d-flex align-center" style="width: 100%">
                     <div class="dz-filename mr-2" data-dz-name></div>
@@ -642,6 +699,7 @@ export default {
         location_id: this.orderData.location_id,
         is_cash_sale: this.switchCashSales,
         cash_sale_customer: this.orderData.cash_sale_customer,
+        instructions: this.orderData.instructions,
       };
       console.log("updateOrder", this.orderData);
 
@@ -650,6 +708,12 @@ export default {
         this.$refs.myVueDropzone.processQueue();
       } else {
         console.log("no File");
+        if (this.orderData.files.length == 0) {
+          this.orderData = {
+            ...this.orderData,
+            remove_file: true,
+          };
+        }
         await axios
           .post("/order/update", this.orderData)
           .then((response) => {
@@ -688,6 +752,8 @@ export default {
         price: null,
         line_price: null,
         remarks: "",
+        instructions: "",
+        remove_file: false,
       };
       setTimeout(() => {
         this.selectedFromSearch = null;

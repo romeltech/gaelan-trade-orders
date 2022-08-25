@@ -154,6 +154,7 @@ class OrderController extends Controller
             //     'user_id' => auth()->id()
             // );
             $orderArr = array(
+                'instructions' => $orderRequest->instructions,
                 'status' => $orderRequest->status,
                 'is_cash_sale' => $orderRequest->is_cash_sale,
                 'cash_sale_customer' => $orderRequest->is_cash_sale == true ? $orderRequest->cash_sale_customer : "",
@@ -167,6 +168,10 @@ class OrderController extends Controller
             if(request()->file('file')){
                 if($theOrder){
                     $theOrder->files()->sync($idsToSync);
+                }
+            }else{
+                if($orderRequest->remove_file == true){
+                    $theOrder->files()->detach();
                 }
             }
 
@@ -205,7 +210,8 @@ class OrderController extends Controller
             'status' => $request['status'],
             'order_number' => $request['item_name'],
             'location_id' => $request['location_id'],
-            'user_id' => auth()->id()
+            'instructions' => $request['instructions'],
+            'user_id' => auth()->id(),
         );
         $orderDetailsArr = array(
             'item_id' => $request['item_id'],
