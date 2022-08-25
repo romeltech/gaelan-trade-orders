@@ -453,6 +453,7 @@ export default {
         remarks: "",
         instructions: "",
         remove_file: false,
+        order_detail_id: null,
       },
       orderObj: {},
       totalPrice: null,
@@ -627,6 +628,12 @@ export default {
       this.removeAllFilesFunction();
       this.clearOrderData();
       this.$emit("saved", true);
+      this.$router.push({
+        name: "StaffOrders",
+        params: {
+          status: 'draft',
+        },
+      });
     },
     uploadErrorFunction(files, message, xhr) {
       this.loadingSaveLater = false;
@@ -704,8 +711,6 @@ export default {
         cash_sale_customer: this.orderData.cash_sale_customer,
         instructions: this.orderData.instructions,
       };
-      console.log("updateOrder", this.orderData);
-
       if (this.$refs.myVueDropzone.getQueuedFiles().length > 0) {
         console.log("has File");
         this.$refs.myVueDropzone.processQueue();
@@ -757,6 +762,8 @@ export default {
         remarks: "",
         instructions: "",
         remove_file: false,
+        files: this.orderObj.files,
+        order_detail_id: null,
       };
       setTimeout(() => {
         this.selectedFromSearch = null;
@@ -802,17 +809,32 @@ export default {
       if (action == "add") {
         this.dialogOrderBtn = "Add";
         this.dialogOrder = true;
+        this.orderData = {
+          ...this.orderData,
+          sku: null,
+          item_id: null,
+          item_name: null,
+          non_foc_quantity: null,
+          foc_quantity: null,
+          price: null,
+          remarks: null,
+          order_detail_id: null,
+        };
       } else if (action == "edit") {
         this.dialogOrderBtn = "Update";
         this.dialogOrder = true;
-        // this.loadingDialogOrder = true;
-        // this.setItems().then(() => {
-        this.orderData = item;
-        this.orderData.item_id = item.item_id;
-        // this.loadingDialogOrder = false;
-        // });
+        this.orderData = {
+          ...this.orderData,
+          sku: item.sku,
+          item_id: item.item_id,
+          item_name: item.item_name,
+          non_foc_quantity: item.non_foc_quantity,
+          foc_quantity: item.foc_quantity,
+          price: item.price,
+          remarks: item.remarks,
+          order_detail_id: item.id,
+        };
       }
-      console.log("openAddItem", this.orderData);
     },
     addItem() {
       this.loadingDialogOrder = true;
@@ -824,7 +846,6 @@ export default {
       this.loadingDialogOrder = true;
       this.orderData.order_number = this.$route.params.ordernum;
       this.orderData.order_id = this.orderObj.id;
-      console.log("saveItem", this.orderData);
       await axios
         .post("/staff/order/save/detail", this.orderData)
         .then((response) => {

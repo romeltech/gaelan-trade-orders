@@ -51,8 +51,9 @@ class OrderController extends Controller
             "line_price" => $request['line_price'],
             "remarks" => $request['remarks'],
         );
-        if(isset($request['id'])){
-            $order->order_details()->where("id", $request['id'])->update($orderDetailArr);
+        if(isset($request['order_detail_id']) && $request['order_detail_id'] != null){
+            $order->order_details()->where("id", $request['order_detail_id'])->update($orderDetailArr);
+            // OrderDetail::where("id", $request['order_detail_id'])->update($orderDetailArr);
         }else{
             $order->order_details()->create($orderDetailArr);
         }
