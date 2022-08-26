@@ -142,13 +142,13 @@
               </div>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <!-- <v-btn
-                  v-if="pagetitle == 'edit'"
+                <v-btn
+                  v-if="auth_user.email == 'romel.i@gagroup.net'"
                   text
                   color="error"
                   @click="deleteUser()"
                   >delete</v-btn
-                > -->
+                >
                 <v-btn
                   class="ml-2 primary"
                   :loading="loading"
