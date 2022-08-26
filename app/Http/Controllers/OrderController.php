@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Mail\OrderSubmissionMail;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Events\OrderSubmissionEvent;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as Img;
-use Illuminate\Support\Str;
-use App\Models\File;
 
 class OrderController extends Controller
 {
@@ -174,6 +179,13 @@ class OrderController extends Controller
                 if($orderRequest->remove_file == true){
                     $theOrder->files()->detach();
                 }
+            }
+
+            if($order && $orderRequest->status == 'submitted'){
+                // get all admin
+                $recipients = User::where(['role' => 'admin', 'status' => 'active'])->get();
+
+                event(new OrderSubmissionEvent($recipients, $theOrder));
             }
 
             DB::commit();

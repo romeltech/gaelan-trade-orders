@@ -209,7 +209,7 @@ export default {
     return {
       // Pagination
       pageCount: 0,
-      page: 1,
+      page: this.$route.params.page ? this.$route.params.page : 1,
       itemsPerPage: 10,
 
       pageLoading: true,
@@ -353,7 +353,7 @@ export default {
     },
   },
   created() {
-    this.getPaginatedItems(this.$route.params.page).then(() => {
+    this.getPaginatedItems(this.page).then(() => {
       this.pageLoading = false;
     });
     console.log(this.$route.params.status);

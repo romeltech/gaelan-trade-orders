@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ItemController;
@@ -142,3 +144,14 @@ Route::get('/user/account-settings',  [DashboardController::class, 'dashboard'])
  * Files
  */
 Route::get('/file/{path}',  [FileController::class, 'showFile'])->name('file.show')->middleware('auth');
+
+
+/**
+ * Email View Test
+ */
+// Route::get('/order-notification', function (){
+//     $adminAccounts = User::where(['role' => 'admin', 'status' => 'active'])->get();
+//     $theOrder = Order::where('order_number', '2-260822-6')->firstOrFail();
+
+//     return view('emails.order-submission-mail', compact('adminAccounts', 'theOrder'));
+// });

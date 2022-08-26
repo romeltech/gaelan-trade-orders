@@ -124,7 +124,7 @@
       ></v-textarea>
     </div>
 
-    <div class="text-subtitle-1 textcolor--text mb-2">Attachement</div>
+    <div class="text-subtitle-1 textcolor--text mb-2">Attachment</div>
     <div class="d-flex align-end flex-wrap" style="width: 100%">
       <div>
         <div class="d-flex align-center">
