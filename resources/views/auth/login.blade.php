@@ -3,10 +3,12 @@
 @section('content')
     <div id="g-login" class="container-fluid py-16 d-flex flex-column align-center gag-container-bg">
         <div class="col-12  mt-10" style="z-index: 2">
-            <v-card max-width="450" id="loginform" class="mx-auto px-5 pt-8 pb-5 rounded-lg glass" style="background-color: rgba(255, 255, 255, 0.9)">
-                <div class="logo-wrapper" style="max-width: 175px; margin: 0 auto">
-                    <img style="width: 100%; height: auto" src="/images/logo-primary.png" alt="Gaelan Medical">
-                </div>
+            <div class="logo-wrapper" style="max-width: 175px; margin: 0 auto 30px">
+                <img style="width: 100%; height: auto" src="/images/logo-primary.png" alt="Gaelan Medical">
+            </div>
+            <v-card max-width="450" id="loginform" class="mx-auto px-5 pt-8 pb-5 rounded-lg"
+                style="background-color: rgba(255, 255, 255, 0.9)">
+
                 <v-card-title class="px-5 pb-0">Login</v-card-title>
                 <v-card-text class="py-5">
                     <v-form autocomplete="off" method="POST" action="{{ route('login') }}" ref="form"
