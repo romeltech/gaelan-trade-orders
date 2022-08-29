@@ -40,18 +40,16 @@
                     <th class="text-left">Item Name</th>
                     <th class="text-left">SKU</th>
                     <th class="text-left">Price</th>
+                    <th class="text-left">Unit of Measure</th>
                     <th class="text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody v-if="Object.keys(item_list).length > 0">
                   <tr v-for="item in item_list" :key="item.id">
-                    <td>
-                      {{ item.name && item.name }}
-                    </td>
+                    <td>{{ item.name && item.name }}</td>
                     <td>{{ item.sku }}</td>
-                    <td>
-                      {{ item.price }}
-                    </td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.uom }}</td>
                     <td class="text-right">
                       <v-btn
                         fab
@@ -140,6 +138,21 @@
                   outlined
                   required
                   name="Price"
+                  :error-messages="errors"
+                ></v-text-field>
+              </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                rules="required"
+                name="Unit of Measure"
+              >
+                <v-text-field
+                  dense
+                  v-model="itemDialogData.uom"
+                  label="Unit of Measure"
+                  outlined
+                  required
+                  name="uom"
                   :error-messages="errors"
                 ></v-text-field>
               </ValidationProvider>

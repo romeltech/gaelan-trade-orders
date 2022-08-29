@@ -57,7 +57,10 @@
             <th class="text-left">Non-FoC Quantity</th>
             <th class="text-left">FoC Quantity</th>
             <th class="text-left">Total Quantity</th>
-            <!-- <th class="text-left">Unit of Measure</th> -->
+            <th class="text-left">
+              Unit of Measure <br />
+              <div style="font-size: 10px; line-height: 10px">Code</div>
+            </th>
             <th class="text-left">
               Unit Price <br />
               <div style="font-size: 10px; line-height: 10px">Excl. VAT</div>
@@ -76,6 +79,7 @@
             <td>{{ item.non_foc_quantity }}</td>
             <td>{{ item.foc_quantity }}</td>
             <td>{{ item.total_quantity }}</td>
+            <td>{{ item.uom }}</td>
             <td>{{ item.price }}</td>
             <td>{{ item.line_price }}</td>
             <td>{{ item.remarks }}</td>
@@ -260,20 +264,6 @@
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
-                name="Item SKU"
-              >
-                <v-text-field
-                  readonly
-                  outlined
-                  v-model="orderData.sku"
-                  label="Item SKU*"
-                  :error-messages="errors"
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-              <ValidationProvider
-                v-slot="{ errors }"
-                rules="required"
                 name="Item Name"
               >
                 <v-text-field
@@ -285,8 +275,41 @@
                   required
                 ></v-text-field>
               </ValidationProvider>
+
               <div class="row">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 pb-0 pt-2">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required"
+                    name="Item SKU"
+                  >
+                    <v-text-field
+                      readonly
+                      outlined
+                      v-model="orderData.sku"
+                      label="Item SKU*"
+                      :error-messages="errors"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+                <div class="col-12 col-md-6 pb-0 pt-2">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required"
+                    name="Unit of Measure Code"
+                  >
+                    <v-text-field
+                      readonly
+                      outlined
+                      v-model="orderData.uom"
+                      label="Unit of Measure Code*"
+                      :error-messages="errors"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+                <div class="col-12 col-md-6 pt-0 pb-2">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="numeric|alpha_num|min_value:0"
@@ -302,7 +325,7 @@
                     ></v-text-field>
                   </ValidationProvider>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 pt-0 pb-2">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="numeric|alpha_num|min_value:0"
@@ -570,6 +593,7 @@ export default {
       if (this.selectedFromSearch) {
         this.orderData.item_id = this.selectedFromSearch.id;
         this.orderData.item_name = this.selectedFromSearch.name;
+        this.orderData.uom = this.selectedFromSearch.uom;
         this.orderData.sku = this.selectedFromSearch.sku;
         this.orderData.price = this.selectedFromSearch.price;
         console.log("orderData", this.orderData);
@@ -631,7 +655,7 @@ export default {
       this.$router.push({
         name: "StaffOrders",
         params: {
-          status: 'draft',
+          status: "draft",
         },
       });
     },
@@ -814,6 +838,7 @@ export default {
           sku: null,
           item_id: null,
           item_name: null,
+          uom: null,
           non_foc_quantity: null,
           foc_quantity: null,
           price: null,
@@ -828,6 +853,7 @@ export default {
           sku: item.sku,
           item_id: item.item_id,
           item_name: item.item_name,
+          uom: item.uom,
           non_foc_quantity: item.non_foc_quantity,
           foc_quantity: item.foc_quantity,
           price: item.price,

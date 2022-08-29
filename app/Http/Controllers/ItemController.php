@@ -42,6 +42,7 @@ class ItemController extends Controller
             'name' => $request['name'],
             'sku' => $request['sku'],
             'price' => $request['price'],
+            'uom' => $request['uom'],
         );
         $item = Item::updateOrCreate(['id' => $request['id']], $arrDetail);
 
@@ -64,14 +65,15 @@ class ItemController extends Controller
                     array_push($itemArr, array(
                         'name' => $item->name,
                         'sku' => $item->sku,
-                        'price' => $item->price
+                        'price' => $item->price,
+                        'uom' => $item->uom
                         )
                     );
                 }
                 $import = Item::upsert(
                     $itemArr,
                     ['sku'],
-                    ['name', 'price']
+                    ['name', 'price', 'uom']
                 );
                 $msg = $import ? "Import success" : "Import failed";
                 // Log::create([

@@ -49,6 +49,7 @@ class OrderController extends Controller
             "sku" => $request['sku'],
             "item_id" => $request['item_id'],
             "item_name" => $request['item_name'],
+            "uom" => $request['uom'],
             "non_foc_quantity" => $request['non_foc_quantity'],
             "foc_quantity" => $request['foc_quantity'],
             "total_quantity" => $request['total_quantity'],
@@ -181,12 +182,13 @@ class OrderController extends Controller
                 }
             }
 
-            if($order && $orderRequest->status == 'submitted'){
-                // get all admin
-                $recipients = User::where(['role' => 'admin', 'status' => 'active'])->get();
+            // email notification
+            // if($order && $orderRequest->status == 'submitted'){
+            //     // get all admin
+            //     $recipients = User::where(['role' => 'admin', 'status' => 'active'])->get();
 
-                event(new OrderSubmissionEvent($recipients, $theOrder));
-            }
+            //     event(new OrderSubmissionEvent($recipients, $theOrder));
+            // }
 
             DB::commit();
         } catch (Exception $e) {
