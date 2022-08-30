@@ -38,6 +38,7 @@
                 <thead>
                   <tr>
                     <th class="text-left">Customer Name</th>
+                    <th class="text-left">Area</th>
                     <th class="text-left">Code</th>
                     <th class="text-right">Action</th>
                   </tr>
@@ -45,6 +46,7 @@
                 <tbody v-if="Object.keys(location_list).length > 0">
                   <tr v-for="item in location_list" :key="item.id">
                     <td>{{ item.name }}</td>
+                    <td>{{ item.area }}</td>
                     <td>{{ item.code }}</td>
                     <td class="text-right">
                       <v-btn
@@ -113,6 +115,22 @@
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
+                name="Area"
+              >
+                <v-text-field
+                  dense
+                  type="text"
+                  v-model="locationDialogData.area"
+                  label="Area"
+                  outlined
+                  required
+                  name="Area"
+                  :error-messages="errors"
+                ></v-text-field>
+              </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                rules="required"
                 name="Code"
               >
                 <v-text-field
@@ -168,7 +186,7 @@ export default {
     return {
       // Pagination
       pageCount: 0,
-      page: 1,
+      page: this.$route.params.page ? this.$route.params.page : 1,
       itemsPerPage: 10,
 
       pageLoading: true,
@@ -244,7 +262,7 @@ export default {
     },
   },
   created() {
-    this.getPaginatedLocations(this.$route.params.page).then(() => {
+    this.getPaginatedLocations(this.page).then(() => {
       this.pageLoading = false;
     });
   },

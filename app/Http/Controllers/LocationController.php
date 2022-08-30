@@ -27,12 +27,13 @@ class LocationController extends Controller
         $msg = isset($request['id']) ? 'updated' : 'created';
         $arrDetail = array(
             'name' => $request['name'],
+            'area' => $request['area'],
             'code' => $request['code']
         );
         $item = Location::updateOrCreate(['id' => $request['id']], $arrDetail);
 
         return response()->json([
-            "message" => "Location has been ".$msg
+            "message" => "Customer has been ".$msg
         ], 200);
     }
 
@@ -49,6 +50,7 @@ class LocationController extends Controller
                 foreach ($locationsToImport_chunked as $item) {
                     array_push($itemArr, array(
                         'name' => $item->name,
+                        'area' => $item->area,
                         'code' => $item->code,
                         )
                     );
@@ -56,7 +58,7 @@ class LocationController extends Controller
                 $import = Location::upsert(
                     $itemArr,
                     ['code'],
-                    ['name']
+                    ['name', 'area']
                 );
                 $msg = $import ? "Import success" : "Import failed";
                 // Log::create([
