@@ -335,14 +335,16 @@ export default {
       let rawJson = [];
       item.order_details.map((i) => {
         rawJson.push({
+          customer_code: item.location ? item.location.code : "-",
           type: "Item",
           sku: i.sku,
-          customer_code: item.location ? item.location.code : "-",
+          description: i.item_name,
           non_foc_quantity: i.non_foc_quantity,
           foc_quantity: i.foc_quantity,
           total_quantity: i.total_quantity,
           unit_of_measure: i.uom ? i.uom : "-",
           unit_price: i.price,
+          line_discount: '',
           line_price: i.line_price,
           remarks: i.remarks,
         });
