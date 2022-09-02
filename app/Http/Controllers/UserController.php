@@ -102,7 +102,8 @@ class UserController extends Controller
         $validated = $request->validate([
             'password' => 'required|confirmed|min:9',
         ]);
-        $user = User::where('id', $request['id'])->first();
+        $userID = isset($request['id']) ? $request['id'] : auth()->id();
+        $user = User::where('id', $userID)->first();
         if($user){
             $user->update([
                 'password' => Hash::make($request['password'])

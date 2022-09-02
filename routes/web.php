@@ -67,7 +67,7 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     Route::post('/user/save', [UserController::class, 'saveUserData'])->name('user.save.data');
     // Route::post('/user/check/email', [UserController::class, 'checkEmail'])->name('user.check.email');
     // Route::post('/user/check/username', [UserController::class, 'checkUsername'])->name('user.check.username');
-    Route::post('/user/changepassword', [UserController::class, 'changePassword'])->name('user.change.password');
+
 
     /**
      * Profiles
@@ -130,6 +130,7 @@ Route::group(['prefix'=>'staff','as'=>'staff.', 'middleware' => 'auth'], functio
     Route::get('/orders/{status?}', [DashboardController::class, 'dashboard'])->name('orders');
     Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
 });
+Route::post('/d/user/changepassword', [UserController::class, 'changePassword'])->middleware('auth')->name('user.change.password');
 
 Route::get('/orders/get/paginated/{status?}', [OrderController::class, 'getPaginatedOrders'])->middleware('auth')->name('order.get.paginated');
 

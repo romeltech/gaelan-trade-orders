@@ -38,7 +38,10 @@ class OrderController extends Controller
 
     public function getPaginatedOrders($status = "draft")
     {
-        $orders = Order::where('status', $status)->latest()->with('user.profile', 'location', 'order_details')->paginate(10);
+        $orders = Order::where([
+            'status' => $status,
+            'user_id' => auth()->id(),
+        ])->latest()->with('user.profile', 'location', 'order_details')->paginate(10);
         return response()->json($orders, 200);
     }
 
@@ -70,7 +73,10 @@ class OrderController extends Controller
 
     public function getSingleOrder($ordernum)
     {
-        $order = Order::where("order_number", $ordernum)->with('order_details', 'location', 'files')->first();
+        $order = Order::where([
+            "order_number" => $ordernum,
+            "user_id" => auth()->id()
+        ])->with('order_details', 'location', 'files')->first();
         return response()->json($order, 200);
     }
 
