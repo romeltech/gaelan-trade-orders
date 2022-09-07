@@ -58,7 +58,7 @@
                       >
                     </td>
                     <td>{{ printCustomer(item) }}</td>
-                    <td>{{ printCustomer(item, "code") }}</td>
+                    <td class="text-center">{{ printCustomer(item, "code") }}</td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td class="text-center">
@@ -117,6 +117,7 @@
                         ></v-progress-circular>
                         <v-checkbox
                           v-else
+                          :disabled="auth_user.role == 'manager'"
                           v-model="item.erp"
                           class="ma-0 ml-auto"
                           hide-details
@@ -260,6 +261,7 @@ export default {
   },
   data() {
     return {
+      auth_user: this.$store.state.authUser.userObject,
       dialogStatusInstructions: false,
       dialogInstructions: "",
 
@@ -299,7 +301,7 @@ export default {
       let customer = "";
       if (item) {
         if (item.is_cash_sale == true) {
-          customer = item.cash_sale_customer ? item.cash_sale_customer : "-";
+          customer = field == "name" ? item.cash_sale_customer : "-";
         } else {
           customer =
             item.location_id && field === "name"
@@ -422,6 +424,7 @@ export default {
   created() {
     this.getPaginatedItems(this.$route.params.page).then(() => {
       this.pageLoading = false;
+      console.log("this.auth_user", this.auth_user);
     });
   },
 };

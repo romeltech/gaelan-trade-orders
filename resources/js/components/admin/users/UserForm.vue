@@ -203,7 +203,7 @@ export default {
     return {
       auth_user: this.$store.state.authUser.userObject,
       statusSwitch: true,
-      rolesArray: ["admin", "staff"],
+      rolesArray: ["admin", "staff", "manager"],
       actionSave: this.pagetitle,
       cardTitle: "New user",
       emailExisted: "",

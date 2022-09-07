@@ -34,7 +34,7 @@
           :nav="item"
         ></nav-item> -->
         <!-- Admin -->
-        <div v-if="auth_user.role == 'admin'">
+        <div v-if="auth_user.role == 'admin' || auth_user.role == 'manager'">
           <nav-item
             v-for="item in adminNav"
             :key="item.title"

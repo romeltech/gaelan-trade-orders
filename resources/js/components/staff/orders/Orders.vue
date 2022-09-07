@@ -61,7 +61,7 @@
                       >
                     </td>
                     <td>{{ printCustomer(item) }}</td>
-                    <td>{{ printCustomer(item, "code") }}</td>
+                    <td class="text-center">{{ printCustomer(item, "code") }}</td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td>
@@ -238,7 +238,7 @@ export default {
       let customer = "";
       if (item) {
         if (item.is_cash_sale == true) {
-          customer = item.cash_sale_customer ? item.cash_sale_customer : "-";
+          customer = field == "name" ? item.cash_sale_customer : "-";
         } else {
           customer =
             item.location_id && field === "name"

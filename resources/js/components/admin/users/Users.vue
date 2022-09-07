@@ -11,7 +11,12 @@
           ></v-skeleton-loader>
         </v-col>
         <v-col v-else cols="12" class="py-5">
-          <v-btn to="user/new" class="primary mb-5">New User</v-btn>
+          <v-btn
+            to="user/new"
+            class="primary mb-5"
+            v-if="auth_user.role === 'admin'"
+            >New User</v-btn
+          >
           <v-card>
             <v-card-title>
               <h4>Users</h4>
@@ -49,9 +54,9 @@
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn
-                  fab
+                  icon
                   x-small
-                  depressed
+                  :disabled="auth_user.role === 'manager'"
                   @click="editUser(item)"
                   class="transparent mr-1"
                 >
@@ -70,6 +75,7 @@
 export default {
   data() {
     return {
+      auth_user: this.$store.state.authUser.userObject,
       pageLoading: true,
       search: "",
       headers: [

@@ -13,7 +13,7 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="py-5">
-          <div class="d-flex mb-5">
+          <div class="d-flex mb-5" v-if="auth_user.role === 'admin'">
             <v-btn class="primary mr-2" @click="openlocationDialog('new', null)"
               >New Customer</v-btn
             >
@@ -50,13 +50,13 @@
                     <td>{{ item.code }}</td>
                     <td class="text-right">
                       <v-btn
-                        fab
+                        icon
                         x-small
-                        depressed
+                        :disabled="auth_user.role === 'manager'"
                         @click="openlocationDialog('edit', item)"
                         class="transparent mr-1"
                       >
-                        <v-icon small> mdi-pencil </v-icon>
+                        <v-icon> mdi-pencil </v-icon>
                       </v-btn>
                     </td>
                   </tr>
@@ -184,6 +184,7 @@ export default {
   },
   data() {
     return {
+      auth_user: this.$store.state.authUser.userObject,
       // Pagination
       pageCount: 0,
       page: this.$route.params.page ? this.$route.params.page : 1,

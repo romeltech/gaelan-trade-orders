@@ -21,7 +21,7 @@ import AccountSettings from "../components/common/user/AccountSettings";
 // Vuex Store
 import store from "../store";
 let auth_user = store.state.authUser;
-let admin_access = ["admin"];
+let admin_access = ["admin", "manager"];
 let staff_access = ["staff"];
 let staff_admin_access = ["staff", "admin"];
 
@@ -64,7 +64,7 @@ export const routes = [
         component: NewUser,
         name: "NewUser",
         beforeEnter: (to, from, next) => {
-            admin_access.includes(auth_user.userObject.role) == true
+            auth_user.userObject.role == 'admin'
                 ? next()
                 : next({ name: "NotFoundPage" });
         }
@@ -74,7 +74,7 @@ export const routes = [
         component: EditUser,
         name: "EditUser",
         beforeEnter: (to, from, next) => {
-            admin_access.includes(auth_user.userObject.role) == true
+            auth_user.userObject.role == 'admin'
                 ? next()
                 : next({ name: "NotFoundPage" });
         }

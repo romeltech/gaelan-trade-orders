@@ -30,7 +30,7 @@ class DashboardController extends Controller
     public function home()
     {
         $role = Auth::user()->role;
-        if($role == 'admin' || $role == 'super_admin'){
+        if($role == 'admin' || $role == 'super_admin' || $role == 'manager') {
             return redirect('d/orders/submitted');
         }else if($role == 'staff'){
             return redirect('staff/orders/draft');

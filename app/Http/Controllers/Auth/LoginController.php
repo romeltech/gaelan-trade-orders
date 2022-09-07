@@ -57,7 +57,7 @@ class LoginController extends Controller
         if(auth()->attempt( array( $fieldType => $input['username'], 'password' => $input['password'], 'status' => 'active')))
         {
             $role =  Auth::user()->role;
-            if($role == 'admin' || $role === 'super_admin'){
+            if($role == 'admin' || $role === 'super_admin' || $role === 'manager'){
                 return redirect('d/orders/submitted');
             }elseif($role == 'staff'){
                 return redirect('staff/orders/draft');

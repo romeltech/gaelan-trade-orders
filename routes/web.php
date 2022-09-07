@@ -140,6 +140,8 @@ Route::post('/order/update', [OrderController::class, 'updateOrder'])->middlewar
 Route::post('/order/update-erp', [OrderController::class, 'updateERPOrder'])->middleware('auth')->name('order.update.erp');
 
 Route::get('/user/account-settings',  [DashboardController::class, 'dashboard'])->name('user.account.settings')->middleware('auth');
+Route::get('/notfound',  [DashboardController::class, 'dashboard'])->name('page.notfound')->middleware('auth');
+Route::get('/forbidden',  [DashboardController::class, 'dashboard'])->name('page.forbidden')->middleware('auth');
 
 /**
  * Files
