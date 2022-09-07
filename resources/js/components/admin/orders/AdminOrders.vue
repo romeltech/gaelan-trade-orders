@@ -31,6 +31,7 @@
                   <tr>
                     <th class="text-left">Order Number</th>
                     <th class="text-left">Cash Sales</th>
+                    <th class="text-left">Customer Name</th>
                     <th class="text-left">Customer Code</th>
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Submitted date</th>
@@ -57,6 +58,7 @@
                       >
                     </td>
                     <td>{{ printCustomer(item) }}</td>
+                    <td>{{ printCustomer(item, "code") }}</td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td>
@@ -291,13 +293,18 @@ export default {
       this.dialogStatusInstructions = true;
       this.dialogInstructions = item.instructions;
     },
-    printCustomer(item) {
+    printCustomer(item, field = "name") {
       let customer = "";
       if (item) {
         if (item.is_cash_sale == true) {
           customer = item.cash_sale_customer ? item.cash_sale_customer : "-";
         } else {
-          customer = item.location_id ? item.location.code : "-";
+          customer =
+            item.location_id && field === "name"
+              ? item.location.name
+              : item.location_id && field == "code"
+              ? item.location.code
+              : "-";
         }
       }
       return customer;
@@ -345,7 +352,7 @@ export default {
           total_quantity: i.total_quantity,
           unit_of_measure: i.uom ? i.uom : "",
           unit_price: i.price,
-          line_discount: '',
+          line_discount: "",
           line_price: i.line_price,
           remarks: i.remarks,
         });
