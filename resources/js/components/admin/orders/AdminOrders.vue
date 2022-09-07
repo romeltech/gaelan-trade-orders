@@ -61,7 +61,7 @@
                     <td>{{ printCustomer(item, "code") }}</td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
-                    <td>
+                    <td class="text-center">
                       <div v-if="item.files && item.files.length > 0">
                         <v-btn
                           rounded
@@ -91,10 +91,10 @@
                         ></v-btn
                       >
                     </td>
-                    <td>
+                    <td class="text-center">
                       <v-btn
+                        v-if="item.instructions"
                         rounded
-                        v-if="item.instructions != ''"
                         small
                         color="primary"
                         @click="() => readInstructions(item)"
@@ -103,6 +103,7 @@
                           >mdi-eye</v-icon
                         >
                       </v-btn>
+                      <div v-else>-</div>
                     </td>
                     <td class="text-right" style="min-width: 40px !important">
                       <div>
@@ -229,7 +230,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="dialogStatusInstructions" persistent width="600">
+    <v-dialog v-model="dialogStatusInstructions" width="600">
       <v-card>
         <v-card-title class="text-capitalize">Instructions</v-card-title>
         <v-card-text class="text-body-1 textColor--text">{{
@@ -238,7 +239,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="primary ml-2" @click="dialogStatusInstructions = false"
-            >Okay</v-btn
+            >OK</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -290,6 +291,7 @@ export default {
   },
   methods: {
     readInstructions(item) {
+      console.log(item.instructions);
       this.dialogStatusInstructions = true;
       this.dialogInstructions = item.instructions;
     },
