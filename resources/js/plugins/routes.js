@@ -219,6 +219,16 @@ export const routes = [
                 : next({ name: "NotFoundPage" });
         }
     },
+    {
+        path: "/d/orders/:status/page/:page",
+        component: AdminOrders,
+        name: "PaginatedAdminOrders",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
+    },
     // {
     //     path: "/d/orders/submitted",
     //     component: AdminOrders,
@@ -239,26 +249,15 @@ export const routes = [
     //             : next({ name: "NotFoundPage" });
     //     }
     // },
-    {
-        path: "/d/orders/page/:page",
-        component: AdminOrders,
-        name: "PaginatedAdminOrders",
-        beforeEnter: (to, from, next) => {
-            admin_access.includes(auth_user.userObject.role) == true
-                ? next()
-                : next({ name: "NotFoundPage" });
-        }
-    },
 
     {
         path: "/user/account-settings",
         component: AccountSettings,
         name: "AccountSettings",
         beforeEnter: (to, from, next) => {
-            auth_user.userObject.role !== "" ? next()
+            auth_user.userObject.role !== ""
+                ? next()
                 : next({ name: "NotFoundPage" });
         }
     }
-
-
 ];
