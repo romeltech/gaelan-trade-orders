@@ -90,6 +90,11 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
      */
     Route::get('/locations/fetch/all', [LocationController::class, 'getAllLocations'])->name('location.get.all');
 
+    /**
+     * Sales Representatives
+     */
+    Route::get('/salesrep/fetch/all', [UserController::class, 'getAllSalesRepresentatives'])->name('user.get.all.sales.representatives');
+
     Route::post('/location/save', [LocationController::class, 'saveLocation'])->name('location.save');
     Route::get('/customers/get/all', [LocationController::class, 'getPaginatedLocations'])->name('location.get.paginated');
     Route::get('/customers/page/{page}', [DashboardController::class, 'dashboard'])->name('location.paginated');
@@ -100,6 +105,9 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
      * Orders
      */
     Route::get('/orders/{status?}', [DashboardController::class, 'dashboard'])->name('orders');
+    Route::post('/orders/get/paginated/{status}/{filter_data}', [OrderController::class, 'getFilteredOrdersForAdmin'])->name('orders');
+
+
     // Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
     Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
     Route::get('/orders/{status?}/page/{page}', [DashboardController::class, 'dashboard'])->name('order.page.paginated');

@@ -4,26 +4,63 @@
     <v-container class="py-8">
       <v-row v-if="pageLoading == true">
         <v-col cols="12">
-          <v-skeleton-loader
-            class="mx-auto"
-            max-width="100%"
-            type="list-item-avatar-three-line, image, article"
-          ></v-skeleton-loader>
+          <v-card>
+            <v-card-text>
+              <v-skeleton-loader
+                class="mx-auto"
+                max-width="100%"
+                type="list-item-avatar-three-line, image, article"
+              ></v-skeleton-loader>
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
       <v-row v-else>
+        <div class="col-md-3">
+          <v-autocomplete
+            :loading="loadingCustomer"
+            dense
+            v-model="filter_data.customer"
+            :items="customerArray"
+            outlined
+            item-text="name"
+            item-value="code"
+            label="Customer Name"
+            hide-details
+            @click="setCustomer"
+          >
+          </v-autocomplete>
+        </div>
+        <div class="col-md-3">
+          <v-autocomplete
+            :loading="loadingSalesRep"
+            dense
+            v-model="filter_data.sales_rep"
+            :items="salesRepArray"
+            outlined
+            item-text="profile.full_name"
+            item-value="id"
+            label="Sales Representative"
+            hide-details
+            @click="setSalesRep"
+          >
+          </v-autocomplete>
+        </div>
+        <div class="col-md-3">
+          <v-btn
+            width="100%"
+            class="primary py-5"
+            @click="submitFilter"
+            :loading="loadingFilter"
+            :disabled="filter_data.filter_by === ''"
+            >Filter</v-btn
+          >
+        </div>
         <v-col cols="12" class="py-5">
           <v-card :loading="loadingOrdersTable" :disabled="loadingOrdersTable">
             <v-card-title>
               <h4 class="text-capitalize">{{ $route.params.status }} Orders</h4>
               <v-spacer></v-spacer>
-              <!-- <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field> -->
             </v-card-title>
             <v-simple-table class="gm-admin-orders">
               <template v-slot:default>
@@ -58,7 +95,9 @@
                       >
                     </td>
                     <td>{{ printCustomer(item) }}</td>
-                    <td class="text-center">{{ printCustomer(item, "code") }}</td>
+                    <td class="text-center">
+                      {{ printCustomer(item, "code") }}
+                    </td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
                     <td class="text-center">
@@ -250,6 +289,8 @@
 </template>
 
 <script>
+import store from "../../../store";
+import { mapActions, mapGetters, mapState } from "vuex";
 import {
   ValidationObserver,
   ValidationProvider,
@@ -261,6 +302,19 @@ export default {
   },
   data() {
     return {
+      // Filter
+      loadingFilter: false,
+      filter_data: {
+        customer: null,
+        sales_rep: null,
+      },
+
+      loadingCustomer: false,
+      customerArray: [],
+
+      loadingSalesRep: false,
+      salesRepArray: [],
+
       auth_user: this.$store.state.authUser.userObject,
       dialogStatusInstructions: false,
       dialogInstructions: "",
@@ -291,7 +345,59 @@ export default {
       this.getPaginatedItems(this.$route.params.page);
     },
   },
+  computed: {
+    ...mapGetters(["all_location_list", "all_sales_rep_list"]),
+    ...mapActions(["fetchAllLocations", "fetchAllSalesRep"]),
+  },
   methods: {
+    // https://stackoverflow.com/questions/40382388/how-to-set-url-query-params-in-vue-with-vue-router
+    async getFilteredData(page) {
+      console.log("getFilteredData", this.filter_data);
+      this.loadingOrdersTable = true;
+      const response = await axios.get(
+        "/d/orders/get/paginated/" +
+          this.$route.params.status +
+          "&?filter=" +
+          this.filter_data +
+          "&?page=" +
+          page,
+          this.filter_data
+      );
+      if (response.data) {
+        this.order_list = Object.assign([], response.data.data);
+        this.loadingOrdersTable = false;
+        this.page = response.data.current_page;
+        this.pageCount = response.data.last_page;
+        this.order_list.map((ol) => {
+          this.loadingERP[ol.id] = false;
+        });
+      }
+    },
+    submitFilter() {
+      this.getFilteredData(1);
+    },
+    async setSalesRep() {
+      if (this.all_sales_rep_list.length == 0) {
+        this.loadingSalesRep = true;
+        await store.dispatch("fetchAllSalesRep").then(() => {
+          this.salesRepArray = this.all_sales_rep_list;
+          this.loadingSalesRep = false;
+        });
+      } else {
+        this.locationList = [...this.customerArray, ...this.all_location_list];
+      }
+    },
+    async setCustomer() {
+      if (this.all_location_list.length == 0) {
+        this.loadingCustomer = true;
+        await store.dispatch("fetchAllLocations").then(() => {
+          this.customerArray = this.all_location_list;
+          this.loadingCustomer = false;
+        });
+      } else {
+        this.locationList = [...this.customerArray, ...this.all_location_list];
+      }
+    },
     readInstructions(item) {
       console.log(item.instructions);
       this.dialogStatusInstructions = true;

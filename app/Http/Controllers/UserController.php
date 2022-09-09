@@ -23,6 +23,13 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function getAllSalesRepresentatives()
+    {
+        // Fetch All Sales Representatives
+        $users = User::where(['role' => 'staff', 'status' => 'active'])->with('profile')->get();
+        return response()->json($users, 200);
+    }
+
     public function getAllUsers()
     {
         // Fetch All Users
