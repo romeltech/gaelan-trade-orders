@@ -25,13 +25,15 @@
             <v-card-title>
               <h4>Customer</h4>
               <v-spacer></v-spacer>
-              <!-- <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
+              <v-text-field
+                v-model="toSearch"
                 label="Search"
                 single-line
                 hide-details
-              ></v-text-field> -->
+                append-icon="mdi-close"
+                :loading="loadingSearch"
+                @click:append="resetSearch"
+              ></v-text-field>
             </v-card-title>
             <v-simple-table>
               <template v-slot:default>
@@ -184,6 +186,9 @@ export default {
   },
   data() {
     return {
+      toSearch: "",
+      loadingSearch: false,
+
       auth_user: this.$store.state.authUser.userObject,
       // Pagination
       pageCount: 0,
@@ -206,8 +211,32 @@ export default {
     $route(to, from) {
       this.getPaginatedLocations(this.$route.params.page);
     },
+    toSearch(val) {
+      if (val && val.length > 3) {
+        this.loadingSearch = true;
+        let data = {
+          keyword: val,
+        };
+        axios
+          .post("/d/customer/search", data)
+          .then((res) => {
+            this.location_list = Object.assign([], res.data);
+            this.loadingSearch = false;
+            this.page = 1;
+            this.pageCount = 0;
+          })
+          .catch((err) => {
+            this.loadingSearch = false;
+            console.error(err);
+          });
+      }
+    },
   },
   methods: {
+    resetSearch() {
+      this.getPaginatedLocations(1);
+      this.toSearch = "";
+    },
     async saveItem() {
       this.loadingLocationDialog = true;
       await axios
@@ -259,7 +288,6 @@ export default {
       this.location_list = Object.assign([], response.data.data);
       this.page = response.data.current_page;
       this.pageCount = response.data.last_page;
-      console.log("this.location_list", this.location_list);
     },
   },
   created() {

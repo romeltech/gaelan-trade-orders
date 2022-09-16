@@ -101,6 +101,8 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     Route::get('/customers/page/{page}', [DashboardController::class, 'dashboard'])->name('location.paginated');
     Route::get('/customers/import', [DashboardController::class, 'dashboard'])->name('location.import');
     Route::post('/import/customers', [LocationController::class, 'importLocations'])->name('location.save.import');
+    Route::post('/customer/search', [LocationController::class, 'searchCustomer'])->name('customer.search.admin');
+
 
     /**
      * Orders

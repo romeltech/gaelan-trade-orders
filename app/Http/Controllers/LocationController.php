@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
+    public function searchCustomer(Request $request)
+    {
+        $customerQuery = Location::query();
+        $searchParam = $request['keyword'];
+        if($searchParam){
+            $customerQuery = Location::search($searchParam);
+        }
+        $customers = $customerQuery->get();
+        return response()->json($customers, 200);
+    }
+
     public function getAllLocations()
     {
         $locations = Location::all();

@@ -234,6 +234,8 @@ export default {
           .then((res) => {
             this.item_list = Object.assign([], res.data);
             this.loadingSearch = false;
+            this.page = 1;
+            this.pageCount = 0;
           })
           .catch((err) => {
             this.loadingSearch = false;
