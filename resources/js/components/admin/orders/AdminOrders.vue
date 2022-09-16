@@ -80,6 +80,7 @@
                     <th class="text-left">Cash Sales</th>
                     <th class="text-left">Customer Name</th>
                     <th class="text-left">Customer Code</th>
+                    <th class="text-left">Area</th>
                     <th class="text-left">Submitted by</th>
                     <th class="text-left">Submitted date</th>
                     <th class="text-left">Attachment</th>
@@ -107,6 +108,9 @@
                     <td>{{ printCustomer(item) }}</td>
                     <td class="text-center">
                       {{ printCustomer(item, "code") }}
+                    </td>
+                    <td class="text-center">
+                      {{ printCustomer(item, "area") }}
                     </td>
                     <td>{{ item.user.profile.full_name }}</td>
                     <td>{{ formatDateHelper(item.created_at) }}</td>
@@ -457,6 +461,8 @@ export default {
               ? item.location.name
               : item.location_id && field == "code"
               ? item.location.code
+              : item.location_id && field == "area"
+              ? item.location.area
               : "-";
         }
       }
