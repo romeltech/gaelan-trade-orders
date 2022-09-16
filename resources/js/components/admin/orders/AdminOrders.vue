@@ -46,10 +46,17 @@
           >
           </v-autocomplete>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 d-flex">
           <v-btn
-            width="100%"
-            class="primary py-5"
+            text
+            class="grey lighten-3 mr-2 primary--text py-5 flex-grow-1"
+            @click="resetFilter"
+            :loading="loadingFilter"
+            :disabled="filter_data.filter_by === ''"
+            >Reset</v-btn
+          >
+          <v-btn
+            class="primary py-5 flex-grow-1"
             @click="submitFilter"
             :loading="loadingFilter"
             :disabled="filter_data.filter_by === ''"
@@ -59,7 +66,10 @@
         <v-col cols="12" class="py-5">
           <v-card :loading="loadingOrdersTable" :disabled="loadingOrdersTable">
             <v-card-title>
-              <h4 class="text-capitalize">{{ $route.params.status }} Orders</h4>
+              <h4 class="text-capitalize">
+                {{ $route.params.status }} Orders
+                {{ filter_result_count ? "(" + filter_result_count + ")" : "" }}
+              </h4>
               <v-spacer></v-spacer>
             </v-card-title>
             <v-simple-table class="gm-admin-orders">
@@ -305,15 +315,29 @@ export default {
       // Filter
       loadingFilter: false,
       filter_data: {
-        customer: null,
-        sales_rep: null,
+        customer: "ALL",
+        sales_rep: 0,
       },
+      filter_route: "",
+      filter_result_count: null,
 
       loadingCustomer: false,
-      customerArray: [],
+      customerArray: [
+        {
+          code: "ALL",
+          name: "All",
+        },
+      ],
 
       loadingSalesRep: false,
-      salesRepArray: [],
+      salesRepArray: [
+        {
+          id: 0,
+          profile: {
+            full_name: "All",
+          },
+        },
+      ],
 
       auth_user: this.$store.state.authUser.userObject,
       dialogStatusInstructions: false,
@@ -321,7 +345,7 @@ export default {
 
       // Pagination
       pageCount: 0,
-      page: 1,
+      page: this.$route.params.page ? this.$route.params.page : 1,
       itemsPerPage: 10,
 
       pageLoading: true,
@@ -342,7 +366,11 @@ export default {
   },
   watch: {
     $route(to, from) {
-      this.getPaginatedItems(this.$route.params.page);
+      if (this.filter_result_count !== null) {
+        this.getFilteredData(this.$route.params.page);
+      } else {
+        this.getPaginatedItems(this.$route.params.page);
+      }
     },
   },
   computed: {
@@ -350,24 +378,33 @@ export default {
     ...mapActions(["fetchAllLocations", "fetchAllSalesRep"]),
   },
   methods: {
-    // https://stackoverflow.com/questions/40382388/how-to-set-url-query-params-in-vue-with-vue-router
+    resetFilter() {
+      this.filter_result_count = null;
+      this.filter_data = {
+        customer: "ALL",
+        sales_rep: 0,
+      };
+      this.filter_route = "";
+      this.getPaginatedItems(1);
+    },
     async getFilteredData(page) {
-      console.log("getFilteredData", this.filter_data);
       this.loadingOrdersTable = true;
-      const response = await axios.get(
+
+      this.filter_route =
         "/d/orders/get/paginated/" +
-          this.$route.params.status +
-          "&?filter=" +
-          this.filter_data +
-          "&?page=" +
-          page,
-          this.filter_data
-      );
+        this.$route.params.status +
+        "/customer/" +
+        this.filter_data.customer +
+        "/sales_rep/" +
+        this.filter_data.sales_rep;
+
+      const response = await axios.get(this.filter_route + "?page=" + page);
       if (response.data) {
-        this.order_list = Object.assign([], response.data.data);
+        this.filter_result_count = response.data.result_count;
+        this.order_list = Object.assign([], response.data.orders.data);
         this.loadingOrdersTable = false;
-        this.page = response.data.current_page;
-        this.pageCount = response.data.last_page;
+        this.page = response.data.orders.current_page;
+        this.pageCount = response.data.orders.last_page;
         this.order_list.map((ol) => {
           this.loadingERP[ol.id] = false;
         });
@@ -380,7 +417,10 @@ export default {
       if (this.all_sales_rep_list.length == 0) {
         this.loadingSalesRep = true;
         await store.dispatch("fetchAllSalesRep").then(() => {
-          this.salesRepArray = this.all_sales_rep_list;
+          this.salesRepArray = [
+            ...this.salesRepArray,
+            ...this.all_sales_rep_list,
+          ];
           this.loadingSalesRep = false;
         });
       } else {
@@ -391,7 +431,10 @@ export default {
       if (this.all_location_list.length == 0) {
         this.loadingCustomer = true;
         await store.dispatch("fetchAllLocations").then(() => {
-          this.customerArray = this.all_location_list;
+          this.customerArray = [
+            ...this.customerArray,
+            ...this.all_location_list,
+          ];
           this.loadingCustomer = false;
         });
       } else {
@@ -507,9 +550,24 @@ export default {
         });
     },
     onPageChange() {
-      this.$router
-        .push("/d/orders/" + this.$route.params.status + "/page/" + this.page)
-        .catch((err) => {});
+      if (this.filter_result_count !== null) {
+        this.$router
+          .push(
+            "/d/orders/" +
+              this.$route.params.status +
+              "/customer/" +
+              this.filter_data.customer +
+              "/sales_rep/" +
+              this.filter_data.sales_rep +
+              "/page/" +
+              this.page
+          )
+          .catch((err) => {});
+      } else {
+        this.$router
+          .push("/d/orders/" + this.$route.params.status + "/page/" + this.page)
+          .catch((err) => {});
+      }
     },
     async getPaginatedItems(page) {
       this.loadingOrdersTable = true;

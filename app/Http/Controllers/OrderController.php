@@ -35,12 +35,29 @@ class OrderController extends Controller
         return response()->json($orders, 200);
     }
 
-    public function getFilteredOrdersForAdmin(Request $request, $status = "draft")
+    public function getFilteredPaginatedOrdersForAdmin($status = "draft", $customer_code, $sales_rep_id)
     {
-        dd($request);
-        $orders = Order::where('status', $status)->with('user.profile', 'location', 'order_details', 'files')->latest()->paginate(10);
-        // $orders = Order::where('status', 'submitted')->paginate(10);
-        return response()->json($orders, 200);
+        // orders/get/paginated/{status?}/customer/{customer_id}/sales_rep/{sales_rep_id}
+        $filteredOrders = new Order;
+        $filteredOrders = $filteredOrders->where('status', $status);
+        if($customer_code !== "ALL"){ // query with locations/customers
+            $filteredOrders = $filteredOrders->whereHas('location', function ($query) use ($customer_code) {
+                $query->where('code', $customer_code);
+            });
+        }
+        if($sales_rep_id !== "0"){ // query with sales rep
+            $filteredOrders = $filteredOrders->whereHas('user', function ($query) use ($sales_rep_id) {
+                $query->where('id', $sales_rep_id);
+            });
+        }
+        $resultCount = $filteredOrders->count();
+        $filteredOrders = $filteredOrders->with('user.profile', 'location', 'order_details', 'files')->latest();
+        $filteredOrders = $filteredOrders->paginate(10);
+        return response()->json([
+            "message" => "Orders has been fetched",
+            "orders" => $filteredOrders,
+            "result_count" => $resultCount
+        ], 200);
     }
 
 

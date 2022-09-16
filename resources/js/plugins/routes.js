@@ -64,7 +64,7 @@ export const routes = [
         component: NewUser,
         name: "NewUser",
         beforeEnter: (to, from, next) => {
-            auth_user.userObject.role == 'admin'
+            auth_user.userObject.role == "admin"
                 ? next()
                 : next({ name: "NotFoundPage" });
         }
@@ -74,7 +74,7 @@ export const routes = [
         component: EditUser,
         name: "EditUser",
         beforeEnter: (to, from, next) => {
-            auth_user.userObject.role == 'admin'
+            auth_user.userObject.role == "admin"
                 ? next()
                 : next({ name: "NotFoundPage" });
         }
@@ -223,6 +223,17 @@ export const routes = [
         path: "/d/orders/:status/page/:page",
         component: AdminOrders,
         name: "PaginatedAdminOrders",
+        beforeEnter: (to, from, next) => {
+            admin_access.includes(auth_user.userObject.role) == true
+                ? next()
+                : next({ name: "NotFoundPage" });
+        }
+    },
+    {
+        // d/orders/submitted/customer/ALL/sales_rep/0/page/2
+        path: "/d/orders/:status/customer/:customer_code/sales_rep/:sales_rep_id/page/:page",
+        component: AdminOrders,
+        name: "FilteredPaginatedAdminOrders",
         beforeEnter: (to, from, next) => {
             admin_access.includes(auth_user.userObject.role) == true
                 ? next()

@@ -105,13 +105,12 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
      * Orders
      */
     Route::get('/orders/{status?}', [DashboardController::class, 'dashboard'])->name('orders');
-    Route::post('/orders/get/paginated/{status}/{filter_data}', [OrderController::class, 'getFilteredOrdersForAdmin'])->name('orders');
-
 
     // Route::get('/orders/page/{page}', [DashboardController::class, 'dashboard'])->name('order.paginated');
     Route::get('/orders', [DashboardController::class, 'dashboard'])->name('orders');
     Route::get('/orders/{status?}/page/{page}', [DashboardController::class, 'dashboard'])->name('order.page.paginated');
     Route::get('/orders/get/paginated/{status?}', [OrderController::class, 'getPaginatedOrdersForAdmin'])->name('orders.get.paginated');
+    Route::get('/orders/get/paginated/{status?}/customer/{customer_code}/sales_rep/{sales_rep_id}', [OrderController::class, 'getFilteredPaginatedOrdersForAdmin'])->name('orders.get.paginated');
 });
 
 
