@@ -2243,25 +2243,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.assign.js */ "./node_modules/core-js/modules/es.object.assign.js");
-/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.promise.js */ "./node_modules/core-js/modules/es.promise.js");
-/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.assign.js */ "./node_modules/core-js/modules/es.object.assign.js");
+/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.promise.js */ "./node_modules/core-js/modules/es.promise.js");
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
 /* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_4__);
-
-
-
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+
+
+
+//
+//
 //
 //
 //
@@ -2456,6 +2458,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   data: function data() {
     return {
+      toSearch: "",
+      loadingSearch: false,
       auth_user: this.$store.state.authUser.userObject,
       // Pagination
       pageCount: 0,
@@ -2475,43 +2479,63 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   watch: {
     $route: function $route(to, from) {
       this.getPaginatedItems(this.$route.params.page);
-    }
-  },
-  computed: {},
-  methods: {
-    saveItem: function saveItem() {
+    },
+    toSearch: function toSearch(val) {
       var _this = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee$(_context) {
+      if (val && val.length > 3) {
+        this.loadingSearch = true;
+        var data = {
+          keyword: val
+        };
+        axios.post("/d/item/search", data).then(function (res) {
+          _this.item_list = Object.assign([], res.data);
+          _this.loadingSearch = false;
+        }).catch(function (err) {
+          _this.loadingSearch = false;
+          console.error(err);
+        });
+      }
+    }
+  },
+  methods: {
+    resetSearch: function resetSearch() {
+      this.getPaginatedItems(1);
+      this.toSearch = "";
+    },
+    saveItem: function saveItem() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _this.loadingItemDialog = true;
+                _this2.loadingItemDialog = true;
                 _context.next = 3;
-                return axios.post("/d/item/save", _this.itemDialogData).then(function (response) {
+                return axios.post("/d/item/save", _this2.itemDialogData).then(function (response) {
                   console.log("response.data.message", response.data.message);
 
-                  _this.getPaginatedItems().then(function () {
-                    _this.sbOptions = {
+                  _this2.getPaginatedItems().then(function () {
+                    _this2.sbOptions = {
                       status: true,
                       type: "success",
                       text: response.data.message
                     };
-                    _this.itemDialog.status = false;
+                    _this2.itemDialog.status = false;
 
-                    _this.$refs.item_observer.reset();
+                    _this2.$refs.item_observer.reset();
 
-                    _this.loadingItemDialog = false;
+                    _this2.loadingItemDialog = false;
                   });
                 }).catch(function (err) {
                   console.log(err);
-                  _this.sbOptions = {
+                  _this2.sbOptions = {
                     status: true,
                     type: "error",
                     text: "Error saving data"
                   };
-                  _this.loadingItemDialog = false;
+                  _this2.loadingItemDialog = false;
                 });
 
               case 3:
@@ -2544,11 +2568,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$router.push("/d/items/page/" + this.page).catch(function (err) {});
     },
     getPaginatedItems: function getPaginatedItems(page) {
-      var _this2 = this;
+      var _this3 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee2() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var response;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee2$(_context2) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
@@ -2557,10 +2581,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 response = _context2.sent;
-                _this2.item_list = Object.assign([], response.data.data);
-                _this2.page = response.data.current_page;
-                _this2.pageCount = response.data.last_page;
-                console.log("this.item_list", _this2.item_list);
+                _this3.item_list = Object.assign([], response.data.data);
+                _this3.page = response.data.current_page;
+                _this3.pageCount = response.data.last_page;
+                console.log("this.item_list", _this3.item_list);
 
               case 7:
               case "end":
@@ -2572,10 +2596,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this4 = this;
 
     this.getPaginatedItems(this.$route.params.page).then(function () {
-      _this3.pageLoading = false;
+      _this4.pageLoading = false;
     });
   }
 });
@@ -20536,7 +20560,25 @@ var render = function() {
                             [
                               _c("h4", [_vm._v("Items")]),
                               _vm._v(" "),
-                              _c("v-spacer")
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c("v-text-field", {
+                                attrs: {
+                                  label: "Search",
+                                  "single-line": "",
+                                  "hide-details": "",
+                                  "append-icon": "mdi-close",
+                                  loading: _vm.loadingSearch
+                                },
+                                on: { "click:append": _vm.resetSearch },
+                                model: {
+                                  value: _vm.toSearch,
+                                  callback: function($$v) {
+                                    _vm.toSearch = $$v
+                                  },
+                                  expression: "toSearch"
+                                }
+                              })
                             ],
                             1
                           ),

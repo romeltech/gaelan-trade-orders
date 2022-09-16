@@ -84,6 +84,7 @@ Route::group(['prefix'=>'d','as'=>'dashboard.', 'middleware' => 'auth'], functio
     Route::get('/items/page/{page}', [DashboardController::class, 'dashboard'])->name('item.paginated');
     Route::get('/items/import', [DashboardController::class, 'dashboard'])->name('item.import');
     Route::post('/import/items', [ItemController::class, 'importItems'])->name('item.save.import');
+    Route::post('/item/search', [ItemController::class, 'searchItem'])->name('item.search.admin');
 
     /**
      * Locations
