@@ -361,11 +361,13 @@
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
-                rules="required"
+                :rules="`required|${
+                  orderData.is_without_price == 1 ? 'min:0' : ''
+                }`"
                 name="Unit Price Excl. VAT"
               >
                 <v-text-field
-                  readonly
+                  :readonly="orderData.is_without_price == 1 ? true : false"
                   type="number"
                   outlined
                   v-model="orderData.price"
@@ -376,7 +378,9 @@
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
-                rules="required"
+                :rules="`required|${
+                  orderData.is_without_price == 1 ? 'min:0' : ''
+                }`"
                 name="Line Amount Excl. VAT"
               >
                 <v-text-field
@@ -596,7 +600,7 @@ export default {
         this.orderData.uom = this.selectedFromSearch.uom;
         this.orderData.sku = this.selectedFromSearch.sku;
         this.orderData.price = this.selectedFromSearch.price;
-        console.log("orderData", this.orderData);
+        console.log("selectedFromSearch", this.selectedFromSearch);
       }
     },
     uploadFunction() {
@@ -813,7 +817,8 @@ export default {
         this.totalPrice =
           parseFloat(this.orderData.price) *
           parseInt(this.orderData.non_foc_quantity);
-        this.orderData.line_price = this.totalPrice ? this.totalPrice : null;
+        console.log("this.totalPrice", this.totalPrice);
+        this.orderData.line_price = this.totalPrice ? this.totalPrice : 0;
       }
     },
     // async setItems() {

@@ -50,7 +50,12 @@
                   <tr v-for="item in item_list" :key="item.id">
                     <td>{{ item.name && item.name }}</td>
                     <td>{{ item.sku }}</td>
-                    <td>{{ item.price }}</td>
+                    <td>
+                      {{ item.price }}
+                      {{
+                        item.is_without_price == true ? "(Allowed 0 value)" : ""
+                      }}
+                    </td>
                     <td>{{ item.uom }}</td>
                     <td class="text-right">
                       <v-btn
@@ -95,6 +100,17 @@
         <v-card-text>
           <ValidationObserver ref="item_observer" v-slot="{ valid }">
             <v-form ref="form">
+              <v-switch
+                class="my-0"
+                style="max-width: 250px"
+                v-model="switchIsWithoutPrice"
+                :color="`${switchIsWithoutPrice == true ? 'success' : 'grey'}`"
+                :label="`${
+                  switchIsWithoutPrice == true
+                    ? 'Allow 0 price value.'
+                    : 'Do not allow 0 price value.'
+                }`"
+              ></v-switch>
               <ValidationProvider
                 v-slot="{ errors }"
                 rules="required"
@@ -198,6 +214,7 @@ export default {
   },
   data() {
     return {
+      switchIsWithoutPrice: false,
       toSearch: "",
       loadingSearch: false,
 
@@ -251,6 +268,7 @@ export default {
     },
     async saveItem() {
       this.loadingItemDialog = true;
+      this.itemDialogData.is_without_price = this.switchIsWithoutPrice;
       await axios
         .post("/d/item/save", this.itemDialogData)
         .then((response) => {
@@ -285,6 +303,8 @@ export default {
       if (obj) {
         console.log("obj", obj);
         this.itemDialogData = Object.assign({}, obj);
+        this.switchIsWithoutPrice =
+          this.itemDialogData.is_without_price == 1 ? true : false;
       }
     },
     openImportPage() {

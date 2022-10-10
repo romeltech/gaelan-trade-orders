@@ -43,6 +43,7 @@ class ItemController extends Controller
             'sku' => $request['sku'],
             'price' => $request['price'],
             'uom' => $request['uom'],
+            'is_without_price' => $request['is_without_price'],
         );
         $item = Item::updateOrCreate(['id' => $request['id']], $arrDetail);
 
