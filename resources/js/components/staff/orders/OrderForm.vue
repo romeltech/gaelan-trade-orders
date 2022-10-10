@@ -231,53 +231,55 @@
         <v-card-text>
           <ValidationObserver ref="order_observer" v-slot="{ valid }">
             <v-form ref="form">
-              <v-autocomplete
-                ref="search_item_list"
-                v-model="selectedFromSearch"
-                :items="searchItemList"
-                :loading="loadingSearch"
-                :search-input.sync="toSearch"
-                clearable
-                hide-details
-                hide-no-data
-                item-text="search_name"
-                item-value="id"
-                label="Search SKU or Item Name"
-                class="mb-7"
-                outlined
-                @change="changeSelected"
-                return-object
-                append-icon="mdi-maginify"
-              >
-                <template v-slot:selection="{ attr, on, item, selected }">
-                  <v-chip
-                    v-bind="attr"
-                    :input-value="selected"
-                    color="primary"
-                    class="white--text"
-                    v-on="on"
-                  >
-                    <span>{{ item.name }}</span>
-                  </v-chip>
-                </template>
-              </v-autocomplete>
-              <ValidationProvider
-                v-slot="{ errors }"
-                rules="required"
-                name="Item Name"
-              >
-                <v-text-field
-                  readonly
-                  outlined
-                  v-model="orderData.item_name"
-                  label="Item Name*"
-                  :error-messages="errors"
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-
               <div class="row">
-                <div class="col-12 col-md-6 pb-0 pt-2">
+                <div class="col-12 pt-2 pb-0">
+                  <v-autocomplete
+                    ref="search_item_list"
+                    v-model="selectedFromSearch"
+                    :items="searchItemList"
+                    :loading="loadingSearch"
+                    :search-input.sync="toSearch"
+                    clearable
+                    hide-no-data
+                    item-text="search_name"
+                    item-value="id"
+                    label="Search SKU or Item Name"
+                    outlined
+                    @change="changeSelected"
+                    return-object
+                    append-icon="mdi-maginify"
+                  >
+                    <template v-slot:selection="{ attr, on, item, selected }">
+                      <v-chip
+                        v-bind="attr"
+                        :input-value="selected"
+                        color="primary"
+                        class="white--text"
+                        v-on="on"
+                      >
+                        <span>{{ item.name }}</span>
+                      </v-chip>
+                    </template>
+                  </v-autocomplete>
+                </div>
+                <div class="col-12 pt-2 pb-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required"
+                    name="Item Name"
+                  >
+                    <v-text-field
+                      readonly
+                      outlined
+                      v-model="orderData.item_name"
+                      label="Item Name*"
+                      :error-messages="errors"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+
+                <div class="col-12 col-md-6 pt-2 pb-0">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="required"
@@ -293,7 +295,7 @@
                     ></v-text-field>
                   </ValidationProvider>
                 </div>
-                <div class="col-12 col-md-6 pb-0 pt-2">
+                <div class="col-12 col-md-6 pt-2 pb-0">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="required"
@@ -309,7 +311,7 @@
                     ></v-text-field>
                   </ValidationProvider>
                 </div>
-                <div class="col-12 col-md-6 pt-0 pb-2">
+                <div class="col-12 col-md-6 pt-2 pb-0">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="numeric|alpha_num|min_value:0"
@@ -325,7 +327,7 @@
                     ></v-text-field>
                   </ValidationProvider>
                 </div>
-                <div class="col-12 col-md-6 pt-0 pb-2">
+                <div class="col-12 col-md-6 pt-2 pb-0">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="numeric|alpha_num|min_value:0"
@@ -341,63 +343,78 @@
                     ></v-text-field>
                   </ValidationProvider>
                 </div>
+
+                <div class="col-12 pt-2 pb-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required|numeric|min_value:1"
+                    name="Total Quantity"
+                  >
+                    <v-text-field
+                      readonly
+                      type="number"
+                      outlined
+                      v-model="orderData.total_quantity"
+                      label="Total Quantity*"
+                      :error-messages="errors"
+                      required
+                      persistent-hint
+                      hint="Total quantity is the sum of FoC and Non-FoC quantities."
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+                <div class="col-12 pt-2 pb-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    :rules="`required|${
+                      orderData.is_without_price == true ? 'min_value:0' : ''
+                    }`"
+                    name="Unit Price Excl. VAT"
+                  >
+                    <v-text-field
+                      :readonly="!orderData.is_without_price"
+                      type="number"
+                      outlined
+                      v-model="orderData.price"
+                      label="Unit Price Excl. VAT"
+                      :error-messages="errors"
+                      required
+                      :hint="`${
+                        orderData.is_without_price == true
+                          ? '0 value is allowed'
+                          : ''
+                      }`"
+                      persistent-hint
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+                <div class="col-12 pt-2 pb-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    :rules="`required|${
+                      orderData.is_without_price == true ? 'min_value:0' : ''
+                    }`"
+                    name="Line Amount Excl. VAT"
+                  >
+                    <v-text-field
+                      readonly
+                      type="number"
+                      outlined
+                      v-model="orderData.line_price"
+                      label="Line Amount Excl. VAT*"
+                      :error-messages="errors"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </div>
+                <div class="col-12 pt-2 pb-0">
+                  <v-text-field
+                    outlined
+                    v-model="orderData.remarks"
+                    label="Remarks"
+                  ></v-text-field>
+                </div>
               </div>
-              <ValidationProvider
-                v-slot="{ errors }"
-                rules="required|numeric|min_value:1"
-                name="Total Quantity"
-              >
-                <v-text-field
-                  readonly
-                  type="number"
-                  outlined
-                  v-model="orderData.total_quantity"
-                  label="Total Quantity*"
-                  :error-messages="errors"
-                  required
-                  persistent-hint
-                  hint="Total quantity is the sum of FoC and Non-FoC quantities."
-                ></v-text-field>
-              </ValidationProvider>
-              <ValidationProvider
-                v-slot="{ errors }"
-                :rules="`required|${
-                  orderData.is_without_price == 1 ? 'min:0' : ''
-                }`"
-                name="Unit Price Excl. VAT"
-              >
-                <v-text-field
-                  :readonly="orderData.is_without_price == 1 ? true : false"
-                  type="number"
-                  outlined
-                  v-model="orderData.price"
-                  label="Unit Price Excl. VAT"
-                  :error-messages="errors"
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-              <ValidationProvider
-                v-slot="{ errors }"
-                :rules="`required|${
-                  orderData.is_without_price == 1 ? 'min:0' : ''
-                }`"
-                name="Line Amount Excl. VAT"
-              >
-                <v-text-field
-                  readonly
-                  type="number"
-                  outlined
-                  v-model="orderData.line_price"
-                  label="Line Amount Excl. VAT*"
-                  :error-messages="errors"
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-              <v-text-field
-                outlined
-                v-model="orderData.remarks"
-                label="Remarks"
-              ></v-text-field>
               <div class="d-flex">
                 <v-spacer></v-spacer>
                 <v-btn
@@ -600,6 +617,8 @@ export default {
         this.orderData.uom = this.selectedFromSearch.uom;
         this.orderData.sku = this.selectedFromSearch.sku;
         this.orderData.price = this.selectedFromSearch.price;
+        this.orderData.is_without_price =
+          this.selectedFromSearch.is_without_price == 1 ? true : false;
         console.log("selectedFromSearch", this.selectedFromSearch);
       }
     },
@@ -817,7 +836,6 @@ export default {
         this.totalPrice =
           parseFloat(this.orderData.price) *
           parseInt(this.orderData.non_foc_quantity);
-        console.log("this.totalPrice", this.totalPrice);
         this.orderData.line_price = this.totalPrice ? this.totalPrice : 0;
       }
     },
