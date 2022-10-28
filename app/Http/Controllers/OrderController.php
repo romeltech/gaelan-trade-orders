@@ -197,10 +197,11 @@ class OrderController extends Controller
                 'is_cash_sale' => $orderRequest->is_cash_sale,
                 'cash_sale_customer' => $orderRequest->is_cash_sale == true ? $orderRequest->cash_sale_customer : "",
                 'location_id' => $orderRequest->is_cash_sale == false ? $orderRequest->location_id : null,
-                'user_id' => auth()->id()
+                'user_id' => auth()->id(),
+                'submitted_date' => $orderRequest->status == 'submitted' ? Carbon::now()->format('YmdHis') : null,
             );
-            $order = Order::where('order_number', $orderRequest->order_number)->update($orderArr);
             $theOrder = Order::where('order_number', $orderRequest->order_number)->firstOrFail();
+            $updateOrder = $theOrder->update($orderArr);
 
             // Sync files to customer feedback
             if(request()->file('file')){

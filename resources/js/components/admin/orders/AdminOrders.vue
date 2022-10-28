@@ -113,7 +113,15 @@
                       {{ printCustomer(item, "area") }}
                     </td>
                     <td>{{ item.user.profile.full_name }}</td>
-                    <td>{{ formatDateHelper(item.created_at) }}</td>
+                    <td>
+                      <div v-if="item.submitted_date != null">
+                        {{ formatDateHelper(item.submitted_date) }}
+                      </div>
+                      <div v-else>
+                        <div>{{ formatDateHelper(item.updated_at) }}</div>
+                        <div style="font-size: 10px">(last updated)</div>
+                      </div>
+                    </td>
                     <td class="text-center">
                       <div v-if="item.files && item.files.length > 0">
                         <v-btn
